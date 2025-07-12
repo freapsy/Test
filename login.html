@@ -117,7 +117,7 @@
     // Firebase SDK v9+ modular imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -155,6 +155,16 @@
           
           if (userDoc.exists()) {
             const userData = userDoc.data();
+            
+            // Letzten Login aktualisieren (nur wenn nicht gerade erst eingeloggt)
+            try {
+              await updateDoc(doc(db, "users", user.uid), {
+                lastLogin: serverTimestamp()
+              });
+              console.log("Letzter Login aktualisiert (automatisch)");
+            } catch (updateError) {
+              console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+            }
             
             // Weiterleitung zum entsprechenden Dashboard
             switch(userData.role) {
@@ -205,6 +215,17 @@
         
         if (userDoc.exists()) {
           const userData = userDoc.data();
+          
+          // Letzten Login aktualisieren
+          try {
+            await updateDoc(doc(db, "users", user.uid), {
+              lastLogin: serverTimestamp()
+            });
+            console.log("Letzter Login aktualisiert");
+          } catch (updateError) {
+            console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+            // Fehler beim Update sollte den Login nicht blockieren
+          }
           
           // Erfolgsmeldung anzeigen
           successMessage.textContent = "Login erfolgreich! Sie werden weitergeleitet...";

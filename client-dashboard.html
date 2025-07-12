@@ -792,7 +792,8 @@
       Timestamp,
       updateDoc,
       deleteDoc,
-      GeoPoint
+      GeoPoint,
+      serverTimestamp
     } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     // Firebase configuration
@@ -1498,6 +1499,16 @@
           
           if (userDoc.exists()) {
             currentUserData = userDoc.data();
+            
+            // Letzten Login aktualisieren
+            try {
+              await updateDoc(doc(db, "users", user.uid), {
+                lastLogin: serverTimestamp()
+              });
+              console.log("Letzter Login aktualisiert (Client-Dashboard)");
+            } catch (updateError) {
+              console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+            }
             
             // Benutzername anzeigen
             userNameElement.textContent = currentUserData.displayName || currentUserData.name || user.email || "Benutzer";

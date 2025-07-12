@@ -170,11 +170,40 @@
       text-decoration: underline;
     }
     
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
+    .section-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .search-input {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      width: 250px;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(0, 102, 179, 0.1);
+    }
+    
+    .dashboard-content {
+      display: flex;
+      flex-direction: column;
       gap: 2rem;
       margin-bottom: 2rem;
+    }
+    
+    .dashboard-card.full-width {
+      width: 100%;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
     }
     
     .dashboard-card {
@@ -202,28 +231,382 @@
     .dashboard-card-body {
       padding: 1.5rem;
     }
+
+    /* Omni-Ansicht Styles */
+    .omni-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .omni-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      padding: 0.8rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+    }
+
+    .tab-btn:hover {
+      background-color: var(--bg-light);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .search-input {
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-table th {
+      background-color: var(--bg-light);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .data-table tr:hover {
+      background-color: var(--bg-light);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-badge.active {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .status-badge.inactive {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-badge.pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .action-btn-small {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+      margin-right: 0.25rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn-small.view {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .action-btn-small.edit {
+      background-color: #ffc107;
+      color: #212529;
+    }
+
+    .action-btn-small.delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .action-btn-small:hover {
+      opacity: 0.8;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .analytics-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .analytics-item:last-child {
+      border-bottom: none;
+    }
+
+    .user-card, .client-card, .order-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+
+    .user-card h3, .client-card h3, .order-card h3 {
+      margin-top: 0;
+      color: var(--primary-navy);
+    }
+
+    .user-info, .client-info, .order-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 0.8rem;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-weight: 500;
+      color: var(--text-color-primary);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: white;
+      border-radius: 8px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-light);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      color: var(--primary-navy);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-color-secondary);
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background-color: var(--border-color);
+      color: var(--text-color-primary);
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .detail-item {
+      padding: 0.75rem;
+      background-color: var(--bg-light);
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .detail-item strong {
+      color: var(--primary-navy);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color-primary);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-navy);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-color-secondary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-light);
+      color: var(--text-color-primary);
+    }
     
     .orders-table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 0.95rem;
+      background-color: white;
     }
     
     .orders-table th, 
     .orders-table td {
-      padding: 1rem;
+      padding: 1.2rem 1rem;
       text-align: left;
       border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
     }
     
     .orders-table th {
       background-color: var(--bg-light);
       color: var(--text-color-secondary);
-      font-weight: 500;
+      font-weight: 600;
       font-size: 0.9rem;
+      border-bottom: 2px solid var(--border-color);
     }
     
     .orders-table tr:hover {
       background-color: rgba(0, 102, 179, 0.05);
+    }
+    
+    .orders-table tbody tr:last-child td {
+      border-bottom: none;
     }
     
     .status-badge {
@@ -254,34 +637,51 @@
       color: #721c24;
     }
     
-    .driver-list {
-      list-style: none;
-      padding: 0;
+    .drivers-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem 0;
       margin: 0;
     }
     
-    .driver-item {
+    .driver-preview-card {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.2rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      min-height: 120px;
       display: flex;
-      align-items: center;
-      padding: 0.8rem 0;
-      border-bottom: 1px solid var(--border-color);
+      flex-direction: column;
     }
     
-    .driver-item:last-child {
-      border-bottom: none;
+    .driver-preview-card:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .driver-preview-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      padding-right: 5rem;
     }
     
     .driver-avatar {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
-      background-color: var(--accent-blue);
+      background: linear-gradient(135deg, var(--accent-blue), #0056b3);
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 500;
-      margin-right: 1rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-right: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     .driver-info {
@@ -289,21 +689,62 @@
     }
     
     .driver-name {
-      font-weight: 500;
-      margin-bottom: 0.2rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--primary-navy);
+      font-size: 1rem;
+      line-height: 1.2;
+      word-wrap: break-word;
     }
     
-    .driver-status {
-      font-size: 0.8rem;
+    .driver-email {
+      font-size: 0.85rem;
       color: var(--text-color-secondary);
+      margin: 0;
+      line-height: 1.3;
+      word-wrap: break-word;
     }
     
-    .driver-status.available {
-      color: #28a745;
+    .driver-status-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 1;
     }
     
-    .driver-status.busy {
-      color: #dc3545;
+    .driver-status-badge.available {
+      background-color: rgba(40, 167, 69, 0.15);
+      color: #155724;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    
+    .driver-status-badge.busy {
+      background-color: rgba(255, 193, 7, 0.15);
+      color: #856404;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    .driver-location {
+      font-size: 0.85rem;
+      color: var(--text-color-secondary);
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      line-height: 1.3;
+    }
+    
+    .driver-location::before {
+      content: "📍";
+      margin-right: 0.4rem;
+      flex-shrink: 0;
     }
     
     .chart-container {
@@ -677,7 +1118,7 @@
     /* Fahrer-Grid Styles */
     .drivers-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 1.5rem;
       padding: 1rem;
     }
@@ -761,6 +1202,222 @@
     .driver-card .order-info strong {
       color: var(--text-color-primary);
     }
+    
+    /* Detaillierte Fahrer-Karten für die Hauptansicht */
+    .driver-card-detailed {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      position: relative;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+    }
+    
+    .driver-card-detailed:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .driver-card-detailed .driver-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-right: 6rem;
+    }
+    
+    .driver-card-detailed .driver-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-blue), #0056b3);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-right: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .driver-card-detailed .driver-info {
+      flex: 1;
+    }
+    
+    .driver-card-detailed .driver-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 0.4rem 0;
+      color: var(--primary-navy);
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    
+    .driver-card-detailed .driver-email {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin: 0 0 0.3rem 0;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    
+    .driver-card-detailed .driver-phone {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin: 0;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    
+    .driver-card-detailed .driver-status-badge {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+    
+    .driver-card-detailed .driver-status-badge.available {
+      background: linear-gradient(135deg, #d4edda, #c3e6cb);
+      color: #155724;
+      border: 1px solid #b8dabc;
+    }
+    
+    .driver-card-detailed .driver-status-badge.busy {
+      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+      color: #856404;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .driver-card-detailed .driver-location {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin: 0.5rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      background-color: rgba(0, 102, 179, 0.05);
+      border-radius: 6px;
+    }
+    
+    .driver-card-detailed .driver-location::before {
+      content: "📍";
+      margin-right: 0.5rem;
+      font-size: 1rem;
+    }
+    
+    .availability-info {
+      text-align: center;
+      padding: 1rem;
+      background-color: rgba(40, 167, 69, 0.1);
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    
+    .availability-info p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    
+    /* Dokumente-Tabelle Styles */
+    .documents-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      background-color: white;
+    }
+    
+    .documents-table th, 
+    .documents-table td {
+      padding: 1.2rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    
+    .documents-table th {
+      background-color: var(--bg-light);
+      color: var(--text-color-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .documents-table tr:hover {
+      background-color: rgba(0, 102, 179, 0.05);
+    }
+    
+    .documents-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .documents-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .action-btn-small {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-right: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .action-btn-small.view {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .action-btn-small.view:hover {
+      background-color: var(--primary-navy);
+    }
+    
+    .action-btn-small.delete {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .action-btn-small.delete:hover {
+      background-color: #c82333;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .dashboard-content {
+        gap: 1.5rem;
+      }
+      
+      .drivers-preview-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .orders-table {
+        font-size: 0.85rem;
+      }
+      
+      .orders-table th, 
+      .orders-table td {
+        padding: 0.8rem 0.5rem;
+      }
+    }
+    
+    @media (min-width: 1200px) {
+      .drivers-preview-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    }
   </style>
 </head>
 <body>
@@ -782,15 +1439,16 @@
     <div class="dashboard-container">
       <div class="sidebar">
         <ul class="sidebar-menu">
-          <li><a href="#dashboard" class="active" data-section="dashboard-section">Dashboard</a></li>
-          <li><a href="#whitelist" data-section="whitelist-section">Whitelist</a></li>
-          <li><a href="#drivers" data-section="drivers-section">Fahrer</a></li>
-          <li><a href="#">Aufträge</a></li>
-          <li><a href="#">Kunden</a></li>
-          <li><a href="#">Fahrzeuge</a></li>
-          <li><a href="#">Berichte</a></li>
-          <li><a href="#">Finanzen</a></li>
-          <li><a href="#">Einstellungen</a></li>
+          <li><a href="#dashboard" class="active" data-section="dashboard-section">📊 Dashboard</a></li>
+          <li><a href="#omni-view" data-section="omni-section">🌐 Omni-Ansicht</a></li>
+
+
+          <li><a href="#clients" data-section="clients-section">🏢 Auftraggeber</a></li>
+          <li><a href="#orders" data-section="orders-section">📋 Aufträge</a></li>
+          
+          <li><a href="#whitelist" data-section="whitelist-section">✅ Whitelist</a></li>
+
+          
         </ul>
       </div>
 
@@ -837,39 +1495,41 @@
             <button id="generateReportBtn" class="action-btn">Bericht erstellen</button>
           </div>
           
-          <div class="dashboard-grid">
-            <div class="dashboard-card">
+          <div class="dashboard-content">
+            <div class="dashboard-card full-width">
               <div class="dashboard-card-header">
                 <h3>Aktuelle Aufträge</h3>
                 <a href="#" class="view-all">Alle anzeigen</a>
               </div>
               <div class="dashboard-card-body">
-                <table class="orders-table">
-                  <thead>
-                    <tr>
-                      <th>Auftrag-Nr.</th>
-                      <th>Kunde</th>
-                      <th>Route</th>
-                      <th>Fahrer</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="ordersTableBody">
-                    <!-- Orders will be loaded dynamically -->
-                  </tbody>
-                </table>
+                <div class="table-container">
+                  <table class="orders-table">
+                    <thead>
+                      <tr>
+                        <th>Auftrag-Nr.</th>
+                        <th>Kunde</th>
+                        <th>Route</th>
+                        <th>Fahrer</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                      <!-- Orders will be loaded dynamically -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
             
-            <div class="dashboard-card">
+            <div class="dashboard-card full-width">
               <div class="dashboard-card-header">
                 <h3>Verfügbare Fahrer</h3>
                 <a href="#" class="view-all">Alle anzeigen</a>
               </div>
               <div class="dashboard-card-body">
-                <ul class="driver-list" id="driverList">
+                <div class="drivers-preview-grid" id="driverList">
                   <!-- Drivers will be loaded dynamically -->
-                </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -965,16 +1625,235 @@
           </div>
         </div>
 
-        <!-- Drivers Section -->
-        <div id="drivers-section" class="content-section">
+        <!-- Omni-Ansicht Section -->
+        <div id="omni-section" class="content-section">
           <div class="section-title">
-            <h2>Fahrer-Übersicht</h2>
+            <h2>🌐 Omni-Ansicht - Alle Firebase-Daten</h2>
+            <button id="refreshOmniBtn" class="action-btn">🔄 Aktualisieren</button>
           </div>
 
-          <div class="drivers-grid">
-            <!-- Fahrer-Karten werden hier dynamisch eingefügt -->
+          <div class="omni-stats">
+            <div class="stat-card">
+              <h3>👥 Benutzer</h3>
+              <div id="totalUsersValue" class="stat-value">-</div>
+              <div class="stat-change">Gesamt registriert</div>
+            </div>
+            <div class="stat-card">
+              <h3>🚗 Fahrer</h3>
+              <div id="totalDriversValue" class="stat-value">-</div>
+              <div class="stat-change">Aktive Fahrer</div>
+            </div>
+            <div class="stat-card">
+              <h3>🏢 Auftraggeber</h3>
+              <div id="totalClientsValue" class="stat-value">-</div>
+              <div class="stat-change">Registrierte Kunden</div>
+            </div>
+            <div class="stat-card">
+              <h3>📋 Aufträge</h3>
+              <div id="totalOrdersValue" class="stat-value">-</div>
+              <div class="stat-change">Alle Aufträge</div>
+            </div>
+            <div class="stat-card">
+              <h3>📄 Dokumente</h3>
+              <div id="totalDocumentsValue" class="stat-value">-</div>
+              <div class="stat-change">Hochgeladene Dateien</div>
+            </div>
+          </div>
+
+          <div class="omni-tabs">
+            <button class="tab-btn active" data-tab="users-tab">👥 Benutzer</button>
+            <button class="tab-btn" data-tab="orders-tab">📋 Aufträge</button>
+            <button class="tab-btn" data-tab="documents-tab">📄 Dokumente</button>
+            <button class="tab-btn" data-tab="analytics-tab">📊 Analytics</button>
+          </div>
+
+          <div id="users-tab" class="tab-content active">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Alle Benutzer</h3>
+                <input type="text" id="userSearchInput" placeholder="Benutzer suchen..." class="search-input">
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>E-Mail</th>
+                        <th>Name</th>
+                        <th>Rolle</th>
+                        <th>Registriert</th>
+                        <th>Letzter Login</th>
+                        <th>Status</th>
+                        <th>Aktionen</th>
+                      </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                      <!-- Wird dynamisch befüllt -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="orders-tab" class="tab-content">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Alle Aufträge</h3>
+                <input type="text" id="orderSearchInput" placeholder="Aufträge suchen..." class="search-input">
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Titel</th>
+                        <th>Kunde</th>
+                        <th>Fahrer</th>
+                        <th>Status</th>
+                        <th>Preis</th>
+                        <th>Erstellt</th>
+                        <th>Aktionen</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ordersTableBodyOmni">
+                      <!-- Wird dynamisch befüllt -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="documents-tab" class="tab-content">
+            <div class="documents-stats">
+              <div class="stat-card">
+                <h3>📄 Gesamt Dokumente</h3>
+                <div id="totalDocumentsCountOmni" class="stat-value">-</div>
+                <div class="stat-change">Alle hochgeladen</div>
+              </div>
+              <div class="stat-card">
+                <h3>📋 Führerscheine</h3>
+                <div id="fuehrerscheinCountOmni" class="stat-value">-</div>
+                <div class="stat-change">Dokumente</div>
+              </div>
+              <div class="stat-card">
+                <h3>🆔 Personalausweise</h3>
+                <div id="personalausweisCountOmni" class="stat-value">-</div>
+                <div class="stat-change">Dokumente</div>
+              </div>
+              <div class="stat-card">
+                <h3>📋 Führungszeugnisse</h3>
+                <div id="fuehrungszeugnis-CountOmni" class="stat-value">-</div>
+                <div class="stat-change">Dokumente</div>
+              </div>
+            </div>
+            
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Alle Dokumente</h3>
+                <div class="section-controls">
+                  <input type="text" id="documentSearchInput" placeholder="Dokumente suchen..." class="search-input">
+                  <button id="refreshDocumentsOmniBtn" class="action-btn">🔄 Aktualisieren</button>
+                </div>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Dateiname</th>
+                        <th>Benutzer</th>
+                        <th>Typ</th>
+                        <th>Größe</th>
+                        <th>Hochgeladen</th>
+                        <th>Aktionen</th>
+                      </tr>
+                    </thead>
+                    <tbody id="documentsTableBody">
+                      <!-- Wird dynamisch befüllt -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="analytics-tab" class="tab-content">
+            <div class="analytics-grid">
+              <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                  <h3>Benutzer-Analytics</h3>
+                </div>
+                <div class="dashboard-card-body">
+                  <div class="analytics-item">
+                    <span>Neue Registrierungen (7 Tage):</span>
+                    <strong id="newUsersWeek">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Aktive Benutzer (30 Tage):</span>
+                    <strong id="activeUsersMonth">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Fahrer/Kunden Verhältnis:</span>
+                    <strong id="driverClientRatio">-</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                  <h3>Auftrags-Analytics</h3>
+                </div>
+                <div class="dashboard-card-body">
+                  <div class="analytics-item">
+                    <span>Neue Aufträge (7 Tage):</span>
+                    <strong id="newOrdersWeek">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Abgeschlossene Aufträge (30 Tage):</span>
+                    <strong id="completedOrdersMonth">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Durchschnittlicher Auftragswert:</span>
+                    <strong id="avgOrderValue">-</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+
+
+        <!-- Auftraggeber Section -->
+        <div id="clients-section" class="content-section">
+          <div class="section-title">
+            <h2>🏢 Auftraggeber-Verwaltung</h2>
+          </div>
+          <div class="clients-grid" id="clientsGrid">
+            <!-- Auftraggeber-Karten werden hier dynamisch eingefügt -->
+          </div>
+        </div>
+
+        <!-- Aufträge Section -->
+        <div id="orders-section" class="content-section">
+          <div class="section-title">
+            <h2>📋 Auftrags-Verwaltung</h2>
+          </div>
+          <div class="orders-management" id="ordersManagement">
+            <!-- Auftrags-Verwaltung wird hier dynamisch eingefügt -->
+          </div>
+        </div>
+
+
+
+
+
+
+
+
       </div>
     </div>
 
@@ -998,6 +1877,14 @@
         deleteDoc,
         serverTimestamp
       } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      import { 
+        getStorage, 
+        ref, 
+        listAll, 
+        getDownloadURL, 
+        getMetadata,
+        deleteObject 
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
       // Firebase configuration
       const firebaseConfig = {
@@ -1014,11 +1901,13 @@
       let app = null;
       let auth = null;
       let db = null;
+      let storage = null;
 
       try {
         app = initializeApp(firebaseConfig);
         auth = getAuth(app);
         db = getFirestore(app);
+        storage = getStorage(app);
         console.log("Firebase erfolgreich initialisiert");
       } catch (error) {
         console.error("Fehler bei der Firebase-Initialisierung:", error);
@@ -1057,6 +1946,16 @@
                 alert("Sie haben keine Berechtigung für den Manager-Bereich.");
                 window.location.href = "login.html";
                 return;
+              }
+              
+              // Letzten Login aktualisieren
+              try {
+                await updateDoc(doc(db, "users", user.uid), {
+                  lastLogin: serverTimestamp()
+                });
+                console.log("Letzter Login aktualisiert (Manager-Dashboard)");
+              } catch (updateError) {
+                console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
               }
               
               // Display user name
@@ -1332,9 +2231,9 @@
           onSnapshot(driversQuery, (snapshot) => {
             if (snapshot.empty) {
               driverList.innerHTML = `
-                <li style="text-align: center; padding: 2rem;">
-                  Keine Fahrer gefunden.
-                </li>
+                <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                  <p style="color: var(--text-color-secondary); font-size: 1rem;">Keine Fahrer gefunden.</p>
+                </div>
               `;
               return;
             }
@@ -1346,25 +2245,32 @@
               const driverId = doc.id;
               
               // Name und Initialen erstellen
-              const driverName = driverData.displayName || driverData.name || driverData.email || "Unbekannter Fahrer";
-              const initials = driverName.split(' ').map(n => n[0]).join('');
+              const fullName = `${driverData.firstName || ''} ${driverData.lastName || ''}`.trim();
+              const displayName = fullName || driverData.displayName || driverData.email || "Unbekannter Fahrer";
+              const initials = fullName ? 
+                `${driverData.firstName?.[0] || ''}${driverData.lastName?.[0] || ''}` : 
+                displayName.split(' ').map(n => n[0]).join('').substring(0, 2);
               
-              // Status und Standort
-              const driverStatus = driverData.status || "unknown";
+              // Status bestimmen
+              const driverStatus = driverData.status || "available";
               const statusClass = driverStatus === 'available' ? 'available' : 'busy';
               const statusText = driverStatus === 'available' ? 'Verfügbar' : 'Beschäftigt';
               
               // Standort (falls vorhanden)
-              let locationText = driverData.currentLocation || "Standort unbekannt";
+              let locationText = driverData.currentLocation || driverData.address || "Standort unbekannt";
               
               driversHTML += `
-                <li class="driver-item">
-                  <div class="driver-avatar">${initials}</div>
-                  <div class="driver-info">
-                    <div class="driver-name">${driverName}</div>
-                    <div class="driver-status ${statusClass}">${statusText} - ${locationText}</div>
+                <div class="driver-preview-card">
+                  <div class="driver-status-badge ${statusClass}">${statusText}</div>
+                  <div class="driver-preview-header">
+                    <div class="driver-avatar">${initials}</div>
+                    <div class="driver-info">
+                      <div class="driver-name">${displayName}</div>
+                      <div class="driver-email">${driverData.email}</div>
+                    </div>
                   </div>
-                </li>
+                  <div class="driver-location">${locationText}</div>
+                </div>
               `;
             });
             
@@ -1373,18 +2279,18 @@
           }, (error) => {
             console.error("Fehler beim Laden der Fahrer:", error);
             driverList.innerHTML = `
-              <li style="text-align: center; padding: 2rem;">
-                Fehler beim Laden der Fahrer. Bitte versuchen Sie es später erneut.
-              </li>
+              <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                <p style="color: #dc3545; font-size: 1rem;">⚠️ Fehler beim Laden der Fahrer. Bitte versuchen Sie es später erneut.</p>
+              </div>
             `;
           });
           
         } catch (error) {
           console.error("Fehler beim Laden der Fahrer:", error);
           driverList.innerHTML = `
-            <li style="text-align: center; padding: 2rem;">
-              Fehler beim Laden der Fahrer. Bitte versuchen Sie es später erneut.
-            </li>
+            <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+              <p style="color: #dc3545; font-size: 1rem;">⚠️ Fehler beim Laden der Fahrer. Bitte versuchen Sie es später erneut.</p>
+            </div>
           `;
         }
       }
@@ -1594,73 +2500,1092 @@
             initializeWhitelistListener();
           }
 
-          // Fahrer-Daten laden, wenn Fahrer-Sektion aktiviert wird
-          if (sectionId === 'drivers-section') {
-            initializeDriversView();
+
+
+          // Omni-Ansicht laden, wenn Omni-Sektion aktiviert wird
+          if (sectionId === 'omni-section') {
+            loadOmniView();
           }
+          
+                
         });
       });
 
-      // Fahrer-Übersicht initialisieren
-      async function initializeDriversView() {
-        const driversGrid = document.querySelector('.drivers-grid');
-        
-        // Query für alle Fahrer
-        const driversQuery = query(
-          collection(db, "users"),
-          where("role", "==", "driver")
-        );
 
-        // Echtzeit-Updates für Fahrer
-        onSnapshot(driversQuery, async (snapshot) => {
-          driversGrid.innerHTML = ''; // Grid leeren
+
+      // Omni-Ansicht laden
+      async function loadOmniView() {
+        console.log("Lade Omni-Ansicht...");
+        
+        // Statistiken laden
+        await loadOmniStats();
+        
+        // Benutzer-Daten laden
+        await loadAllUsers();
+        
+        // Aufträge laden
+        await loadAllOrders();
+        
+        // Dokumente laden
+        await loadAllDocuments();
+        
+        // Tab-Funktionalität initialisieren
+        initializeOmniTabs();
+        
+        // Suchfunktionalität initialisieren
+        initializeOmniSearch();
+      }
+
+      // Omni-Statistiken laden
+      async function loadOmniStats() {
+        try {
+          // Alle Benutzer zählen
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          document.getElementById('totalUsersValue').textContent = usersSnapshot.size;
           
-          for (const doc of snapshot.docs) {
-            const driverData = doc.data();
+          // Fahrer zählen
+          const driversQuery = query(collection(db, "users"), where("role", "==", "driver"));
+          const driversSnapshot = await getDocs(driversQuery);
+          document.getElementById('totalDriversValue').textContent = driversSnapshot.size;
+          
+          // Auftraggeber zählen
+          const clientsQuery = query(collection(db, "users"), where("role", "==", "client"));
+          const clientsSnapshot = await getDocs(clientsQuery);
+          document.getElementById('totalClientsValue').textContent = clientsSnapshot.size;
+          
+          // Aufträge zählen
+          const ordersSnapshot = await getDocs(collection(db, "orders"));
+          document.getElementById('totalOrdersValue').textContent = ordersSnapshot.size;
+          
+          // Dokumente zählen
+          const documentsSnapshot = await getDocs(collection(db, "driver_documents"));
+          document.getElementById('totalDocumentsValue').textContent = documentsSnapshot.size;
+          
+        } catch (error) {
+          console.error("Fehler beim Laden der Omni-Statistiken:", error);
+        }
+      }
+
+      // Alle Benutzer laden
+      async function loadAllUsers() {
+        try {
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          const usersTableBody = document.getElementById('usersTableBody');
+          usersTableBody.innerHTML = '';
+          
+          usersSnapshot.forEach(doc => {
+            const userData = doc.data();
+            const tr = document.createElement('tr');
             
-            // Aktiven Auftrag des Fahrers abrufen
-            const activeOrderQuery = query(
-              collection(db, "orders"),
-              where("driverId", "==", doc.id),
-              where("status", "==", "assigned"),
-              limit(1)
-            );
+            const registeredAt = userData.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt';
+            const lastLogin = userData.lastLogin ? new Date(userData.lastLogin.seconds * 1000).toLocaleString('de-DE') : 'Nie';
             
-            const activeOrderSnapshot = await getDocs(activeOrderQuery);
-            const activeOrder = activeOrderSnapshot.docs[0]?.data();
-            const isBusy = !!activeOrder;
-            
-            // Fahrer-Karte erstellen
-            const driverCard = document.createElement('div');
-            driverCard.className = 'driver-card';
-            
-            const initials = (driverData.firstName?.[0] || '') + (driverData.lastName?.[0] || '');
-            
-            driverCard.innerHTML = `
-              <div class="driver-header">
-                <div class="driver-avatar">${initials || '?'}</div>
-                <div class="driver-info">
-                  <h3 class="driver-name">${driverData.firstName} ${driverData.lastName}</h3>
-                  <p class="driver-email">${driverData.email}</p>
-                </div>
-              </div>
-              <div class="status-badge ${isBusy ? 'busy' : 'available'}">
-                ${isBusy ? 'Im Auftrag' : 'Verfügbar'}
-              </div>
-              ${isBusy && activeOrder ? `
-                <div class="order-info">
-                  <p><strong>Aktueller Auftrag:</strong></p>
-                  <p><strong>Start:</strong> ${activeOrder.pickupLocation}</p>
-                  <p><strong>Ziel:</strong> ${activeOrder.deliveryLocation}</p>
-                </div>
-              ` : ''}
+            tr.innerHTML = `
+              <td>${doc.id.substring(0, 8)}...</td>
+              <td>${userData.email}</td>
+              <td>${userData.firstName || ''} ${userData.lastName || ''}</td>
+              <td><span class="status-badge ${userData.role}">${translateRole(userData.role)}</span></td>
+              <td>${registeredAt}</td>
+              <td>${lastLogin}</td>
+              <td><span class="status-badge ${userData.status || 'active'}">${userData.status === 'inactive' ? 'Inaktiv' : 'Aktiv'}</span></td>
+              <td>
+                <button class="action-btn-small view" onclick="viewUserDetails('${doc.id}')">👁️</button>
+                <button class="action-btn-small edit" onclick="editUser('${doc.id}')">✏️</button>
+                <button class="action-btn-small delete" onclick="deleteUser('${doc.id}')">🗑️</button>
+              </td>
             `;
             
-            driversGrid.appendChild(driverCard);
+            usersTableBody.appendChild(tr);
+          });
+        } catch (error) {
+          console.error("Fehler beim Laden der Benutzer:", error);
+        }
+      }
+
+      // Alle Aufträge laden
+      async function loadAllOrders() {
+        try {
+          const ordersSnapshot = await getDocs(collection(db, "orders"));
+          const ordersTableBody = document.getElementById('ordersTableBodyOmni');
+          ordersTableBody.innerHTML = '';
+          
+          ordersSnapshot.forEach(doc => {
+            const orderData = doc.data();
+            const tr = document.createElement('tr');
+            
+            const createdAt = orderData.createdAt ? new Date(orderData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt';
+            const price = orderData.price ? `${orderData.price.toFixed(2)} €` : 'N/A';
+            
+            tr.innerHTML = `
+              <td>${doc.id.substring(0, 8)}...</td>
+              <td>${orderData.title || 'Unbekannt'}</td>
+              <td>${orderData.customerEmail || 'Unbekannt'}</td>
+              <td>${orderData.driverEmail || 'Nicht zugewiesen'}</td>
+              <td><span class="status-badge ${orderData.status}">${translateOrderStatus(orderData.status)}</span></td>
+              <td>${price}</td>
+              <td>${createdAt}</td>
+              <td>
+                <button class="action-btn-small view" onclick="viewOrderDetails('${doc.id}')">👁️</button>
+                <button class="action-btn-small edit" onclick="editOrder('${doc.id}')">✏️</button>
+                <button class="action-btn-small delete" onclick="deleteOrder('${doc.id}')">🗑️</button>
+              </td>
+            `;
+            
+            ordersTableBody.appendChild(tr);
+          });
+        } catch (error) {
+          console.error("Fehler beim Laden der Aufträge:", error);
+        }
+      }
+
+      // Alle Dokumente laden (für Omni-Ansicht)
+      async function loadAllDocuments() {
+        try {
+          // Verwende die gleiche Logik wie loadDocumentsView
+          const allDocuments = [];
+          
+          // Aus Firebase Storage laden
+          const storageBasePath = 'driver_documents/';
+          const storageRef = ref(storage, storageBasePath);
+          
+          try {
+            const storageList = await listAll(storageRef);
+            
+            for (const userPrefix of storageList.prefixes) {
+              const userFolderList = await listAll(userPrefix);
+              
+              for (const typePrefix of userFolderList.prefixes) {
+                const typeList = await listAll(typePrefix);
+                
+                for (const fileRef of typeList.items) {
+                  try {
+                    const downloadURL = await getDownloadURL(fileRef);
+                    const metadata = await getMetadata(fileRef);
+                    
+                    allDocuments.push({
+                      id: fileRef.fullPath,
+                      name: fileRef.name,
+                      originalName: fileRef.name,
+                      type: typePrefix.name,
+                      downloadURL: downloadURL,
+                      storagePath: fileRef.fullPath,
+                      fileSize: metadata.size,
+                      uploadedAt: new Date(metadata.timeCreated),
+                      userId: userPrefix.name,
+                      source: 'storage'
+                    });
+                  } catch (fileError) {
+                    console.warn(`Fehler beim Laden von ${fileRef.name}:`, fileError);
+                  }
+                }
+              }
+            }
+          } catch (storageError) {
+            console.warn("Fehler beim Laden aus Storage:", storageError);
+          }
+          
+          // Aus Firestore laden
+          const documentsSnapshot = await getDocs(collection(db, "driver_documents"));
+          
+          documentsSnapshot.forEach(doc => {
+            const docData = doc.data();
+            const existsInStorage = allDocuments.find(d => 
+              d.storagePath === docData.storagePath || 
+              d.downloadURL === docData.downloadURL
+            );
+            
+            if (!existsInStorage) {
+              allDocuments.push({
+                id: doc.id,
+                name: docData.originalName || docData.fileName,
+                type: docData.type,
+                downloadURL: docData.downloadURL,
+                storagePath: docData.storagePath,
+                fileSize: docData.fileSize,
+                uploadedAt: docData.uploadedAt?.toDate?.() || new Date(docData.uploadedAt),
+                userId: docData.userId,
+                source: 'firestore'
+              });
+            }
+          });
+          
+          // Statistiken berechnen
+          let counts = { fuehrerschein: 0, personalausweis: 0, fuehrungszeugnis: 0 };
+          allDocuments.forEach(doc => {
+            if (doc.type === 'fuehrerschein') counts.fuehrerschein++;
+            else if (doc.type === 'personalausweis') counts.personalausweis++;
+            else if (doc.type === 'fuehrungszeugnis') counts.fuehrungszeugnis++;
+          });
+          
+          // Omni-Statistiken aktualisieren
+          document.getElementById('totalDocumentsCountOmni').textContent = allDocuments.length;
+          document.getElementById('fuehrerscheinCountOmni').textContent = counts.fuehrerschein;
+          document.getElementById('personalausweisCountOmni').textContent = counts.personalausweis;
+          document.getElementById('fuehrungszeugnis-CountOmni').textContent = counts.fuehrungszeugnis;
+          
+          // Tabelle befüllen
+          const documentsTableBody = document.getElementById('documentsTableBody');
+          documentsTableBody.innerHTML = '';
+          
+          if (allDocuments.length === 0) {
+            documentsTableBody.innerHTML = `
+              <tr><td colspan="6" style="text-align: center; padding: 2rem;">Keine Dokumente gefunden.</td></tr>
+            `;
+            return;
+          }
+          
+          // Sortieren
+          allDocuments.sort((a, b) => {
+            const timeA = a.uploadedAt instanceof Date ? a.uploadedAt.getTime() : 0;
+            const timeB = b.uploadedAt instanceof Date ? b.uploadedAt.getTime() : 0;
+            return timeB - timeA;
+          });
+          
+          // Tabelle befüllen
+          for (const docData of allDocuments) {
+            const tr = document.createElement('tr');
+            
+            let userName = 'Unbekannt';
+            if (docData.userId) {
+              try {
+                const userDoc = await getDoc(doc(db, "users", docData.userId));
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.email || 'Unbekannt';
+                } else {
+                  userName = `User: ${docData.userId.substring(0, 8)}...`;
+                }
+              } catch (error) {
+                userName = `User: ${docData.userId.substring(0, 8)}...`;
+              }
+            }
+            
+            const uploadedAt = docData.uploadedAt instanceof Date ? 
+              docData.uploadedAt.toLocaleDateString('de-DE') : 'Unbekannt';
+            const fileSize = docData.fileSize ? formatFileSize(docData.fileSize) : 'Unbekannt';
+            
+            tr.innerHTML = `
+              <td>
+                ${docData.name}
+                <br><small style="color: var(--text-color-secondary);">${docData.source === 'storage' ? '📦 Storage' : '🗃️ Firestore'}</small>
+              </td>
+              <td>${userName}</td>
+              <td><span class="status-badge ${docData.type}">${translateDocumentType(docData.type)}</span></td>
+              <td>${fileSize}</td>
+              <td>${uploadedAt}</td>
+              <td>
+                <button class="action-btn-small view" onclick="downloadDocument('${docData.downloadURL}', '${docData.name}')">📥</button>
+                <button class="action-btn-small delete" onclick="deleteDocument('${docData.id}', '${docData.storagePath}')">🗑️</button>
+              </td>
+            `;
+            
+            documentsTableBody.appendChild(tr);
+          }
+        } catch (error) {
+          console.error("Fehler beim Laden der Dokumente:", error);
+        }
+      }
+
+      // Tab-Funktionalität initialisieren
+      function initializeOmniTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            // Alle Tabs deaktivieren
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Aktiven Tab aktivieren
+            btn.classList.add('active');
+            const tabId = btn.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+          });
+        });
+      }
+
+      // Suchfunktionalität initialisieren
+      function initializeOmniSearch() {
+        // Benutzer-Suche
+        const userSearchInput = document.getElementById('userSearchInput');
+        userSearchInput.addEventListener('input', (e) => {
+          filterTable('usersTableBody', e.target.value);
+        });
+        
+        // Aufträge-Suche
+        const orderSearchInput = document.getElementById('orderSearchInput');
+        orderSearchInput.addEventListener('input', (e) => {
+          filterTable('ordersTableBodyOmni', e.target.value);
+        });
+        
+        // Dokumente-Suche
+        const documentSearchInput = document.getElementById('documentSearchInput');
+        documentSearchInput.addEventListener('input', (e) => {
+          filterTable('documentsTableBody', e.target.value);
+        });
+      }
+
+      // Tabelle filtern
+      function filterTable(tableBodyId, searchTerm) {
+        const tableBody = document.getElementById(tableBodyId);
+        const rows = tableBody.getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const text = row.textContent || row.innerText;
+          
+          if (text.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      }
+
+      // Hilfsfunktionen
+      function translateOrderStatus(status) {
+        const statuses = {
+          'available': 'Verfügbar',
+          'assigned': 'Zugewiesen',
+          'in_progress': 'In Bearbeitung',
+          'completed': 'Abgeschlossen',
+          'cancelled': 'Storniert'
+        };
+        return statuses[status] || status;
+      }
+
+      function translateDocumentType(type) {
+        const types = {
+          'fuehrerschein': 'Führerschein',
+          'fuehrungszeugnis': 'Führungszeugnis',
+          'personalausweis': 'Personalausweis'
+        };
+        return types[type] || type;
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // Globale Funktionen für Aktionen
+      window.viewUserDetails = async function(userId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", userId));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            showUserDetailsModal(userId, userData);
+          } else {
+            alert('Benutzer nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Benutzer-Details:', error);
+          alert('Fehler beim Laden der Benutzer-Details');
+        }
+      };
+
+      window.editUser = async function(userId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", userId));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            showEditUserModal(userId, userData);
+          } else {
+            alert('Benutzer nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Benutzer-Daten:', error);
+          alert('Fehler beim Laden der Benutzer-Daten');
+        }
+      };
+
+      window.deleteUser = async function(userId) {
+        if (confirm('Möchten Sie diesen Benutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+          try {
+            await deleteDoc(doc(db, "users", userId));
+            alert('Benutzer erfolgreich gelöscht');
+            loadAllUsers(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Löschen des Benutzers:', error);
+            alert('Fehler beim Löschen des Benutzers');
+          }
+        }
+      };
+
+      window.viewOrderDetails = async function(orderId) {
+        try {
+          const orderDoc = await getDoc(doc(db, "orders", orderId));
+          if (orderDoc.exists()) {
+            const orderData = orderDoc.data();
+            showOrderDetailsModal(orderId, orderData);
+          } else {
+            alert('Auftrag nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Auftrags-Details:', error);
+          alert('Fehler beim Laden der Auftrags-Details');
+        }
+      };
+
+      window.editOrder = async function(orderId) {
+        try {
+          const orderDoc = await getDoc(doc(db, "orders", orderId));
+          if (orderDoc.exists()) {
+            const orderData = orderDoc.data();
+            showEditOrderModal(orderId, orderData);
+          } else {
+            alert('Auftrag nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Auftrags-Daten:', error);
+          alert('Fehler beim Laden der Auftrags-Daten');
+        }
+      };
+
+      window.deleteOrder = async function(orderId) {
+        if (confirm('Möchten Sie diesen Auftrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+          try {
+            await deleteDoc(doc(db, "orders", orderId));
+            alert('Auftrag erfolgreich gelöscht');
+            loadAllOrders(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Löschen des Auftrags:', error);
+            alert('Fehler beim Löschen des Auftrags');
+          }
+        }
+      };
+
+      window.downloadDocument = function(url, filename) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      window.deleteDocument = async function(docId, storagePath) {
+        if (!confirm('Möchten Sie dieses Dokument wirklich löschen?')) {
+          return;
+        }
+        
+        try {
+          let deletedFromStorage = false;
+          let deletedFromFirestore = false;
+          
+          // Aus Firebase Storage löschen falls storagePath vorhanden
+          if (storagePath) {
+            try {
+              const storageRef = ref(storage, storagePath);
+              await deleteObject(storageRef);
+              deletedFromStorage = true;
+              console.log("Dokument aus Storage gelöscht");
+            } catch (storageError) {
+              console.warn("Fehler beim Löschen aus Storage:", storageError);
+            }
+          }
+          
+          // Aus Firestore löschen falls docId vorhanden und nicht nur ein Pfad
+          if (docId && !docId.startsWith('driver_documents/')) {
+            try {
+              await deleteDoc(doc(db, "driver_documents", docId));
+              deletedFromFirestore = true;
+              console.log("Dokument aus Firestore gelöscht");
+            } catch (firestoreError) {
+              console.warn("Fehler beim Löschen aus Firestore:", firestoreError);
+            }
+          }
+          
+          if (deletedFromStorage || deletedFromFirestore) {
+            alert("Dokument erfolgreich gelöscht");
+            // Dokumente neu laden
+            await loadDocumentsView();
+          } else {
+            alert("Dokument konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.");
+          }
+          
+        } catch (error) {
+          console.error("Fehler beim Löschen des Dokuments:", error);
+          alert("Fehler beim Löschen des Dokuments. Bitte versuchen Sie es erneut.");
+        }
+      };
+
+      // Refresh-Button für Omni-Ansicht
+      document.getElementById('refreshOmniBtn').addEventListener('click', () => {
+        loadOmniView();
+      });
+      
+      // Refresh-Button für Omni-Dokumente
+      setTimeout(() => {
+        const refreshOmniBtn = document.getElementById('refreshDocumentsOmniBtn');
+        if (refreshOmniBtn) {
+          refreshOmniBtn.addEventListener('click', () => {
+            console.log("Omni-Dokumente Refresh-Button geklickt");
+            loadAllDocuments();
+          });
+        }
+      }, 100);
+      
+      // Refresh-Button für Dokumente-Ansicht - mit Delay um sicherzustellen, dass DOM geladen ist
+      setTimeout(() => {
+        const refreshBtn = document.getElementById('refreshDocumentsBtn');
+        if (refreshBtn) {
+          refreshBtn.addEventListener('click', () => {
+            console.log("Refresh-Button für Dokumente geklickt");
+            loadDocumentsView();
+          });
+          console.log("Refresh-Button Event Listener hinzugefügt");
+        } else {
+          console.warn("Refresh-Button nicht gefunden - Element existiert nicht");
+        }
+      }, 100);
+      
+      // Suchfunktion für Dokumente
+      document.getElementById('documentsSearchInput').addEventListener('input', (e) => {
+        filterDocumentsTable(e.target.value);
+      });
+      
+      // Globale Funktionen für Tests
+      window.testDocumentsView = function() {
+        console.log("Test-Funktion aufgerufen");
+        loadDocumentsView();
+      };
+      
+      window.testRefreshButton = function() {
+        const refreshBtn = document.getElementById('refreshDocumentsBtn');
+        console.log("Refresh-Button Element:", refreshBtn);
+        if (refreshBtn) {
+          console.log("Button gefunden, simuliere Klick");
+          refreshBtn.click();
+        } else {
+          console.log("Button nicht gefunden");
+        }
+      };
+      
+      // Dokumente-Ansicht laden
+      async function loadDocumentsView() {
+        console.log("Lade Dokumente-Ansicht...");
+        console.log("Firebase DB:", db);
+        console.log("Dokumente-Tabelle Element:", document.getElementById('documentsTableBodyMain'));
+        
+        try {
+          // Alle Dokumente aus Firebase Storage und Firestore laden
+          const allDocuments = [];
+          
+          // Zuerst aus Firebase Storage laden
+          console.log("Lade Dokumente aus Firebase Storage...");
+          const storageBasePath = 'driver_documents/';
+          const storageRef = ref(storage, storageBasePath);
+          
+          try {
+            const storageList = await listAll(storageRef);
+            console.log("Storage-Ordner gefunden:", storageList.prefixes.length);
+            
+            // Für jeden Benutzer-Ordner
+            for (const userPrefix of storageList.prefixes) {
+              console.log("Lade Dokumente für Benutzer:", userPrefix.name);
+              const userFolderList = await listAll(userPrefix);
+              
+              // Für jeden Dokumenttyp-Ordner
+              for (const typePrefix of userFolderList.prefixes) {
+                console.log("Lade Dokumenttyp:", typePrefix.name);
+                const typeList = await listAll(typePrefix);
+                
+                // Für jede Datei
+                for (const fileRef of typeList.items) {
+                  try {
+                    const downloadURL = await getDownloadURL(fileRef);
+                    const metadata = await getMetadata(fileRef);
+                    
+                    allDocuments.push({
+                      id: fileRef.fullPath,
+                      name: fileRef.name,
+                      originalName: fileRef.name,
+                      fileName: fileRef.name,
+                      type: typePrefix.name,
+                      downloadURL: downloadURL,
+                      storagePath: fileRef.fullPath,
+                      fileSize: metadata.size,
+                      uploadedAt: new Date(metadata.timeCreated),
+                      contentType: metadata.contentType,
+                      userId: userPrefix.name,
+                      source: 'storage'
+                    });
+                  } catch (fileError) {
+                    console.warn(`Fehler beim Laden von ${fileRef.name}:`, fileError);
+                  }
+                }
+              }
+            }
+          } catch (storageError) {
+            console.warn("Fehler beim Laden aus Storage:", storageError);
+          }
+          
+          // Aus Firestore laden
+          const documentsSnapshot = await getDocs(collection(db, "driver_documents"));
+          console.log("Dokumente-Snapshot:", documentsSnapshot);
+          console.log("Anzahl Dokumente:", documentsSnapshot.size);
+          
+          // Statistiken werden später berechnet
+          
+          documentsSnapshot.forEach(doc => {
+            const docData = doc.data();
+            
+            // Prüfen, ob diese Datei bereits aus Storage geladen wurde
+            const existsInStorage = allDocuments.find(d => 
+              d.storagePath === docData.storagePath || 
+              d.downloadURL === docData.downloadURL
+            );
+            
+            if (!existsInStorage) {
+              allDocuments.push({
+                id: doc.id,
+                name: docData.originalName || docData.fileName,
+                originalName: docData.originalName || docData.fileName,
+                fileName: docData.fileName,
+                type: docData.type,
+                downloadURL: docData.downloadURL,
+                storagePath: docData.storagePath,
+                fileSize: docData.fileSize,
+                uploadedAt: docData.uploadedAt?.toDate?.() || new Date(docData.uploadedAt),
+                contentType: docData.fileType,
+                userId: docData.userId,
+                source: 'firestore'
+              });
+            }
+          });
+          
+          // Statistiken nach dem Laden aller Dokumente zählen
+          let counts = {
+            fuehrerschein: 0,
+            personalausweis: 0,
+            fuehrungszeugnis: 0
+          };
+          
+          allDocuments.forEach(doc => {
+            if (doc.type === 'fuehrerschein') counts.fuehrerschein++;
+            else if (doc.type === 'personalausweis') counts.personalausweis++;
+            else if (doc.type === 'fuehrungszeugnis') counts.fuehrungszeugnis++;
+          });
+          
+          // Statistiken aktualisieren
+          document.getElementById('totalDocumentsCount').textContent = allDocuments.length;
+          document.getElementById('fuehrerscheinCount').textContent = counts.fuehrerschein;
+          document.getElementById('personalausweisCount').textContent = counts.personalausweis;
+          // Führungszeugnis-Element
+          try {
+            const elem = document.getElementById('fuehrungszeugnis-Count');
+            if (elem) elem.textContent = counts.fuehrungszeugnis;
+          } catch (e) {
+            console.warn('Führungszeugnis-Element nicht gefunden');
+          }
+          
+          // Tabelle befüllen
+          const documentsTableBody = document.getElementById('documentsTableBodyMain');
+          documentsTableBody.innerHTML = '';
+          
+          if (allDocuments.length === 0) {
+            console.log("Keine Dokumente gefunden - zeige leere Nachricht");
+            documentsTableBody.innerHTML = `
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem;">
+                  <p style="color: var(--text-color-secondary); font-size: 1rem;">Keine Dokumente gefunden.</p>
+                  <p style="color: var(--text-color-secondary); font-size: 0.9rem;">Dokumente werden von Fahrern über das Fahrer-Dashboard hochgeladen.</p>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+          
+          // Nach Upload-Datum sortieren (neueste zuerst)
+          allDocuments.sort((a, b) => {
+            let timeA = 0;
+            let timeB = 0;
+            
+            if (a.uploadedAt) {
+              timeA = a.uploadedAt instanceof Date ? a.uploadedAt.getTime() : 
+                     (a.uploadedAt.seconds ? new Date(a.uploadedAt.seconds * 1000).getTime() : 0);
+            }
+            
+            if (b.uploadedAt) {
+              timeB = b.uploadedAt instanceof Date ? b.uploadedAt.getTime() : 
+                     (b.uploadedAt.seconds ? new Date(b.uploadedAt.seconds * 1000).getTime() : 0);
+            }
+            
+            return timeB - timeA;
+          });
+          
+          // Für jedes Dokument eine Zeile erstellen
+          for (const docData of allDocuments) {
+            const tr = document.createElement('tr');
+            
+            // Benutzer-Informationen abrufen
+            let userName = 'Unbekannt';
+            if (docData.userId) {
+              try {
+                const userDoc = await getDoc(doc(db, "users", docData.userId));
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.email || 'Unbekannt';
+                } else {
+                  // Fallback: User-ID als Teilstring anzeigen
+                  userName = `User: ${docData.userId.substring(0, 8)}...`;
+                }
+              } catch (error) {
+                console.warn("Fehler beim Laden der Benutzerdaten:", error);
+                userName = `User: ${docData.userId.substring(0, 8)}...`;
+              }
+            }
+            
+            const uploadedAt = docData.uploadedAt ? 
+              (docData.uploadedAt instanceof Date ? 
+                docData.uploadedAt.toLocaleDateString('de-DE') : 
+                (docData.uploadedAt.seconds ? 
+                  new Date(docData.uploadedAt.seconds * 1000).toLocaleDateString('de-DE') : 
+                  'Unbekannt'
+                )
+              ) : 'Unbekannt';
+            const fileSize = docData.fileSize ? formatFileSize(docData.fileSize) : 'Unbekannt';
+            const fileName = docData.originalName || docData.fileName || 'Unbekannt';
+            
+            tr.innerHTML = `
+              <td>
+                ${fileName}
+                <br><small style="color: var(--text-color-secondary);">${docData.source === 'storage' ? '📦 Storage' : '🗃️ Firestore'}</small>
+              </td>
+              <td>${userName}</td>
+              <td><span class="status-badge ${docData.type}">${translateDocumentType(docData.type)}</span></td>
+              <td>${fileSize}</td>
+              <td>${uploadedAt}</td>
+              <td>
+                <button class="action-btn-small view" onclick="downloadDocument('${docData.downloadURL}', '${fileName}')">📥</button>
+                <button class="action-btn-small delete" onclick="deleteDocument('${docData.id}', '${docData.storagePath}')">🗑️</button>
+              </td>
+            `;
+            
+            documentsTableBody.appendChild(tr);
+          }
+          
+        } catch (error) {
+          console.error("Fehler beim Laden der Dokumente:", error);
+          console.error("Fehler-Details:", error.stack);
+          const documentsTableBody = document.getElementById('documentsTableBodyMain');
+          if (documentsTableBody) {
+            documentsTableBody.innerHTML = `
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem;">
+                  <p style="color: #dc3545; font-size: 1rem;">⚠️ Fehler beim Laden der Dokumente: ${error.message}</p>
+                  <p style="color: #dc3545; font-size: 0.9rem;">Bitte prüfen Sie die Browser-Konsole für weitere Details.</p>
+                </td>
+              </tr>
+            `;
+          } else {
+            console.error("Dokumente-Tabelle nicht gefunden!");
+          }
+        }
+      }
+      
+      // Dokumente-Tabelle filtern
+      function filterDocumentsTable(searchTerm) {
+        const tableBody = document.getElementById('documentsTableBodyMain');
+        const rows = tableBody.getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const text = row.textContent || row.innerText;
+          
+          if (text.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      }
+
+      // Modal-Funktionen
+      function showUserDetailsModal(userId, userData) {
+        const modal = createModal('Benutzer-Details', `
+          <div class="user-details">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <strong>ID:</strong> ${userId}
+              </div>
+              <div class="detail-item">
+                <strong>E-Mail:</strong> ${userData.email}
+              </div>
+              <div class="detail-item">
+                <strong>Vorname:</strong> ${userData.firstName || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Nachname:</strong> ${userData.lastName || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Rolle:</strong> ${translateRole(userData.role)}
+              </div>
+              <div class="detail-item">
+                <strong>Status:</strong> ${userData.status === 'inactive' ? 'Inaktiv' : 'Aktiv'}
+              </div>
+              <div class="detail-item">
+                <strong>Telefon:</strong> ${userData.phone || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Adresse:</strong> ${userData.address || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Registriert:</strong> ${userData.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt'}
+              </div>
+              <div class="detail-item">
+                <strong>Letzter Login:</strong> ${userData.lastLogin ? new Date(userData.lastLogin.seconds * 1000).toLocaleString('de-DE') : 'Nie'}
+              </div>
+            </div>
+          </div>
+        `);
+        
+        document.body.appendChild(modal);
+      }
+
+      function showEditUserModal(userId, userData) {
+        const modal = createModal('Benutzer bearbeiten', `
+          <form id="editUserForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="editFirstName">Vorname:</label>
+                <input type="text" id="editFirstName" value="${userData.firstName || ''}" required>
+              </div>
+              <div class="form-group">
+                <label for="editLastName">Nachname:</label>
+                <input type="text" id="editLastName" value="${userData.lastName || ''}" required>
+              </div>
+              <div class="form-group">
+                <label for="editEmail">E-Mail:</label>
+                <input type="email" id="editEmail" value="${userData.email}" required>
+              </div>
+              <div class="form-group">
+                <label for="editPhone">Telefon:</label>
+                <input type="tel" id="editPhone" value="${userData.phone || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editRole">Rolle:</label>
+                <select id="editRole" required>
+                  <option value="client" ${userData.role === 'client' ? 'selected' : ''}>Auftraggeber</option>
+                  <option value="driver" ${userData.role === 'driver' ? 'selected' : ''}>Fahrer</option>
+                  <option value="manager" ${userData.role === 'manager' ? 'selected' : ''}>Manager</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="editStatus">Status:</label>
+                <select id="editStatus" required>
+                  <option value="active" ${userData.status !== 'inactive' ? 'selected' : ''}>Aktiv</option>
+                  <option value="inactive" ${userData.status === 'inactive' ? 'selected' : ''}>Inaktiv</option>
+                </select>
+              </div>
+              <div class="form-group full-width">
+                <label for="editAddress">Adresse:</label>
+                <textarea id="editAddress" rows="3">${userData.address || ''}</textarea>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" onclick="closeModal()" class="btn-secondary">Abbrechen</button>
+              <button type="submit" class="btn-primary">Speichern</button>
+            </div>
+          </form>
+        `);
+        
+        document.body.appendChild(modal);
+        
+        // Form-Handler
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const updatedData = {
+            firstName: document.getElementById('editFirstName').value,
+            lastName: document.getElementById('editLastName').value,
+            email: document.getElementById('editEmail').value,
+            phone: document.getElementById('editPhone').value,
+            role: document.getElementById('editRole').value,
+            status: document.getElementById('editStatus').value,
+            address: document.getElementById('editAddress').value,
+            updatedAt: serverTimestamp()
+          };
+          
+          try {
+            await updateDoc(doc(db, "users", userId), updatedData);
+            alert('Benutzer erfolgreich aktualisiert');
+            closeModal();
+            loadAllUsers(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Aktualisieren des Benutzers:', error);
+            alert('Fehler beim Aktualisieren des Benutzers');
           }
         });
       }
+
+      function showOrderDetailsModal(orderId, orderData) {
+        const modal = createModal('Auftrags-Details', `
+          <div class="order-details">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <strong>ID:</strong> ${orderId}
+              </div>
+              <div class="detail-item">
+                <strong>Titel:</strong> ${orderData.title || 'Unbekannt'}
+              </div>
+              <div class="detail-item">
+                <strong>Kunde:</strong> ${orderData.customerEmail || 'Unbekannt'}
+              </div>
+              <div class="detail-item">
+                <strong>Fahrer:</strong> ${orderData.driverEmail || 'Nicht zugewiesen'}
+              </div>
+              <div class="detail-item">
+                <strong>Status:</strong> ${translateOrderStatus(orderData.status)}
+              </div>
+              <div class="detail-item">
+                <strong>Preis:</strong> ${orderData.price ? orderData.price.toFixed(2) + ' €' : 'N/A'}
+              </div>
+              <div class="detail-item">
+                <strong>Abholort:</strong> ${orderData.pickupLocation || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Zielort:</strong> ${orderData.deliveryLocation || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Datum:</strong> ${orderData.date || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Uhrzeit:</strong> ${orderData.time || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item full-width">
+                <strong>Beschreibung:</strong><br>
+                ${orderData.description || 'Keine Beschreibung'}
+              </div>
+              <div class="detail-item">
+                <strong>Erstellt:</strong> ${orderData.createdAt ? new Date(orderData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt'}
+              </div>
+            </div>
+          </div>
+        `);
+        
+        document.body.appendChild(modal);
+      }
+
+      function showEditOrderModal(orderId, orderData) {
+        const modal = createModal('Auftrag bearbeiten', `
+          <form id="editOrderForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="editOrderTitle">Titel:</label>
+                <input type="text" id="editOrderTitle" value="${orderData.title || ''}" required>
+              </div>
+              <div class="form-group">
+                <label for="editOrderStatus">Status:</label>
+                <select id="editOrderStatus" required>
+                  <option value="available" ${orderData.status === 'available' ? 'selected' : ''}>Verfügbar</option>
+                  <option value="assigned" ${orderData.status === 'assigned' ? 'selected' : ''}>Zugewiesen</option>
+                  <option value="in_progress" ${orderData.status === 'in_progress' ? 'selected' : ''}>In Bearbeitung</option>
+                  <option value="completed" ${orderData.status === 'completed' ? 'selected' : ''}>Abgeschlossen</option>
+                  <option value="cancelled" ${orderData.status === 'cancelled' ? 'selected' : ''}>Storniert</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="editOrderPrice">Preis (€):</label>
+                <input type="number" id="editOrderPrice" value="${orderData.price || ''}" step="0.01" min="0">
+              </div>
+              <div class="form-group">
+                <label for="editOrderDate">Datum:</label>
+                <input type="date" id="editOrderDate" value="${orderData.date || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editOrderTime">Uhrzeit:</label>
+                <input type="time" id="editOrderTime" value="${orderData.time || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editPickupLocation">Abholort:</label>
+                <input type="text" id="editPickupLocation" value="${orderData.pickupLocation || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editDeliveryLocation">Zielort:</label>
+                <input type="text" id="editDeliveryLocation" value="${orderData.deliveryLocation || ''}">
+              </div>
+              <div class="form-group full-width">
+                <label for="editOrderDescription">Beschreibung:</label>
+                <textarea id="editOrderDescription" rows="4">${orderData.description || ''}</textarea>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" onclick="closeModal()" class="btn-secondary">Abbrechen</button>
+              <button type="submit" class="btn-primary">Speichern</button>
+            </div>
+          </form>
+        `);
+        
+        document.body.appendChild(modal);
+        
+        // Form-Handler
+        document.getElementById('editOrderForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const updatedData = {
+            title: document.getElementById('editOrderTitle').value,
+            status: document.getElementById('editOrderStatus').value,
+            price: parseFloat(document.getElementById('editOrderPrice').value) || 0,
+            date: document.getElementById('editOrderDate').value,
+            time: document.getElementById('editOrderTime').value,
+            pickupLocation: document.getElementById('editPickupLocation').value,
+            deliveryLocation: document.getElementById('editDeliveryLocation').value,
+            description: document.getElementById('editOrderDescription').value,
+            updatedAt: serverTimestamp()
+          };
+          
+          try {
+            await updateDoc(doc(db, "orders", orderId), updatedData);
+            alert('Auftrag erfolgreich aktualisiert');
+            closeModal();
+            loadAllOrders(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Aktualisieren des Auftrags:', error);
+            alert('Fehler beim Aktualisieren des Auftrags');
+          }
+        });
+      }
+
+      function createModal(title, content) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>${title}</h3>
+              <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+              ${content}
+            </div>
+          </div>
+        `;
+        
+        // Schließen bei Klick auf Overlay
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeModal();
+          }
+        });
+        
+        return modal;
+      }
+
+      window.closeModal = function() {
+        const modal = document.querySelector('.modal-overlay');
+        if (modal) {
+          modal.remove();
+        }
+      };
     </script>
   </div>
 </body>
+</html> 
 </html> 

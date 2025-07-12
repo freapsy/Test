@@ -490,6 +490,152 @@
       color: var(--text-color-secondary);
       margin-left: 0.5rem;
     }
+
+    /* Dokumente Upload Styles */
+    .documents-upload-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-card {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .upload-card h3 {
+      margin-top: 0;
+      color: var(--primary-navy);
+      font-size: 1.2rem;
+    }
+
+    .upload-card p {
+      color: var(--text-color-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .upload-card input[type="file"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .upload-btn {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .upload-btn:hover {
+      background-color: var(--accent-dark);
+    }
+
+    .upload-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .upload-status {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .upload-status.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .upload-status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .upload-status.uploading {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .documents-list-section {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .document-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .document-item:last-child {
+      border-bottom: none;
+    }
+
+    .document-info {
+      flex: 1;
+    }
+
+    .document-name {
+      font-weight: 500;
+      color: var(--text-color-primary);
+    }
+
+    .document-date {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+    }
+
+    .document-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-download, .btn-delete {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-download {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-download:hover {
+      background-color: var(--primary-navy);
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
   </style>
 </head>
 <body>
@@ -515,7 +661,7 @@
           <li><a href="#" data-section="my-trips">Meine Fahrten</a></li>
           <li><a href="#" data-section="available-orders">Verfügbare Aufträge</a></li>
           <li><a href="#">Abrechnungen</a></li>
-          <li><a href="#">Dokumente</a></li>
+          <li><a href="#" data-section="documents">Dokumente</a></li>
           <li><a href="#">Profil</a></li>
           <li><a href="#">Einstellungen</a></li>
         </ul>
@@ -592,6 +738,43 @@
             <p class="loading-text">Lade verfügbare Aufträge...</p>
           </div>
         </div>
+
+        <!-- Dokumente Bereich -->
+        <div class="content-section" id="documents-section" style="display: none;">
+          <h2>Dokumente</h2>
+          <div class="documents-upload-section">
+            <div class="upload-card">
+              <h3>📄 Führerschein</h3>
+              <p>Laden Sie eine Kopie Ihres Führerscheins hoch (Vorder- und Rückseite)</p>
+              <input type="file" id="fuehrerschein-upload" accept=".pdf,.jpg,.jpeg,.png" multiple>
+              <button onclick="uploadDocument('fuehrerschein')" class="upload-btn">Hochladen</button>
+              <div id="fuehrerschein-status" class="upload-status"></div>
+            </div>
+            
+            <div class="upload-card">
+              <h3>📋 Führungszeugnis</h3>
+              <p>Aktuelles Führungszeugnis (nicht älter als 3 Monate)</p>
+              <input type="file" id="fuehrungszeugnis-upload" accept=".pdf,.jpg,.jpeg,.png">
+              <button onclick="uploadDocument('fuehrungszeugnis')" class="upload-btn">Hochladen</button>
+              <div id="fuehrungszeugnis-status" class="upload-status"></div>
+            </div>
+            
+            <div class="upload-card">
+              <h3>🆔 Personalausweis</h3>
+              <p>Kopie des Personalausweises (Vorder- und Rückseite)</p>
+              <input type="file" id="personalausweis-upload" accept=".pdf,.jpg,.jpeg,.png" multiple>
+              <button onclick="uploadDocument('personalausweis')" class="upload-btn">Hochladen</button>
+              <div id="personalausweis-status" class="upload-status"></div>
+            </div>
+          </div>
+          
+          <div class="documents-list-section">
+            <h3>Hochgeladene Dokumente</h3>
+            <div id="documents-list">
+              <p class="loading-text">Lade Dokumente...</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -636,9 +819,22 @@
       limit, 
       onSnapshot,
       updateDoc,
+      addDoc,
+      deleteDoc,
+      getDocs,
       Timestamp,
-      GeoPoint
+      GeoPoint,
+      serverTimestamp
     } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { 
+      getStorage, 
+      ref, 
+      uploadBytes, 
+      getDownloadURL, 
+      deleteObject,
+      listAll,
+      getMetadata
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -652,12 +848,13 @@
     };
 
     // Initialize Firebase
-    let app, auth, db, currentUser;
+    let app, auth, db, storage, currentUser;
 
     try {
       app = initializeApp(firebaseConfig);
       auth = getAuth(app);
       db = getFirestore(app);
+      storage = getStorage(app);
       console.log("Firebase erfolgreich initialisiert");
     } catch (error) {
       console.error("Fehler bei der Firebase-Initialisierung:", error);
@@ -713,6 +910,8 @@
             loadAvailableOrders();
           } else if (sectionId === 'my-trips') {
             loadMyTrips();
+          } else if (sectionId === 'documents') {
+            loadDocuments();
           }
         }
       });
@@ -1267,6 +1466,16 @@
           if (userDoc.exists()) {
             const userData = userDoc.data();
             
+            // Letzten Login aktualisieren
+            try {
+              await updateDoc(doc(db, "users", user.uid), {
+                lastLogin: serverTimestamp()
+              });
+              console.log("Letzter Login aktualisiert (Fahrer-Dashboard)");
+            } catch (updateError) {
+              console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+            }
+            
             // Benutzername anzeigen
             userNameElement.textContent = userData.displayName || userData.name || user.email || "Benutzer";
             userNameElement.classList.remove('loading-name');
@@ -1422,8 +1631,309 @@
       });
     }
 
+    // Dokumente laden
+    async function loadDocuments() {
+      if (!currentUser) return;
+      
+      const documentsList = document.getElementById('documents-list');
+      documentsList.innerHTML = '<p class="loading-text">Lade Dokumente...</p>';
+      
+      try {
+        // Direkt aus Firebase Storage laden
+        const storageBasePath = `driver_documents/${currentUser.uid}/`;
+        const documentTypes = ['fuehrerschein', 'fuehrungszeugnis', 'personalausweis'];
+        const allDocuments = [];
+        
+        // Für jeden Dokumenttyp die Dateien aus Storage laden
+        for (const type of documentTypes) {
+          try {
+            const folderRef = ref(storage, `${storageBasePath}${type}/`);
+            const listResult = await listAll(folderRef);
+            
+            for (const itemRef of listResult.items) {
+              try {
+                const downloadURL = await getDownloadURL(itemRef);
+                const metadata = await getMetadata(itemRef);
+                
+                allDocuments.push({
+                  name: itemRef.name,
+                  type: type,
+                  downloadURL: downloadURL,
+                  storagePath: itemRef.fullPath,
+                  size: metadata.size,
+                  uploadedAt: metadata.timeCreated,
+                  contentType: metadata.contentType
+                });
+              } catch (error) {
+                console.warn(`Fehler beim Laden von ${itemRef.name}:`, error);
+              }
+            }
+          } catch (error) {
+            console.warn(`Fehler beim Laden des Ordners ${type}:`, error);
+          }
+        }
+        
+        // Fallback: Auch aus Firestore laden falls Storage leer ist
+        try {
+          const documentsQuery = query(
+            collection(db, "driver_documents"),
+            where("userId", "==", currentUser.uid)
+          );
+          
+          const querySnapshot = await getDocs(documentsQuery);
+          querySnapshot.forEach(doc => {
+            const data = doc.data();
+            // Nur hinzufügen wenn nicht bereits aus Storage geladen
+            if (!allDocuments.find(d => d.storagePath === data.storagePath)) {
+              allDocuments.push({
+                id: doc.id,
+                name: data.originalName || data.fileName,
+                type: data.type,
+                downloadURL: data.downloadURL,
+                storagePath: data.storagePath,
+                size: data.fileSize,
+                uploadedAt: data.uploadedAt?.toDate?.() || new Date(data.uploadedAt),
+                contentType: data.fileType
+              });
+            }
+          });
+        } catch (firestoreError) {
+          console.warn("Firestore Fallback fehlgeschlagen:", firestoreError);
+        }
+        
+        if (allDocuments.length === 0) {
+          documentsList.innerHTML = `
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">Noch keine Dokumente hochgeladen</div>
+                <div class="document-date">Laden Sie Ihre Dokumente über die Upload-Bereiche oben hoch</div>
+              </div>
+            </div>
+          `;
+          return;
+        }
+        
+        // Nach Datum sortieren (neueste zuerst)
+        allDocuments.sort((a, b) => {
+          const timeA = new Date(a.uploadedAt).getTime();
+          const timeB = new Date(b.uploadedAt).getTime();
+          return timeB - timeA;
+        });
+        
+        let documentsHTML = '';
+        allDocuments.forEach(data => {
+          const uploadDate = new Date(data.uploadedAt).toLocaleDateString('de-DE');
+          const documentTypeNames = {
+            'fuehrerschein': 'Führerschein',
+            'fuehrungszeugnis': 'Führungszeugnis',
+            'personalausweis': 'Personalausweis'
+          };
+          
+          // Dateigröße formatieren
+          const formatFileSize = (bytes) => {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+          };
+          
+          documentsHTML += `
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">${data.name}</div>
+                <div class="document-date">${documentTypeNames[data.type] || data.type} - ${uploadDate} (${formatFileSize(data.size)})</div>
+              </div>
+              <div class="document-actions">
+                <button onclick="downloadDocument('${data.id || ''}', '${data.downloadURL}', '${data.name}')" class="btn-download">
+                  Download
+                </button>
+                <button onclick="deleteDocumentFromStorage('${data.storagePath}')" class="btn-delete">
+                  Löschen
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        documentsList.innerHTML = documentsHTML;
+        
+      } catch (error) {
+        console.error("Fehler beim Laden der Dokumente:", error);
+        documentsList.innerHTML = `
+          <div class="document-item">
+            <div class="document-info">
+              <div class="document-name">Fehler beim Laden der Dokumente</div>
+              <div class="document-date">Details: ${error.message}</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
     // Standardmäßig das Dashboard laden
     document.querySelector('.sidebar-menu a[data-section="dashboard"]').click();
+
+    // Globale Upload-Funktion
+    window.uploadDocument = async function(type) {
+      if (!currentUser) {
+        alert('Sie müssen angemeldet sein, um Dokumente hochzuladen.');
+        return;
+      }
+      
+      const fileInput = document.getElementById(`${type}-upload`);
+      const statusDiv = document.getElementById(`${type}-status`);
+      const files = fileInput.files;
+      
+      if (!files || files.length === 0) {
+        statusDiv.innerHTML = '<span class="error">Bitte wählen Sie eine Datei aus.</span>';
+        statusDiv.className = 'upload-status error';
+        return;
+      }
+      
+      // Validierung
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+      
+      for (let file of files) {
+        if (file.size > maxSize) {
+          statusDiv.innerHTML = '<span class="error">Datei zu groß. Maximum 10MB.</span>';
+          statusDiv.className = 'upload-status error';
+          return;
+        }
+        
+        if (!allowedTypes.includes(file.type)) {
+          statusDiv.innerHTML = '<span class="error">Nur PDF, JPG und PNG Dateien erlaubt.</span>';
+          statusDiv.className = 'upload-status error';
+          return;
+        }
+      }
+      
+      // Upload zu Firebase Storage
+      statusDiv.innerHTML = '<span class="uploading">Wird hochgeladen...</span>';
+      statusDiv.className = 'upload-status uploading';
+      
+      try {
+        const uploadPromises = Array.from(files).map(async (file) => {
+          // Eindeutigen Dateinamen generieren
+          const timestamp = Date.now();
+          const fileName = `${timestamp}_${file.name}`;
+          const storagePath = `driver_documents/${currentUser.uid}/${type}/${fileName}`;
+          
+          // Datei zu Firebase Storage hochladen
+          const storageRef = ref(storage, storagePath);
+          const snapshot = await uploadBytes(storageRef, file);
+          
+          // Download-URL erhalten
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          
+          // Metadaten in Firestore speichern
+          await addDoc(collection(db, "driver_documents"), {
+            userId: currentUser.uid,
+            type: type,
+            originalName: file.name,
+            fileName: fileName,
+            storagePath: storagePath,
+            downloadURL: downloadURL,
+            fileSize: file.size,
+            fileType: file.type,
+            uploadedAt: Timestamp.now()
+          });
+          
+          return { fileName, downloadURL };
+        });
+        
+        await Promise.all(uploadPromises);
+        
+        statusDiv.innerHTML = '<span class="success">✓ Erfolgreich hochgeladen!</span>';
+        statusDiv.className = 'upload-status success';
+        
+        // Eingabefeld zurücksetzen
+        fileInput.value = '';
+        
+        // Dokumente-Liste wird automatisch über onSnapshot aktualisiert
+        
+      } catch (error) {
+        console.error("Fehler beim Hochladen:", error);
+        statusDiv.innerHTML = '<span class="error">Fehler beim Hochladen. Bitte versuchen Sie es erneut.</span>';
+        statusDiv.className = 'upload-status error';
+      }
+    };
+    
+    // Dokument herunterladen
+    window.downloadDocument = function(docId, downloadURL, fileName) {
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    
+    // Dokument löschen (alte Funktion für Firestore-Dokumente)
+    window.deleteDocument = async function(docId, storagePath) {
+      if (!confirm('Möchten Sie dieses Dokument wirklich löschen?')) {
+        return;
+      }
+      
+      try {
+        // Aus Firebase Storage löschen
+        const storageRef = ref(storage, storagePath);
+        await deleteObject(storageRef);
+        
+        // Aus Firestore löschen falls docId vorhanden
+        if (docId) {
+          await deleteDoc(doc(db, "driver_documents", docId));
+        }
+        
+        console.log("Dokument erfolgreich gelöscht");
+        
+        // Dokumente neu laden
+        await loadDocuments();
+        
+      } catch (error) {
+        console.error("Fehler beim Löschen des Dokuments:", error);
+        alert("Fehler beim Löschen des Dokuments. Bitte versuchen Sie es erneut.");
+      }
+    };
+    
+    // Dokument direkt aus Storage löschen
+    window.deleteDocumentFromStorage = async function(storagePath) {
+      if (!confirm('Möchten Sie dieses Dokument wirklich löschen?')) {
+        return;
+      }
+      
+      try {
+        // Aus Firebase Storage löschen
+        const storageRef = ref(storage, storagePath);
+        await deleteObject(storageRef);
+        
+        // Auch aus Firestore löschen falls vorhanden
+        try {
+          const documentsQuery = query(
+            collection(db, "driver_documents"),
+            where("userId", "==", currentUser.uid),
+            where("storagePath", "==", storagePath)
+          );
+          const querySnapshot = await getDocs(documentsQuery);
+          querySnapshot.forEach(async (docSnapshot) => {
+            await deleteDoc(docSnapshot.ref);
+          });
+        } catch (firestoreError) {
+          console.warn("Firestore-Löschung fehlgeschlagen:", firestoreError);
+        }
+        
+        console.log("Dokument erfolgreich gelöscht");
+        
+        // Dokumente neu laden
+        await loadDocuments();
+        
+      } catch (error) {
+        console.error("Fehler beim Löschen des Dokuments:", error);
+        alert("Fehler beim Löschen des Dokuments. Bitte versuchen Sie es erneut.");
+      }
+    };
   </script>
 </body>
 </html> 
