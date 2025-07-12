@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auftraggeber Dashboard - NorthDrive</title>
+  <link rel="stylesheet" href="transport-style.css">
+  <style>
+    .dashboard-container {
+      display: flex;
+      min-height: 70vh;
+    }
+    
+    .sidebar {
+      width: 250px;
+      background-color: var(--bg-light);
+      padding: 2rem 1rem;
+      border-right: 1px solid var(--border-color);
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .sidebar-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      color: var(--text-color-primary);
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .sidebar-menu a i {
+      margin-right: 0.5rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .content-area {
+      flex: 1;
+      padding: 2rem;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .user-welcome {
+      font-size: 1.2rem;
+    }
+    
+    .user-welcome strong {
+      color: var(--accent-blue);
+    }
+    
+    .loading-name {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+    }
+    
+    .loading-name::after {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 8px;
+      border: 2px solid var(--accent-blue);
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: loading-spinner 1s linear infinite;
+    }
+    
+    @keyframes loading-spinner {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .logout-btn {
+      background-color: transparent;
+      color: var(--accent-blue);
+      border: 1px solid var(--accent-blue);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background-color: var(--bg-light);
+      border-radius: 4px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .stat-card h3 {
+      margin-top: 0;
+      color: var(--text-color-secondary);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin: 0.5rem 0;
+    }
+    
+    .stat-card .stat-change {
+      font-size: 0.9rem;
+      color: #5cb85c;
+    }
+    
+    .stat-card .stat-change.negative {
+      color: #d9534f;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .action-btn {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .action-btn:hover {
+      background-color: var(--accent-color-darker);
+    }
+    
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .section-title h2 {
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+    
+    .section-title .view-all {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .section-title .view-all:hover {
+      text-decoration: underline;
+    }
+    
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+    
+    .orders-table th, 
+    .orders-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .orders-table th {
+      background-color: var(--bg-light);
+      color: var(--text-color-secondary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    .orders-table tr:hover {
+      background-color: rgba(0, 102, 179, 0.05);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-badge.pending {
+      background-color: rgba(255, 193, 7, 0.2);
+      color: #856404;
+    }
+    
+    .status-badge.in-progress {
+      background-color: rgba(0, 123, 255, 0.2);
+      color: #004085;
+    }
+    
+    .status-badge.completed {
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #155724;
+    }
+    
+    .status-badge.cancelled {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #721c24;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+      background-color: var(--white);
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 4px;
+      max-width: 600px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+    }
+    
+    .close-btn:hover {
+      color: var(--text-dark);
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      flex: 1;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-family: var(--font-body);
+    }
+    
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .geocoding-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .location-status {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-light);
+    }
+
+    .location-status.success {
+      color: #155724;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+
+    .location-status.error {
+      color: #721c24;
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
+
+    .location-status.warning {
+      color: #856404;
+      background-color: #fff3cd;
+      border-color: #ffeeba;
+    }
+
+    .kilometers-display {
+      margin-left: 20px;
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      display: inline-block;
+    }
+    
+    .kilometers-display strong {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+    
+    .highlight-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    
+    .positive-change {
+      color: #28a745;
+      font-weight: 600;
+    }
+    
+    .negative-change {
+      color: #dc3545;
+      font-weight: 600;
+    }
+    
+    /* Adress-Autocomplete Styles */
+    .address-input-container {
+      position: relative;
+      width: 100%;
+    }
+    
+    .address-suggestions {
+      position: absolute;
+      z-index: 10;
+      background: white;
+      width: 100%;
+      max-height: 250px;
+      overflow-y: auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .address-suggestion {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .address-suggestion:hover,
+    .address-suggestion.active {
+      background-color: #f5f8ff;
+    }
+    
+    .address-suggestion:last-child {
+      border-bottom: none;
+    }
+    
+    .address-status {
+      margin-top: 5px;
+      font-size: 0.85rem;
+    }
+    
+    .address-status.valid {
+      color: #28a745;
+    }
+    
+    .address-status.invalid {
+      color: #dc3545;
+    }
+    
+    .address-status.pending {
+      color: #ffc107;
+    }
+    
+    /* Auftragsanzahl-Anzeige */
+    .orders-count {
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--text-color-secondary);
+      margin-left: 0.5rem;
+    }
+    
+    /* Benachrichtigungssystem */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 350px;
+      z-index: 9999;
+    }
+    
+    .notification {
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s ease;
+      display: flex;
+      align-items: center;
+      border-left: 4px solid var(--accent-blue);
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    .notification.success {
+      border-left-color: #28a745;
+    }
+    
+    .notification.error {
+      border-left-color: #dc3545;
+    }
+    
+    .notification.warning {
+      border-left-color: #ffc107;
+    }
+    
+    .notification.info {
+      border-left-color: var(--accent-blue);
+    }
+    
+    .notification-icon {
+      margin-right: 15px;
+      font-size: 20px;
+      width: 24px;
+      height: 24px;
+      text-align: center;
+    }
+    
+    .notification-content {
+      flex: 1;
+    }
+    
+    .notification-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--primary-navy);
+    }
+    
+    .notification-message {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+    }
+    
+    .notification-close {
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 10px;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    
+    .notification-close:hover {
+      color: #333;
+    }
+    
+    /* Bestätigungsdialog */
+    .confirm-dialog-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .confirm-dialog-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .confirm-dialog {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 450px;
+      padding: 25px;
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .confirm-dialog-overlay.show .confirm-dialog {
+      transform: translateY(0);
+    }
+    
+    .confirm-dialog-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-navy);
+      margin-bottom: 15px;
+    }
+    
+    .confirm-dialog-message {
+      margin-bottom: 25px;
+      color: var(--text-color-secondary);
+      line-height: 1.5;
+    }
+    
+    .confirm-dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    .confirm-dialog-btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .confirm-dialog-btn.cancel {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      color: var(--text-color-secondary);
+    }
+    
+    .confirm-dialog-btn.cancel:hover {
+      background-color: #e9ecef;
+    }
+    
+    .confirm-dialog-btn.confirm {
+      background-color: var(--accent-blue);
+      border: 1px solid var(--accent-blue);
+      color: white;
+    }
+    
+    .confirm-dialog-btn.confirm:hover {
+      background-color: var(--accent-color-darker);
+    }
+    
+    .confirm-dialog-btn.danger {
+      background-color: #dc3545;
+      border: 1px solid #dc3545;
+      color: white;
+    }
+    
+    .confirm-dialog-btn.danger:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <!-- Benachrichtigungscontainer -->
+    <div id="notificationContainer" class="notification-container"></div>
+    
+    <!-- Bestätigungsdialog -->
+    <div id="confirmDialogOverlay" class="confirm-dialog-overlay">
+      <div class="confirm-dialog">
+        <div id="confirmDialogTitle" class="confirm-dialog-title">Bestätigung</div>
+        <div id="confirmDialogMessage" class="confirm-dialog-message">Sind Sie sicher?</div>
+        <div class="confirm-dialog-actions">
+          <button id="confirmDialogCancel" class="confirm-dialog-btn cancel">Abbrechen</button>
+          <button id="confirmDialogConfirm" class="confirm-dialog-btn confirm">Bestätigen</button>
+        </div>
+      </div>
+    </div>
+
+    <header class="section hero-small">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="client-dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="impressum.html">Impressum</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li><a href="#" class="active">Dashboard</a></li>
+          <li><a href="#" id="sidebarCreateOrder">Neuer Auftrag</a></li>
+          <li><a href="#">Rechnungen</a></li>
+          <li><a href="#">Fahrer bewerten</a></li>
+          <li><a href="#">Profil</a></li>
+          <li><a href="#">Einstellungen</a></li>
+        </ul>
+      </div>
+      
+      <div class="content-area">
+        <div class="dashboard-header">
+          <div class="user-welcome">
+            Willkommen zurück, <strong id="userName" class="loading-name">Wird geladen...</strong>!
+            <span class="kilometers-display">Gesamtkilometer: <strong id="headerKilometersValue" class="highlight-value">-</strong> (<span id="headerKilometersChange" class="positive-change">+0 km</span> im letzten Monat)</span>
+          </div>
+          <button id="logoutBtn" class="logout-btn">Abmelden</button>
+        </div>
+        
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <h3>Aktive Aufträge</h3>
+            <div id="activeOrdersValue" class="stat-value">-</div>
+            <div id="activeOrdersChange" class="stat-change">Wird geladen...</div>
+          </div>
+          
+          <div class="stat-card">
+            <h3>Abgeschlossene Aufträge</h3>
+            <div id="completedOrdersValue" class="stat-value">-</div>
+            <div id="completedOrdersChange" class="stat-change">Wird geladen...</div>
+          </div>
+          
+          <div class="stat-card">
+            <h3>Stornierte Aufträge</h3>
+            <div id="cancelledOrdersValue" class="stat-value">-</div>
+            <div id="cancelledOrdersChange" class="stat-change">Wird geladen...</div>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button id="createOrderBtn" class="action-btn">Neuen Auftrag erstellen</button>
+        </div>
+        
+        <div class="section-title">
+          <h2>Meine Aufträge <span id="clientOrdersCount" class="orders-count">(0)</span></h2>
+          <a href="#" class="view-all" id="viewAllOrders">Alle anzeigen</a>
+        </div>
+        
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Auftrag</th>
+              <th>Abholung</th>
+              <th>Lieferort</th>
+              <th>Datum</th>
+              <th>Status</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr>
+              <td colspan="6" class="loading-text">Lade Aufträge...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modaler Dialog für die Auftragserstellung -->
+  <div id="createOrderModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeCreateOrderModal">&times;</span>
+      <h2>Neuen Transportauftrag erstellen</h2>
+      
+      <form id="createOrderForm">
+          <div class="form-group">
+          <label for="orderTitle">Titel des Auftrags</label>
+          <input type="text" id="orderTitle" required placeholder="z.B. Transport von 5 Paletten">
+          </div>
+          
+          <div class="form-group">
+            <label for="orderPickupLocation">Abholort</label>
+            <div class="address-input-container">
+              <input type="text" id="orderPickupLocation" required placeholder="Vollständige Adresse eingeben">
+              <div id="pickupLocationSuggestions" class="address-suggestions"></div>
+              <div id="pickupLocationStatus" class="address-status"></div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="orderDeliveryLocation">Lieferort</label>
+            <div class="address-input-container">
+              <input type="text" id="orderDeliveryLocation" required placeholder="Vollständige Adresse eingeben">
+              <div id="deliveryLocationSuggestions" class="address-suggestions"></div>
+              <div id="deliveryLocationStatus" class="address-status"></div>
+            </div>
+          </div>
+        
+        <div class="form-group">
+          <label for="orderPickupDate">Abholdatum und -zeit</label>
+          <input type="datetime-local" id="orderPickupDate" required step="300">
+        </div>
+        
+          <div class="form-group">
+          <label for="orderCargoDescription">Beschreibung der Fracht</label>
+          <input type="text" id="orderCargoDescription" placeholder="z.B. 5 Paletten Elektronik, 800kg (optional)">
+          </div>
+          
+          <div class="form-group">
+          <label for="orderDescription">Zusätzliche Informationen</label>
+          <textarea id="orderDescription" rows="4" placeholder="Weitere Details zum Auftrag (optional)"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="orderPrice">Preis (€)</label>
+          <input type="number" id="orderPrice" min="0" step="0.01" required placeholder="Preis in Euro">
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" id="cancelCreateOrder">Abbrechen</button>
+          <button type="submit" class="submit-btn">Auftrag erstellen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modaler Dialog für Auftragsdetails -->
+  <div id="orderDetailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeOrderDetailsModal">&times;</span>
+      <h2>Auftragsdetails</h2>
+      <div id="orderDetailsContent"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDK v9+ modular imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      collection, 
+      addDoc, 
+      query, 
+      where, 
+      orderBy, 
+      onSnapshot,
+      Timestamp,
+      updateDoc,
+      deleteDoc,
+      GeoPoint
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_KAYTuhfjpASvzvI1zgdNam7BzliB3mM",
+      authDomain: "appnorthdrive.firebaseapp.com",
+      projectId: "appnorthdrive",
+      storageBucket: "appnorthdrive.firebasestorage.app",
+      messagingSenderId: "559746363897",
+      appId: "1:559746363897:web:959bffc6e2f374e5448d28",
+      measurementId: "G-ZSJL11E70J"
+    };
+
+    // Initialize Firebase
+    let app, auth, db, currentUser, currentUserData;
+
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      console.log("Firebase erfolgreich initialisiert");
+    } catch (error) {
+      console.error("Fehler bei der Firebase-Initialisierung:", error);
+    }
+
+    // DOM-Elemente
+    const userNameElement = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const createOrderBtn = document.getElementById('createOrderBtn');
+    const createOrderModal = document.getElementById('createOrderModal');
+    const closeCreateOrderModal = document.getElementById('closeCreateOrderModal');
+    const cancelCreateOrder = document.getElementById('cancelCreateOrder');
+    const createOrderForm = document.getElementById('createOrderForm');
+    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    const closeOrderDetailsModal = document.getElementById('closeOrderDetailsModal');
+    const orderDetailsContent = document.getElementById('orderDetailsContent');
+    const ordersTableBody = document.getElementById('ordersTableBody');
+    const viewAllOrders = document.getElementById('viewAllOrders');
+    const clientOrdersCount = document.getElementById('clientOrdersCount');
+    const notificationContainer = document.getElementById('notificationContainer');
+    
+    // Adresseingabe-Elemente
+    const orderPickupLocation = document.getElementById('orderPickupLocation');
+    const orderDeliveryLocation = document.getElementById('orderDeliveryLocation');
+    const pickupLocationSuggestions = document.getElementById('pickupLocationSuggestions');
+    const deliveryLocationSuggestions = document.getElementById('deliveryLocationSuggestions');
+    const pickupLocationStatus = document.getElementById('pickupLocationStatus');
+    const deliveryLocationStatus = document.getElementById('deliveryLocationStatus');
+    
+    // Variablen für Geocoding-Daten
+    let pickupLocationGeo = null;
+    let deliveryLocationGeo = null;
+    let pickupLocationValid = false;
+    let deliveryLocationValid = false;
+    
+    // Dashboard Statistik Elemente
+    const activeOrdersValue = document.getElementById('activeOrdersValue');
+    const activeOrdersChange = document.getElementById('activeOrdersChange');
+    const completedOrdersValue = document.getElementById('completedOrdersValue');
+    const completedOrdersChange = document.getElementById('completedOrdersChange');
+    const cancelledOrdersValue = document.getElementById('cancelledOrdersValue');
+    const cancelledOrdersChange = document.getElementById('cancelledOrdersChange');
+    const headerKilometersValue = document.getElementById('headerKilometersValue');
+    const headerKilometersChange = document.getElementById('headerKilometersChange');
+    
+    // Event-Listener für Buttons
+    createOrderBtn.addEventListener('click', () => {
+      // Mindestdatum auf 3,5 Stunden in der Zukunft setzen
+      setMinimumPickupDate();
+      
+      createOrderModal.style.display = 'block';
+    });
+
+    // Neuer Auftrag in der Sidebar
+    const sidebarCreateOrderLink = document.getElementById('sidebarCreateOrder');
+    sidebarCreateOrderLink.addEventListener('click', () => {
+      // Mindestdatum auf 3,5 Stunden in der Zukunft setzen
+      setMinimumPickupDate();
+      
+      createOrderModal.style.display = 'block';
+    });
+    
+    // Funktion zum Setzen des Mindestdatums (3,5 Stunden in der Zukunft)
+    function setMinimumPickupDate() {
+      const now = new Date();
+      
+      // 3,5 Stunden (= 3 Stunden und 30 Minuten = 210 Minuten) zur aktuellen Zeit addieren
+      now.setMinutes(now.getMinutes() + 210);
+      
+      // Auf nächste 5 Minuten aufrunden
+      const minutesToRound = 5;
+      const ms = 1000 * 60 * minutesToRound;
+      const roundedDate = new Date(Math.ceil(now.getTime() / ms) * ms);
+      
+      // Formatieren für datetime-local Input
+      const year = roundedDate.getFullYear();
+      const month = String(roundedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(roundedDate.getDate()).padStart(2, '0');
+      const hours = String(roundedDate.getHours()).padStart(2, '0');
+      const minutes = String(roundedDate.getMinutes()).padStart(2, '0');
+      
+      const minDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+      
+      // Mindestdatum setzen und als Standardwert eintragen
+      const pickupDateInput = document.getElementById('orderPickupDate');
+      pickupDateInput.min = minDatetime;
+      pickupDateInput.value = minDatetime;
+    }
+    
+    // Event-Listener für das Abholdatum-Feld, um manuelle Eingaben auf 5-Minuten-Schritte zu runden
+    document.getElementById('orderPickupDate').addEventListener('change', function() {
+      const selectedDate = new Date(this.value);
+      
+      // Auf nächste 5 Minuten runden
+      const minutesToRound = 5;
+      const ms = 1000 * 60 * minutesToRound;
+      const roundedDate = new Date(Math.round(selectedDate.getTime() / ms) * ms);
+      
+      // Formatieren für datetime-local Input
+      const year = roundedDate.getFullYear();
+      const month = String(roundedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(roundedDate.getDate()).padStart(2, '0');
+      const hours = String(roundedDate.getHours()).padStart(2, '0');
+      const minutes = String(roundedDate.getMinutes()).padStart(2, '0');
+      
+      const formattedDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+      
+      // Gerundeten Wert setzen
+      this.value = formattedDatetime;
+      
+      // Überprüfen, ob das Datum mindestens 3,5 Stunden in der Zukunft liegt
+      const now = new Date();
+      const minTime = new Date(now.getTime() + (210 * 60 * 1000)); // 3,5 Stunden in der Zukunft
+      
+      if (roundedDate < minTime) {
+        showNotification('warning', 'Ungültiges Datum', 'Das Abholdatum muss mindestens 3,5 Stunden in der Zukunft liegen.');
+        setMinimumPickupDate(); // Auf Mindestdatum zurücksetzen
+      }
+    });
+
+    closeCreateOrderModal.addEventListener('click', () => {
+      createOrderModal.style.display = 'none';
+    });
+
+    cancelCreateOrder.addEventListener('click', () => {
+      createOrderModal.style.display = 'none';
+    });
+
+    closeOrderDetailsModal.addEventListener('click', () => {
+      orderDetailsModal.style.display = 'none';
+    });
+
+    // Außerhalb des Modals klicken, um zu schließen
+    window.addEventListener('click', (event) => {
+      if (event.target === createOrderModal) {
+        createOrderModal.style.display = 'none';
+      }
+      if (event.target === orderDetailsModal) {
+        orderDetailsModal.style.display = 'none';
+      }
+    });
+
+    // Adress-Autocomplete für Abholort
+    orderPickupLocation.addEventListener('input', debounce(function() {
+      const query = this.value.trim();
+      if (query.length < 3) {
+        pickupLocationSuggestions.style.display = 'none';
+        updateAddressStatus(pickupLocationStatus, 'pending', 'Bitte geben Sie mindestens 3 Zeichen ein');
+        pickupLocationValid = false;
+        return;
+      }
+      
+      updateAddressStatus(pickupLocationStatus, 'pending', 'Suche nach Adressen...');
+      searchAddresses(query, pickupLocationSuggestions, (suggestion) => {
+        orderPickupLocation.value = suggestion.display_name;
+        pickupLocationGeo = {
+          latitude: parseFloat(suggestion.lat),
+          longitude: parseFloat(suggestion.lon)
+        };
+        updateAddressStatus(pickupLocationStatus, 'valid', 'Adresse gefunden und validiert');
+        pickupLocationValid = true;
+        pickupLocationSuggestions.style.display = 'none';
+      });
+    }, 500));
+    
+    // Adress-Autocomplete für Lieferort
+    orderDeliveryLocation.addEventListener('input', debounce(function() {
+      const query = this.value.trim();
+      if (query.length < 3) {
+        deliveryLocationSuggestions.style.display = 'none';
+        updateAddressStatus(deliveryLocationStatus, 'pending', 'Bitte geben Sie mindestens 3 Zeichen ein');
+        deliveryLocationValid = false;
+        return;
+      }
+      
+      updateAddressStatus(deliveryLocationStatus, 'pending', 'Suche nach Adressen...');
+      searchAddresses(query, deliveryLocationSuggestions, (suggestion) => {
+        orderDeliveryLocation.value = suggestion.display_name;
+        deliveryLocationGeo = {
+          latitude: parseFloat(suggestion.lat),
+          longitude: parseFloat(suggestion.lon)
+        };
+        updateAddressStatus(deliveryLocationStatus, 'valid', 'Adresse gefunden und validiert');
+        deliveryLocationValid = true;
+        deliveryLocationSuggestions.style.display = 'none';
+      });
+    }, 500));
+    
+    // Adresssuche mit OpenStreetMap Nominatim API
+    async function searchAddresses(query, suggestionsContainer, onSelect) {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5&countrycodes=de`);
+        const suggestions = await response.json();
+        
+        if (suggestions.length === 0) {
+          suggestionsContainer.innerHTML = '<div class="address-suggestion">Keine Adressen gefunden</div>';
+          updateAddressStatus(
+            suggestionsContainer.previousElementSibling.nextElementSibling, 
+            'invalid', 
+            'Keine gültige Adresse gefunden'
+          );
+          return;
+        }
+        
+        suggestionsContainer.innerHTML = '';
+        suggestions.forEach(suggestion => {
+          const item = document.createElement('div');
+          item.className = 'address-suggestion';
+          item.textContent = suggestion.display_name;
+          item.addEventListener('click', () => onSelect(suggestion));
+          suggestionsContainer.appendChild(item);
+        });
+        
+        suggestionsContainer.style.display = 'block';
+      } catch (error) {
+        console.error('Fehler bei der Adresssuche:', error);
+        suggestionsContainer.innerHTML = '<div class="address-suggestion">Fehler bei der Adresssuche</div>';
+      }
+    }
+    
+    // Status der Adresseingabe aktualisieren
+    function updateAddressStatus(statusElement, type, message) {
+      statusElement.textContent = message;
+      statusElement.className = 'address-status ' + type;
+    }
+    
+    // Debounce-Funktion für verzögerte Ausführung
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+    
+    // Klick außerhalb der Vorschläge schließt diese
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.address-input-container')) {
+        pickupLocationSuggestions.style.display = 'none';
+        deliveryLocationSuggestions.style.display = 'none';
+      }
+    });
+    
+    // Benachrichtigungssystem
+    function showNotification(type, title, message, duration = 10000) {
+      // Notification-Element erstellen
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      
+      // Icon je nach Typ
+      let icon = '';
+      switch(type) {
+        case 'success': icon = '✓'; break;
+        case 'error': icon = '✕'; break;
+        case 'warning': icon = '⚠'; break;
+        case 'info': default: icon = 'ℹ'; break;
+      }
+      
+      // Inhalt der Notification
+      notification.innerHTML = `
+        <div class="notification-icon">${icon}</div>
+        <div class="notification-content">
+          <div class="notification-title">${title}</div>
+          <div class="notification-message">${message}</div>
+        </div>
+        <button class="notification-close">&times;</button>
+      `;
+      
+      // Zum Container hinzufügen
+      notificationContainer.appendChild(notification);
+      
+      // Kurze Verzögerung, damit die Animation funktioniert
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 10);
+      
+      // Schließen-Button
+      const closeBtn = notification.querySelector('.notification-close');
+      closeBtn.addEventListener('click', () => {
+        closeNotification(notification);
+      });
+      
+      // Automatisch nach X Sekunden schließen
+      if (duration) {
+        setTimeout(() => {
+          closeNotification(notification);
+        }, duration);
+      }
+      
+      return notification;
+    }
+    
+    function closeNotification(notification) {
+      // Animation zum Ausblenden
+      notification.classList.remove('show');
+      
+      // Nach der Animation aus dem DOM entfernen
+      setTimeout(() => {
+        notification.remove();
+      }, 400); // Entspricht der CSS-Transition-Zeit
+    }
+    
+    // Bestätigungsdialog-System
+    function showConfirmDialog(options = {}) {
+      const title = options.title || 'Bestätigung';
+      const message = options.message || 'Sind Sie sicher?';
+      const cancelText = options.cancelText || 'Abbrechen';
+      const confirmText = options.confirmText || 'Bestätigen';
+      const isDanger = options.isDanger || false;
+      
+      confirmDialogTitle.textContent = title;
+      confirmDialogMessage.textContent = message;
+      confirmDialogCancel.textContent = cancelText;
+      confirmDialogConfirm.textContent = confirmText;
+      
+      // Button-Styling basierend auf der Art des Dialogs
+      confirmDialogConfirm.className = isDanger 
+        ? 'confirm-dialog-btn danger' 
+        : 'confirm-dialog-btn confirm';
+      
+      // Dialog anzeigen mit Animation
+      confirmDialogOverlay.classList.add('show');
+      
+      // Promise erstellen, der bei Klick auf einen Button aufgelöst wird
+      return new Promise(resolve => {
+        // Einmalige Event-Listener für die Buttons
+        const handleCancel = () => {
+          confirmDialogOverlay.classList.remove('show');
+          confirmDialogCancel.removeEventListener('click', handleCancel);
+          confirmDialogConfirm.removeEventListener('click', handleConfirm);
+          setTimeout(() => resolve(false), 300); // Nach der Animation auflösen
+        };
+        
+        const handleConfirm = () => {
+          confirmDialogOverlay.classList.remove('show');
+          confirmDialogCancel.removeEventListener('click', handleCancel);
+          confirmDialogConfirm.removeEventListener('click', handleConfirm);
+          setTimeout(() => resolve(true), 300); // Nach der Animation auflösen
+        };
+        
+        confirmDialogCancel.addEventListener('click', handleCancel);
+        confirmDialogConfirm.addEventListener('click', handleConfirm);
+        
+        // Klick außerhalb des Dialogs schließt ihn
+        const handleOutsideClick = (event) => {
+          if (event.target === confirmDialogOverlay) {
+            handleCancel();
+          }
+        };
+        
+        confirmDialogOverlay.addEventListener('click', handleOutsideClick, { once: true });
+      });
+    }
+
+    // Funktion zum Berechnen der Entfernung zwischen zwei Punkten (Haversine-Formel)
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Erdradius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2); 
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+      const distance = R * c; // Entfernung in km
+      return Math.round(distance * 10) / 10; // Auf eine Dezimalstelle gerundet
+    }
+
+    // Auftrag erstellen
+    createOrderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!currentUser) {
+        showNotification('error', 'Nicht eingeloggt', 'Sie müssen eingeloggt sein, um einen Auftrag zu erstellen.');
+        return;
+      }
+      
+      // Prüfen, ob beide Adressen validiert wurden
+      if (!pickupLocationValid || !deliveryLocationValid) {
+        showNotification('warning', 'Ungültige Adressen', 'Bitte geben Sie gültige Adressen für Abhol- und Lieferort ein.');
+        return;
+      }
+      
+      try {
+        // Entfernung zwischen Abhol- und Lieferort berechnen
+        const distance = calculateDistance(
+          pickupLocationGeo.latitude,
+          pickupLocationGeo.longitude,
+          deliveryLocationGeo.latitude,
+          deliveryLocationGeo.longitude
+        );
+        
+        // Preis validieren
+        const priceValue = document.getElementById('orderPrice').value;
+        if (!priceValue || isNaN(parseFloat(priceValue))) {
+          showNotification('warning', 'Ungültiger Preis', 'Bitte geben Sie einen gültigen Preis ein.');
+          return;
+        }
+        
+        // Abholdatum validieren
+        const pickupDateValue = document.getElementById('orderPickupDate').value;
+        const pickupDate = new Date(pickupDateValue);
+        const now = new Date();
+        const minTime = new Date(now.getTime() + (210 * 60 * 1000)); // 3,5 Stunden in der Zukunft
+        
+        if (pickupDate < minTime) {
+          showNotification('warning', 'Ungültiges Datum', 'Das Abholdatum muss mindestens 3,5 Stunden in der Zukunft liegen.');
+          return;
+        }
+        
+        // Formulardaten erfassen
+        const orderData = {
+          title: document.getElementById('orderTitle').value,
+          pickupLocation: document.getElementById('orderPickupLocation').value,
+          deliveryLocation: document.getElementById('orderDeliveryLocation').value,
+          pickupDate: Timestamp.fromDate(new Date(document.getElementById('orderPickupDate').value)),
+          cargoDescription: document.getElementById('orderCargoDescription').value,
+          description: document.getElementById('orderDescription').value,
+          price: parseFloat(document.getElementById('orderPrice').value),
+          
+          // Geocoding-Daten und berechnete Entfernung
+          pickupLocationGeo: new GeoPoint(
+            pickupLocationGeo.latitude,
+            pickupLocationGeo.longitude
+          ),
+          deliveryLocationGeo: new GeoPoint(
+            deliveryLocationGeo.latitude,
+            deliveryLocationGeo.longitude
+          ),
+          distance: distance, // Entfernung in km
+          
+          // Metadaten
+          clientId: currentUser.uid,
+          clientName: currentUserData.displayName || currentUserData.name || currentUser.email,
+          clientEmail: currentUser.email,
+          status: 'available', // available, assigned, completed, cancelled
+          createdAt: Timestamp.now()
+        };
+        
+        // In Firestore speichern
+        const orderRef = await addDoc(collection(db, "orders"), orderData);
+        
+        console.log("Auftrag erstellt mit ID:", orderRef.id);
+        showNotification('success', 'Auftrag erstellt', 'Ihr Transportauftrag wurde erfolgreich erstellt!');
+        
+        // Modal schließen und Formular zurücksetzen
+        createOrderModal.style.display = 'none';
+        createOrderForm.reset();
+        pickupLocationGeo = null;
+        deliveryLocationGeo = null;
+        pickupLocationValid = false;
+        deliveryLocationValid = false;
+        updateAddressStatus(pickupLocationStatus, '', '');
+        updateAddressStatus(deliveryLocationStatus, '', '');
+        
+      } catch (error) {
+        console.error("Fehler beim Erstellen des Auftrags:", error);
+        showNotification('error', 'Fehler', `Fehler beim Erstellen des Auftrags: ${error.message}`);
+      }
+    });
+
+    // Aufträge des angemeldeten Kunden laden
+    function loadClientOrders() {
+      if (!currentUser) return;
+      
+      ordersTableBody.innerHTML = '<tr><td colspan="6" class="loading-text">Lade Aufträge...</td></tr>';
+      clientOrdersCount.textContent = '(0)'; // Initiale Anzeige
+      
+      // Nur nach clientId filtern, ohne Sortierung nach createdAt
+      const ordersQuery = query(
+        collection(db, "orders"),
+        where("clientId", "==", currentUser.uid)
+        // Sortierung nach createdAt entfernt, um keinen zusammengesetzten Index zu benötigen
+      );
+      
+      // Echtzeit-Listener für Aufträge, um sofortige Updates zu erhalten
+      const unsubscribe = onSnapshot(ordersQuery, (querySnapshot) => {
+        const count = querySnapshot.size;
+        clientOrdersCount.textContent = `(${count})`;
+        
+        if (querySnapshot.empty) {
+          ordersTableBody.innerHTML = '<tr><td colspan="6">Keine Aufträge gefunden.</td></tr>';
+          return;
+        }
+        
+        // Alle Aufträge sammeln und manuell sortieren
+        const orders = [];
+        querySnapshot.forEach((orderDoc) => {
+          orders.push({id: orderDoc.id, ...orderDoc.data()});
+        });
+        
+        // Manuell nach createdAt sortieren (absteigend)
+        orders.sort((a, b) => {
+          const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+          const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+          return timeB - timeA; // Absteigend sortieren (neueste zuerst)
+        });
+        
+        console.log(`${orders.length} Aufträge geladen`);
+        
+        // Tabelle leeren
+        ordersTableBody.innerHTML = '';
+        
+        // Sortierte Aufträge anzeigen
+        orders.forEach((orderData) => {
+          const orderId = orderData.id;
+          
+          // Sicherstellen, dass pickupDate ein gültiges Datum ist
+          const pickupDate = orderData.pickupDate?.toDate ? orderData.pickupDate.toDate() : new Date();
+          const formattedDate = pickupDate.toLocaleDateString('de-DE') + ' ' + 
+                              pickupDate.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+          
+          const row = document.createElement('tr');
+          
+          row.innerHTML = `
+            <td>${orderData.title || 'Transportauftrag'}</td>
+            <td>${orderData.pickupLocation || '-'}</td>
+            <td>${orderData.deliveryLocation || '-'}</td>
+            <td>${formattedDate}</td>
+            <td><span class="status-badge ${orderData.status}">${getStatusText(orderData.status)}</span></td>
+            <td>
+              <button class="view-btn" data-order-id="${orderId}">Ansehen</button>
+              ${orderData.status === 'available' ? `
+              <button class="edit-btn" data-order-id="${orderId}">Bearbeiten</button>
+              <button class="cancel-btn" data-order-id="${orderId}">Stornieren</button>
+              ` : ''}
+            </td>
+          `;
+          
+          ordersTableBody.appendChild(row);
+          
+          // Event-Listener für Aktionsbuttons
+          row.querySelector('.view-btn').addEventListener('click', () => showOrderDetails(orderId));
+          
+          if (orderData.status === 'available') {
+            row.querySelector('.edit-btn').addEventListener('click', () => editOrder(orderId));
+            row.querySelector('.cancel-btn').addEventListener('click', () => cancelOrder(orderId));
+          }
+        });
+      }, (error) => {
+        console.error("Fehler beim Laden der Aufträge:", error);
+        ordersTableBody.innerHTML = '<tr><td colspan="6">Fehler beim Laden der Aufträge: ' + error.message + '</td></tr>';
+      });
+      
+      return unsubscribe;
+    }
+    
+    // Status-Text je nach Status-Code zurückgeben
+    function getStatusText(status) {
+      switch(status) {
+        case 'available': return 'Verfügbar';
+        case 'assigned': return 'Zugewiesen';
+        case 'completed': return 'Abgeschlossen';
+        case 'cancelled': return 'Storniert';
+        default: return 'Unbekannt';
+      }
+    }
+    
+    // Auftragsdetails anzeigen
+    async function showOrderDetails(orderId) {
+      try {
+        const orderDoc = await getDoc(doc(db, "orders", orderId));
+        
+        if (!orderDoc.exists()) {
+          showNotification('error', 'Auftrag nicht gefunden', 'Der angeforderte Auftrag konnte nicht gefunden werden.');
+          return;
+        }
+        
+        const orderData = orderDoc.data();
+        const pickupDate = orderData.pickupDate.toDate();
+        const formattedDate = pickupDate.toLocaleDateString('de-DE') + ' ' + 
+                            pickupDate.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+        
+        let driverInfo = '';
+        if (orderData.driverId && orderData.status !== 'available') {
+          driverInfo = `
+            <div class="detail-section">
+              <h3>Fahrer-Information</h3>
+              <p><strong>Name:</strong> ${orderData.driverName || 'Nicht verfügbar'}</p>
+              <p><strong>E-Mail:</strong> ${orderData.driverEmail || 'Nicht verfügbar'}</p>
+            </div>
+          `;
+        }
+        
+        let completionInfo = '';
+        if (orderData.status === 'completed' && orderData.completedAt) {
+          const completedDate = orderData.completedAt.toDate();
+          const formattedCompletionDate = completedDate.toLocaleDateString('de-DE') + ' ' + 
+                                        completedDate.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+          
+          completionInfo = `
+            <div class="detail-section">
+              <h3>Auftragsabschluss</h3>
+              <p><strong>Abgeschlossen am:</strong> ${formattedCompletionDate}</p>
+            </div>
+          `;
+        }
+        
+        orderDetailsContent.innerHTML = `
+          <div class="detail-section">
+            <h3>Allgemeine Informationen</h3>
+            <p><strong>Titel:</strong> ${orderData.title || 'Transportauftrag'}</p>
+            <p><strong>Status:</strong> <span class="status-badge ${orderData.status}">${getStatusText(orderData.status)}</span></p>
+            <p><strong>Erstellt am:</strong> ${orderData.createdAt.toDate().toLocaleString('de-DE')}</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Transport-Details</h3>
+            <p><strong>Abholung von:</strong> ${orderData.pickupLocation}</p>
+            <p><strong>Lieferung nach:</strong> ${orderData.deliveryLocation}</p>
+            <p><strong>Abholdatum:</strong> ${formattedDate}</p>
+            <p><strong>Fracht:</strong> ${orderData.cargoDescription || 'Keine Angabe'}</p>
+            <p><strong>Preis:</strong> ${orderData.price ? orderData.price + ' €' : 'Auf Anfrage'}</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Beschreibung</h3>
+            <p>${orderData.description || 'Keine Beschreibung vorhanden.'}</p>
+          </div>
+          
+          ${driverInfo}
+          ${completionInfo}
+        `;
+        
+        orderDetailsModal.style.display = 'block';
+        
+      } catch (error) {
+        console.error("Fehler beim Laden der Auftragsdetails:", error);
+        showNotification('error', 'Fehler', `Fehler beim Laden der Auftragsdetails: ${error.message}`);
+      }
+    }
+    
+    // Auftrag bearbeiten (nur im Status 'available')
+    function editOrder(orderId) {
+      alert("Bearbeitung wird implementiert...");
+      // Hier würde eine Bearbeitungsfunktion implementiert werden
+    }
+    
+    // Auftrag stornieren
+    async function cancelOrder(orderId) {
+      const confirmed = await showConfirmDialog({
+        title: 'Auftrag stornieren',
+        message: 'Sind Sie sicher, dass Sie diesen Auftrag stornieren möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
+        cancelText: 'Abbrechen',
+        confirmText: 'Stornieren',
+        isDanger: true
+      });
+      
+      if (confirmed) {
+        try {
+          await updateDoc(doc(db, "orders", orderId), {
+            status: 'cancelled',
+            cancelledAt: Timestamp.now()
+          });
+          
+          showNotification('success', 'Auftrag storniert', 'Der Auftrag wurde erfolgreich storniert.');
+        } catch (error) {
+          console.error("Fehler beim Stornieren des Auftrags:", error);
+          showNotification('error', 'Fehler', `Fehler beim Stornieren des Auftrags: ${error.message}`);
+        }
+      }
+    }
+    
+    // Ausloggen
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "login.html";
+      } catch (error) {
+        console.error("Fehler beim Ausloggen:", error);
+      }
+    });
+
+    // Authentifizierungsstatus überwachen
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        
+        try {
+          // Benutzerdaten aus Firestore abrufen
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists()) {
+            currentUserData = userDoc.data();
+            
+            // Benutzername anzeigen
+            userNameElement.textContent = currentUserData.displayName || currentUserData.name || user.email || "Benutzer";
+            userNameElement.classList.remove('loading-name');
+            
+            // Überprüfen, ob der Benutzer ein Kunde ist
+            if (currentUserData.role !== 'client') {
+              alert("Sie haben keine Berechtigung für den Kunden-Bereich.");
+              window.location.href = "login.html";
+              return;
+            }
+            
+            // Dashboard-Statistiken laden
+            loadDashboardStats(user.uid);
+            
+            // Aufträge laden
+            loadClientOrders();
+          } else {
+            console.log("Keine Benutzerdaten gefunden");
+            window.location.href = "login.html";
+          }
+        } catch (error) {
+          console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+        }
+      } else {
+        // Nicht eingeloggt, zur Login-Seite umleiten
+        window.location.href = "login.html";
+      }
+    });
+    
+    // Dashboard-Statistiken laden
+    function loadDashboardStats(clientId) {
+      // Aktive Aufträge (assigned)
+      const activeOrdersQuery = query(
+        collection(db, "orders"),
+        where("clientId", "==", clientId),
+        where("status", "==", "assigned")
+      );
+      
+      // Abgeschlossene Aufträge
+      const completedOrdersQuery = query(
+        collection(db, "orders"),
+        where("clientId", "==", clientId),
+        where("status", "==", "completed")
+      );
+      
+      // Stornierte Aufträge
+      const cancelledOrdersQuery = query(
+        collection(db, "orders"),
+        where("clientId", "==", clientId),
+        where("status", "==", "cancelled")
+      );
+      
+      // Echtzeit-Listener für aktive Aufträge
+      onSnapshot(activeOrdersQuery, (snapshot) => {
+        const count = snapshot.size;
+        activeOrdersValue.textContent = count;
+        activeOrdersChange.textContent = count === 1 ? "Aktiver Auftrag" : "Aktive Aufträge";
+      }, (error) => {
+        console.error("Fehler beim Laden der aktiven Aufträge:", error);
+        activeOrdersValue.textContent = "-";
+        activeOrdersChange.textContent = "Fehler beim Laden";
+      });
+      
+      // Echtzeit-Listener für abgeschlossene Aufträge
+      onSnapshot(completedOrdersQuery, (snapshot) => {
+        const count = snapshot.size;
+        completedOrdersValue.textContent = count;
+        
+        // Letzten Monat berechnen (für die Änderungsanzeige)
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        // Zählen, wie viele Aufträge im letzten Monat abgeschlossen wurden
+        let lastMonthCount = 0;
+        snapshot.forEach(doc => {
+          const completedAt = doc.data().completedAt?.toDate();
+          if (completedAt && completedAt > oneMonthAgo) {
+            lastMonthCount++;
+          }
+        });
+        
+        completedOrdersChange.textContent = `+${lastMonthCount} im letzten Monat`;
+      }, (error) => {
+        console.error("Fehler beim Laden der abgeschlossenen Aufträge:", error);
+        completedOrdersValue.textContent = "-";
+        completedOrdersChange.textContent = "Fehler beim Laden";
+      });
+      
+      // Echtzeit-Listener für stornierte Aufträge
+      onSnapshot(cancelledOrdersQuery, (snapshot) => {
+        const count = snapshot.size;
+        cancelledOrdersValue.textContent = count;
+        
+        // Letzten Monat berechnen (für die Änderungsanzeige)
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        // Zählen, wie viele Aufträge im letzten Monat storniert wurden
+        let lastMonthCount = 0;
+        snapshot.forEach(doc => {
+          const cancelledAt = doc.data().cancelledAt?.toDate();
+          if (cancelledAt && cancelledAt > oneMonthAgo) {
+            lastMonthCount++;
+          }
+        });
+        
+        // Text und Farbe basierend auf der Anzahl setzen
+        if (lastMonthCount > 0) {
+          cancelledOrdersChange.textContent = `+${lastMonthCount} im letzten Monat`;
+          cancelledOrdersChange.classList.add('negative-change');
+        } else {
+          cancelledOrdersChange.textContent = `Keine im letzten Monat`;
+          cancelledOrdersChange.classList.remove('negative-change');
+        }
+        
+        // Auch den Wert einfärben, wenn größer als 0
+        if (count > 0) {
+          cancelledOrdersValue.style.color = '#dc3545';
+        } else {
+          cancelledOrdersValue.style.color = '';
+        }
+      }, (error) => {
+        console.error("Fehler beim Laden der stornierten Aufträge:", error);
+        cancelledOrdersValue.textContent = "-";
+        cancelledOrdersChange.textContent = "Fehler beim Laden";
+      });
+      
+      // Echtzeit-Listener für Gesamtkilometer
+      onSnapshot(completedOrdersQuery, (snapshot) => {
+        let totalKilometers = 0;
+        let lastMonthKilometers = 0;
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        // Sammle alle Aufträge, um sie dann zu verarbeiten
+        const orders = [];
+        snapshot.forEach(doc => {
+          orders.push({id: doc.id, ...doc.data()});
+        });
+        
+        // Funktion zum Berechnen der Entfernung zwischen zwei Punkten (Haversine-Formel)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+          const R = 6371; // Erdradius in km
+          const dLat = (lat2 - lat1) * Math.PI / 180;
+          const dLon = (lon2 - lon1) * Math.PI / 180;
+          const a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2); 
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+          const distance = R * c; // Entfernung in km
+          return distance;
+        }
+        
+        // Funktion zum Geocodieren einer Adresse mit OpenStreetMap
+        async function geocodeAddress(address) {
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`);
+            const data = await response.json();
+            
+            if (data.length === 0) {
+              console.warn(`Geocoding fehlgeschlagen für Adresse: ${address}`);
+              return null;
+            }
+            
+            return {
+              latitude: parseFloat(data[0].lat),
+              longitude: parseFloat(data[0].lon)
+            };
+          } catch (error) {
+            console.error(`Geocoding-Fehler für ${address}:`, error);
+            return null;
+          }
+        }
+        
+        // Verarbeite alle Aufträge und aktualisiere die Kilometeranzeige
+        async function processOrders() {
+          for (const order of orders) {
+            let kilometers = 0;
+            
+            // Wenn die Entfernung bereits im Auftrag gespeichert ist, verwende diese
+            if (order.distance) {
+              kilometers = order.distance;
+            }
+            // Wenn Geocoding-Daten für Abholung und Lieferung vorhanden sind, berechne die Entfernung
+            else if (order.pickupLocationGeo && order.deliveryLocationGeo) {
+              kilometers = calculateDistance(
+                order.pickupLocationGeo.latitude,
+                order.pickupLocationGeo.longitude,
+                order.deliveryLocationGeo.latitude,
+                order.deliveryLocationGeo.longitude
+              );
+            }
+            // Versuche, die Adressen zu geocodieren und die Entfernung zu berechnen
+            else if (order.pickupLocation && order.deliveryLocation) {
+              console.log(`Berechne Entfernung für Auftrag ${order.id}: ${order.pickupLocation} -> ${order.deliveryLocation}`);
+              
+              try {
+                // Geocodiere die Adressen
+                const pickupGeo = await geocodeAddress(order.pickupLocation);
+                const deliveryGeo = await geocodeAddress(order.deliveryLocation);
+                
+                // Wenn beide Geocoding-Ergebnisse vorhanden sind, berechne die Entfernung
+                if (pickupGeo && deliveryGeo) {
+                  kilometers = calculateDistance(
+                    pickupGeo.latitude,
+                    pickupGeo.longitude,
+                    deliveryGeo.latitude,
+                    deliveryGeo.longitude
+                  );
+                  
+                  console.log(`Berechnete Entfernung: ${kilometers.toFixed(2)} km`);
+                  
+                  // Speichere die berechnete Entfernung im Auftrag für zukünftige Berechnungen
+                  try {
+                    await updateDoc(doc(db, "orders", order.id), {
+                      distance: kilometers,
+                      pickupLocationGeo: pickupGeo,
+                      deliveryLocationGeo: deliveryGeo
+                    });
+                    console.log(`Entfernung für Auftrag ${order.id} in der Datenbank aktualisiert`);
+                  } catch (error) {
+                    console.error(`Fehler beim Speichern der Entfernung für Auftrag ${order.id}:`, error);
+                  }
+                } else {
+                  // Fallback: Schätze die Entfernung basierend auf den Städtenamen
+                  kilometers = estimateDistanceFromCityNames(order.pickupLocation, order.deliveryLocation);
+                }
+              } catch (error) {
+                console.error(`Fehler bei der Entfernungsberechnung für Auftrag ${order.id}:`, error);
+                // Fallback: Schätze die Entfernung basierend auf den Städtenamen
+                kilometers = estimateDistanceFromCityNames(order.pickupLocation, order.deliveryLocation);
+              }
+            } else {
+              // Fallback: Wenn keine Adressinformationen vorhanden sind
+              kilometers = 50; // Standardwert
+            }
+            
+            // Addiere die Kilometer zum Gesamtwert
+            totalKilometers += kilometers;
+            
+            // Prüfe, ob der Auftrag im letzten Monat abgeschlossen wurde
+            const completedAt = order.completedAt?.toDate();
+            if (completedAt && completedAt > oneMonthAgo) {
+              lastMonthKilometers += kilometers;
+            }
+          }
+          
+          // Formatierung mit km
+          const formattedTotal = `${Math.round(totalKilometers).toLocaleString('de-DE')} km`;
+          const formattedLastMonth = `+${Math.round(lastMonthKilometers).toLocaleString('de-DE')} km`;
+          
+          // Aktualisiere den Header
+          headerKilometersValue.textContent = formattedTotal;
+          headerKilometersChange.textContent = formattedLastMonth;
+        }
+        
+        // Funktion zur Schätzung der Entfernung basierend auf Städtenamen
+        function estimateDistanceFromCityNames(pickupLocation, deliveryLocation) {
+          // Extrahiere Städtenamen (vereinfachte Annahme: letztes Wort nach Komma ist die Stadt)
+          let pickupCity = pickupLocation.split(',').pop().trim().toLowerCase();
+          let deliveryCity = deliveryLocation.split(',').pop().trim().toLowerCase();
+          
+          // Entferne "flughafen" aus dem Namen, um die eigentliche Stadt zu erhalten
+          pickupCity = pickupCity.replace('flughafen', '').trim();
+          deliveryCity = deliveryCity.replace('flughafen', '').trim();
+          
+          // Definiere einige bekannte Entfernungen zwischen deutschen Städten
+          const knownDistances = {
+            'berlin-hamburg': 290,
+            'berlin-münchen': 585,
+            'berlin-köln': 575,
+            'hamburg-münchen': 790,
+            'hamburg-köln': 425,
+            'münchen-köln': 570,
+            'frankfurt-berlin': 545,
+            'frankfurt-hamburg': 495,
+            'frankfurt-münchen': 390,
+            'frankfurt-köln': 190,
+            'stuttgart-berlin': 630,
+            'stuttgart-hamburg': 655,
+            'stuttgart-münchen': 220,
+            'stuttgart-köln': 380,
+            'stuttgart-frankfurt': 200,
+            'düsseldorf-berlin': 580,
+            'düsseldorf-hamburg': 380,
+            'düsseldorf-münchen': 610,
+            'düsseldorf-köln': 45,
+            'düsseldorf-frankfurt': 230,
+            'düsseldorf-stuttgart': 370,
+            'kiel-hamburg': 90,
+            'kiel-berlin': 350,
+            'kiel-münchen': 850
+          };
+          
+          // Versuche, die Entfernung aus der Tabelle zu finden
+          const key1 = `${pickupCity}-${deliveryCity}`;
+          const key2 = `${deliveryCity}-${pickupCity}`;
+          
+          if (knownDistances[key1]) {
+            return knownDistances[key1];
+          } else if (knownDistances[key2]) {
+            return knownDistances[key2];
+          }
+          
+          // Wenn die genaue Kombination nicht gefunden wurde, versuche eine Schätzung
+          // basierend auf bekannten Entfernungen zu größeren Städten
+          
+          // Standardwert, wenn keine bessere Schätzung möglich ist
+          return 200; // Durchschnittliche Entfernung zwischen deutschen Städten
+        }
+        
+        // Starte die Verarbeitung
+        processOrders();
+        
+      }, (error) => {
+        console.error("Fehler beim Laden der Gesamtkilometer:", error);
+        headerKilometersValue.textContent = "-";
+        headerKilometersChange.textContent = "+0 km";
+      });
+    }
+  </script>
+</body>
+</html> 

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthDrive - Werde Fahrzeugüberführer (m/w/d)</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="transport-style.css">
+  <style>
+    /* Make the input a positioning context for the pseudo-element */
+    input#availability.flatpickr-input {
+      position: relative;
+    }
+
+    /* CSS-Fix für Flatpickr Placeholder auf iOS */
+    .flatpickr-input[placeholder]:not(:placeholder-shown)::before {
+      content: attr(placeholder);
+      color: #aaa;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding-left: 0.8rem;
+      padding-right: 0.8rem;
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: normal;
+    }
+    .button-container {
+      text-align: center;
+      margin: 2.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+
+    <header class="section hero">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html" class="active">Startseite</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="ueber_uns.html">Über Uns</a></li>
+            <li><a href="login.html" id="loginLink">Login</a></li>
+            <li><a href="impressum.html">Impressum</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="section">
+      <div style="text-align: center; width: 100%;">
+        <h1>Werde Fahrzeugüberführer</h1>
+        <p class="hero-subtitle">Dein flexibler Nebenjob: Deutschland entdecken &amp; Gutes Geld verdienen</p>
+      </div>
+      
+      <div class="text-intro">
+        <p>Du willst nicht den ganzen Tag am Schreibtisch sitzen und suchst einen flexiblen Nebenjob, der Dir Deutschland zeigt und trotzdem gut bezahlt ist? <strong class="highlight">Dann bist Du bei uns genau richtig!</strong></p>
+      </div>
+      
+      <div class="content-section">
+        <p>Wir suchen zuverlässige und motivierte Fahrer (m/w/d) zur Fahrzeugüberführung im gesamten Bundesgebiet. Ideal für Studenten, die gerne unterwegs sind und eigenverantwortlich arbeiten.</p>
+      </div>
+      
+      <div class="button-container">
+        <button id="openFormBtn" class="cta-button">Mehr erfahren &amp; Bewerben</button>
+      </div>
+    </div>
+
+    <div class="section grid-section">
+      <div class="content-section">
+        <h3>Überführung von Fahrzeugen</h3>
+        <p>Fahre Fahrzeuge quer durch Deutschland und entdecke neue Orte. Wir bieten dir spannende Routen und abwechslungsreiche Aufträge.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>Flexible Arbeitszeiten</h3>
+        <p>Bestimme selbst, wann und wie viel du fahren möchtest. Perfekt als Nebenjob neben Studium oder Hauptberuf.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>Faire Vergütung</h3>
+        <p>Attraktive Bezahlung pro Fahrt plus Übernahme der Rückreisekosten. Transparente Abrechnung und pünktliche Auszahlung.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Das erwartet Dich &amp; unsere Vorteile</h2>
+      <ul>
+        <li><span class="icon">&#128664;</span> <strong class="highlight">Überführung von Fahrzeugen</strong>&nbsp;quer durch Deutschland</li>
+        <li><span class="icon">&#128196;</span> Sorgfältige Kontrolle und Dokumentation der Fahrzeuge</li>
+        <li><span class="icon">&#9992;</span> Reisen, Verantwortung übernehmen – und dabei Geld verdienen</li>
+        <li><span class="icon">&#128107;</span> Freundliches, unkompliziertes Team und flexible Einsatzzeiten</li>
+        <li><span class="icon">&#128640;</span> <strong class="highlight">Deine Rückfahrt wird von uns organisiert</strong>&nbsp;– Du kommst sicher wieder nach Hause!</li>
+        <li><span class="icon">&#128176;</span> Faire Bezahlung pro Fahrt & Option auf spätere Festanstellung</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Dein Profil – Das bringst Du mit</h2>
+      <ul>
+        <li><span class="icon">&#127959;</span> <strong class="highlight">Führerschein Klasse B seit 2 Jahren</strong>&nbsp;(Pflicht)</li>
+        <li><span class="icon">&#128221;</span> <strong class="highlight">Aktuelles Führungszeugnis</strong>&nbsp;(nicht älter als 3 Monate - Pflicht)</li>
+        <li><span class="icon">&#128170;</span> Selbstständige, pünktliche und zuverlässige Arbeitsweise</li>
+        <li><span class="icon">&#9203;</span> Hohe zeitliche Flexibilität und Engagement</li>
+        <li><span class="icon">&#127979;</span> 49€-Ticket (Deutschlandticket) ist von Vorteil</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Rahmenbedingungen</h2>
+      
+      <div class="content-section">
+        <h3>Einsatzgebiet:</h3>
+        <p>Deutschlandweite Fahrzeugüberführungen. Bei Absprache auch europaweite Einsätze möglich.</p>
+      </div>
+      
+      <div class="content-section">
+        <h3>Start:</h3>
+        <p>Ab sofort oder nach individueller Absprache.</p>
+      </div>
+    </div>
+
+    <div class="section contact-section">
+      <h2>Interesse geweckt? Wir wollen Dich im Team!</h2>
+      <p>Bereit für Deinen neuen Nebenjob auf Deutschlands Straßen?</p>
+      <p>Dann melde Dich jetzt einfach per E-Mail:</p>
+      <p><strong>contact@northdrive.team</strong></p>
+      <div class="button-container">
+        <a href="mailto:contact@northdrive.team" class="cta-button">Jetzt per E-Mail kontaktieren</a>
+      </div>
+      <p class="final-greeting">Wir freuen uns auf Deine Nachricht!</p>
+    </div>
+
+  </div>
+
+<div id="applicationModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Online Bewerben</h2>
+    <form id="applicationForm">
+      <input type="hidden" id="detailedAvailability" name="detailedAvailability">
+
+      <div id="formStep1">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="email">E-Mail:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="phone">Telefonnummer:</label>
+        <input type="tel" id="phone" name="phone" required>
+
+        <label for="city">Wohnort:</label>
+        <input type="text" id="city" name="city" required>
+
+        <button type="button" id="nextStepBtn" class="cta-button" style="margin-top: 1.5rem;">Weiter</button>
+      </div>
+
+      <div id="formStep2">
+        <label for="availability">Wunschtermine für Bewerbungsgespräch (Dauer ca. 1 Std.):</label>
+        <p style="font-size: 0.85rem; color: var(--text-color-secondary); margin-top: -0.75rem; margin-bottom: 1rem;">Bitte wählen Sie einen verbindlichen Termin für Ihr Online-Bewerbungsgespräch aus. Das Gespräch findet über Microsoft Teams statt.</p>
+        <input type="text" id="availability" name="availability_summary" placeholder="Klicken, um einen Termin auszuwählen...">
+        <div id="availabilityDetailsPreview"></div>
+
+        <label for="coverletter">Bewerbung (Pflichtfeld):</label>
+        <textarea id="coverletter" name="coverletter" rows="5" required></textarea>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="driversLicenseB" name="driversLicenseB" value="bestaetigt" required>
+          <label for="driversLicenseB" class="checkbox-label">Ich bestätige, dass ich einen Führerschein der Klasse B besitze (Pflichtfeld).</label>
+        </div>
+        
+        <button type="submit" class="cta-button">Bewerbung senden</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="timeSlotModal" class="modal">
+  <div class="modal-content">
+    <span class="close-time-modal-btn">&times;</span>
+    <h2 id="timeSlotModalDate">Zeiten für den TAG auswählen</h2>
+    <div id="timeSlotsContainer">
+      <!-- Zeit-Slots werden hier dynamisch per JS eingefügt -->
+    </div>
+    <button id="confirmTimeSlotsBtn" class="cta-button" style="margin-top: 1.5rem;">Zeiten bestätigen</button>
+  </div>
+</div>
+
+<!-- Notification Modal -->
+<div id="notificationModal" class="modal">
+  <div class="modal-content notification-modal-content">
+    <span class="close-notification-btn">&times;</span>
+    <h2 id="notificationTitle"></h2>
+    <div id="notificationMessage"></div>
+    <button id="notificationCloseUserBtn" class="cta-button">OK</button> <!-- Renamed to avoid conflict if we reuse id for programmatic close -->
+  </div>
+</div>
+
+<script type="module">
+  // Firebase SDK v9+ modular imports from gstatic.com CDN
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc, serverTimestamp, Timestamp, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+  // Your web app's Firebase configuration for northdrive-fb0d6
+  const firebaseConfig = {
+    apiKey: "AIzaSyDC_sOZ1SZc-8laEaSh0X64gNeRzBCLtXA",
+    authDomain: "northdrive-fb0d6.firebaseapp.com",
+    projectId: "northdrive-fb0d6",
+    storageBucket: "northdrive-fb0d6.firebasestorage.app",
+    messagingSenderId: "33722601529",
+    appId: "1:33722601529:web:701846534ef7186a583de8",
+    measurementId: "G-6LDHW72B51"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app); // Google Analytics
+  const db = getFirestore(app); // Firestore Database
+  const auth = getAuth(app);
+  // const storage = getStorage(app);
+
+  // Make db and other Firebase services/functions globally available for your existing script blocks
+  // This is generally not recommended for new modular code, but might be needed for your existing older script blocks.
+  // Consider refactoring your older script blocks to import these directly.
+  window.db = db;
+  window.firebaseApp = app; // if needed
+  window.Timestamp = Timestamp; // Firestore Timestamp
+  window.collection = collection;
+  window.addDoc = addDoc;
+  window.getDocs = getDocs;
+  window.query = query;
+  window.where = where;
+  window.doc = doc;
+  window.setDoc = setDoc;
+  window.serverTimestamp = serverTimestamp;
+
+
+  // Your existing logic for checking Firebase initialization
+  if (db && Timestamp && collection && addDoc && getDocs && query && where && doc && setDoc && serverTimestamp) {
+    console.log("Firebase initialized successfully. Firestore (db) and its functions are available on the window object.");
+  } else {
+    console.error("Error initializing Firebase or making functions globally available.");
+  }
+
+  // DOM Elements
+  const loginLink = document.getElementById('loginLink');
+
+  // Überprüfe Authentifizierungsstatus
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // Benutzer ist eingeloggt
+      console.log("Benutzer ist eingeloggt:", user.uid);
+      
+      try {
+        // Benutzerdaten aus Firestore abrufen
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          
+          // Login-Link ändern
+          loginLink.textContent = "Dashboard";
+          
+          // Link zum entsprechenden Dashboard setzen
+          switch(userData.role) {
+            case 'driver':
+              loginLink.href = "driver-dashboard.html";
+              break;
+            case 'client':
+              loginLink.href = "client-dashboard.html";
+              break;
+            case 'manager':
+              loginLink.href = "manager-dashboard.html";
+              break;
+            default:
+              loginLink.href = "login.html";
+          }
+        } else {
+          console.log("Keine Benutzerdaten gefunden");
+          loginLink.textContent = "Login";
+          loginLink.href = "login.html";
+        }
+      } catch (error) {
+        console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+      }
+    } else {
+      // Benutzer ist nicht eingeloggt
+      console.log("Kein Benutzer eingeloggt");
+      loginLink.textContent = "Login";
+      loginLink.href = "login.html";
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal für die Bewerbung
+    const modal = document.getElementById('applicationModal');
+    const openFormBtn = document.getElementById('openFormBtn');
+    const closeBtn = document.querySelector('.close-btn');
+    
+    // Öffnen des Formulars bei Klick auf den Button
+    if (openFormBtn) {
+      openFormBtn.addEventListener('click', function() {
+        modal.style.display = 'block';
+      });
+    }
+    
+    // Schließen des Formulars bei Klick auf das X
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+    }
+    
+    // Schließen des Formulars bei Klick außerhalb
+    window.addEventListener('click', function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    });
+    
+    // Bewerbungsformular-Schritte
+    const formStep1 = document.getElementById('formStep1');
+    const formStep2 = document.getElementById('formStep2');
+    const nextStepBtn = document.getElementById('nextStepBtn');
+    
+    if (nextStepBtn) {
+      nextStepBtn.addEventListener('click', function() {
+        // Einfache Validierung der Felder im ersten Schritt
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const city = document.getElementById('city').value;
+        
+        if (name && email && phone && city) {
+          formStep1.style.display = 'none';
+          formStep2.style.display = 'block';
+        } else {
+          alert('Bitte fülle alle Pflichtfelder aus.');
+        }
+      });
+    }
+    
+    // Initialisierung des zweiten Formularsschritts
+    if (formStep2) {
+      formStep2.style.display = 'none';
+    }
+    
+    // Formular-Absenden
+    const applicationForm = document.getElementById('applicationForm');
+    if (applicationForm) {
+      applicationForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Zeige Erfolgsmeldung
+        const notificationModal = document.getElementById('notificationModal');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const notificationMessage = document.getElementById('notificationMessage');
+        
+        if (notificationModal && notificationTitle && notificationMessage) {
+          notificationModal.classList.add('success');
+          notificationTitle.textContent = 'Bewerbung erfolgreich gesendet!';
+          notificationMessage.innerHTML = '<p>Vielen Dank für deine Bewerbung. Wir werden uns in Kürze bei dir melden!</p>';
+          
+          // Modal anzeigen
+          modal.style.display = 'none';
+          notificationModal.style.display = 'block';
+        }
+      });
+    }
+    
+    // Schließen der Benachrichtigung
+    const closeNotificationBtn = document.querySelector('.close-notification-btn');
+    const notificationCloseUserBtn = document.getElementById('notificationCloseUserBtn');
+    const notificationModal = document.getElementById('notificationModal');
+    
+    if (closeNotificationBtn && notificationModal) {
+      closeNotificationBtn.addEventListener('click', function() {
+        notificationModal.style.display = 'none';
+      });
+    }
+    
+    if (notificationCloseUserBtn && notificationModal) {
+      notificationCloseUserBtn.addEventListener('click', function() {
+        notificationModal.style.display = 'none';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
