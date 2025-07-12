@@ -3560,13 +3560,19 @@
           <div class="modal-content">
             <div class="modal-header">
               <h3>${title}</h3>
-              <button class="modal-close" onclick="closeModal()">&times;</button>
+              <button class="modal-close" type="button">&times;</button>
             </div>
             <div class="modal-body">
               ${content}
             </div>
           </div>
         `;
+        
+        // Schließen bei Klick auf Close-Button
+        const closeButton = modal.querySelector('.modal-close');
+        closeButton.addEventListener('click', () => {
+          closeModal();
+        });
         
         // Schließen bei Klick auf Overlay
         modal.addEventListener('click', (e) => {
@@ -3575,14 +3581,37 @@
           }
         });
         
+        // Schließen bei ESC-Taste
+        const handleEscape = (e) => {
+          if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', handleEscape);
+          }
+        };
+        document.addEventListener('keydown', handleEscape);
+        
         return modal;
       }
 
       window.closeModal = function() {
-        const modal = document.querySelector('.modal-overlay');
-        if (modal) {
+        console.log("closeModal wurde aufgerufen");
+        const modals = document.querySelectorAll('.modal-overlay');
+        console.log("Anzahl gefundener Modals:", modals.length);
+        
+        // Alle Modals entfernen
+        modals.forEach(modal => {
+          console.log("Modal wird entfernt:", modal);
           modal.remove();
+        });
+        
+        // Doppelte Sicherheit: Nochmal prüfen, ob noch Modals da sind
+        const remainingModals = document.querySelectorAll('.modal-overlay');
+        if (remainingModals.length > 0) {
+          console.log("Noch vorhandene Modals werden entfernt:", remainingModals.length);
+          remainingModals.forEach(modal => modal.remove());
         }
+        
+        console.log("Modal erfolgreich geschlossen");
       };
     </script>
   </div>
