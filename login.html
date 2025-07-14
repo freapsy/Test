@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - NorthDrive</title>
+  <link rel="stylesheet" href="transport-style.css">
+  <style>
+    .login-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .login-options a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+    
+    .login-options a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      color: #d9534f;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      background-color: rgba(217, 83, 79, 0.1);
+      display: none;
+    }
+    
+    .success-message {
+      color: #5cb85c;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      background-color: rgba(92, 184, 92, 0.1);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+
+    <header class="section hero-small">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="ueber_uns.html">Über Uns</a></li>
+            <li><a href="login.html" class="active">Login</a></li>
+            <li><a href="impressum.html">Impressum</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="section">
+      <h1>Anmelden</h1>
+      <p class="tagline">Willkommen zurück bei NorthDrive</p>
+      
+      <div class="login-container">
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">E-Mail:</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Passwort:</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          
+          <div class="login-options">
+            <a href="#" id="forgotPassword">Passwort vergessen?</a>
+            <a href="register.html">Neu hier? Registrieren</a>
+          </div>
+          
+          <button type="submit" class="cta-button" style="width: 100%;">Anmelden</button>
+          
+          <div id="errorMessage" class="error-message"></div>
+          <div id="successMessage" class="success-message"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDK v9+ modular imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_KAYTuhfjpASvzvI1zgdNam7BzliB3mM",
+      authDomain: "appnorthdrive.firebaseapp.com",
+      projectId: "appnorthdrive",
+      storageBucket: "appnorthdrive.firebasestorage.app",
+      messagingSenderId: "559746363897",
+      appId: "1:559746363897:web:959bffc6e2f374e5448d28",
+      measurementId: "G-ZSJL11E70J"
+    };
+
+    // Initialize Firebase
+    let app, auth, db;
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      console.log("Firebase erfolgreich initialisiert");
+    } catch (error) {
+      console.error("Fehler bei der Firebase-Initialisierung:", error);
+    }
+
+    // DOM Elements
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const forgotPasswordLink = document.getElementById('forgotPassword');
+
+    // Überprüfe, ob Benutzer bereits eingeloggt ist
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // Letzten Login aktualisieren (nur wenn nicht gerade erst eingeloggt)
+            try {
+              await updateDoc(doc(db, "users", user.uid), {
+                lastLogin: serverTimestamp()
+              });
+              console.log("Letzter Login aktualisiert (automatisch)");
+            } catch (updateError) {
+              console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+            }
+            
+            // Weiterleitung zum entsprechenden Dashboard
+            switch(userData.role) {
+              case 'driver':
+                window.location.href = 'driver-dashboard.html';
+                break;
+              case 'client':
+                window.location.href = 'client-dashboard.html';
+                break;
+              case 'manager':
+                window.location.href = 'manager-dashboard.html';
+                break;
+              default:
+                errorMessage.textContent = "Unbekannte Benutzerrolle";
+                errorMessage.style.display = "block";
+                await auth.signOut();
+            }
+          } else {
+            errorMessage.textContent = "Benutzerprofil nicht gefunden";
+            errorMessage.style.display = "block";
+            await auth.signOut();
+          }
+        } catch (error) {
+          console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+          errorMessage.textContent = "Fehler beim Laden der Benutzerdaten";
+          errorMessage.style.display = "block";
+        }
+      }
+    });
+
+    // Login Form Handler
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      errorMessage.style.display = "none";
+      successMessage.style.display = "none";
+      
+      try {
+        // Anmelden mit Firebase Auth
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Benutzerdaten aus Firestore abrufen
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          
+          // Letzten Login aktualisieren
+          try {
+            await updateDoc(doc(db, "users", user.uid), {
+              lastLogin: serverTimestamp()
+            });
+            console.log("Letzter Login aktualisiert");
+          } catch (updateError) {
+            console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+            // Fehler beim Update sollte den Login nicht blockieren
+          }
+          
+          // Erfolgsmeldung anzeigen
+          successMessage.textContent = "Login erfolgreich! Sie werden weitergeleitet...";
+          successMessage.style.display = "block";
+          
+          // Weiterleitung zum entsprechenden Dashboard
+          setTimeout(() => {
+            switch(userData.role) {
+              case 'driver':
+                window.location.href = 'driver-dashboard.html';
+                break;
+              case 'client':
+                window.location.href = 'client-dashboard.html';
+                break;
+              case 'manager':
+                window.location.href = 'manager-dashboard.html';
+                break;
+            }
+          }, 1000);
+        } else {
+          await auth.signOut();
+          errorMessage.textContent = "Benutzerprofil nicht gefunden";
+          errorMessage.style.display = "block";
+        }
+      } catch (error) {
+        console.error("Login-Fehler:", error);
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorMessage.textContent = "Benutzer nicht gefunden";
+            break;
+          case 'auth/wrong-password':
+            errorMessage.textContent = "Falsches Passwort";
+            break;
+          case 'auth/invalid-email':
+            errorMessage.textContent = "Ungültige E-Mail-Adresse";
+            break;
+          default:
+            errorMessage.textContent = "Ein Fehler ist aufgetreten: " + error.message;
+        }
+        errorMessage.style.display = "block";
+      }
+    });
+
+    // Passwort vergessen Handler
+    forgotPasswordLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      
+      if (!email) {
+        errorMessage.textContent = "Bitte geben Sie Ihre E-Mail-Adresse ein";
+        errorMessage.style.display = "block";
+        return;
+      }
+      
+      try {
+        await sendPasswordResetEmail(auth, email);
+        successMessage.textContent = "Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet";
+        successMessage.style.display = "block";
+        errorMessage.style.display = "none";
+      } catch (error) {
+        console.error("Fehler beim Zurücksetzen des Passworts:", error);
+        errorMessage.textContent = "Fehler beim Senden der Zurücksetz-E-Mail: " + error.message;
+        errorMessage.style.display = "block";
+        successMessage.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html> 

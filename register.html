@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrieren - NorthDrive</title>
+  <link rel="stylesheet" href="transport-style.css">
+  <style>
+    .register-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    .user-type-selector {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .user-type-selector .user-type-btn {
+      background-color: var(--bg-light);
+      border: 2px solid var(--border-color);
+      padding: 1rem;
+      margin: 0 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .user-type-selector .user-type-btn.active {
+      background-color: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+    
+    .user-type-selector .user-type-btn:hover:not(.active) {
+      border-color: var(--accent-blue);
+    }
+    
+    .error-message {
+      color: #d9534f;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      background-color: rgba(217, 83, 79, 0.1);
+      display: none;
+    }
+    
+    .success-message {
+      color: #5cb85c;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      background-color: rgba(92, 184, 92, 0.1);
+      display: none;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    
+    .login-link a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+    
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+
+    <header class="section hero-small">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="ueber_uns.html">Über Uns</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="impressum.html">Impressum</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="section">
+      <h1>Registrieren</h1>
+      <p class="tagline">Erstellen Sie ein Konto bei NorthDrive</p>
+      
+      <div class="register-container">
+        <div class="user-type-selector">
+          <button class="user-type-btn active" data-user-type="driver">Fahrer</button>
+          <button class="user-type-btn" data-user-type="client">Auftraggeber</button>
+          <button class="user-type-btn" data-user-type="manager">Manager</button>
+        </div>
+        
+        <form id="registerForm">
+          <input type="hidden" id="userType" name="userType" value="driver">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">Vorname:</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="lastName">Nachname:</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">E-Mail:</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password">Passwort:</label>
+              <input type="password" id="password" name="password" required minlength="8">
+            </div>
+            
+            <div class="form-group">
+              <label for="confirmPassword">Passwort bestätigen:</label>
+              <input type="password" id="confirmPassword" name="confirmPassword" required minlength="8">
+            </div>
+          </div>
+          
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="termsAgreement" name="termsAgreement" required>
+            <label for="termsAgreement" class="checkbox-label">Ich akzeptiere die <a href="#" target="_blank">Nutzungsbedingungen</a> und <a href="#" target="_blank">Datenschutzrichtlinien</a>.</label>
+          </div>
+          
+          <button type="submit" class="cta-button" style="width: 100%;">Registrieren</button>
+          
+          <div id="errorMessage" class="error-message"></div>
+          <div id="successMessage" class="success-message"></div>
+          
+          <div class="login-link">
+            <p>Bereits registriert? <a href="login.html">Hier anmelden</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDK v9+ modular imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_KAYTuhfjpASvzvI1zgdNam7BzliB3mM",
+      authDomain: "appnorthdrive.firebaseapp.com",
+      projectId: "appnorthdrive",
+      storageBucket: "appnorthdrive.firebasestorage.app",
+      messagingSenderId: "559746363897",
+      appId: "1:559746363897:web:959bffc6e2f374e5448d28",
+      measurementId: "G-ZSJL11E70J"
+    };
+
+    // Initialize Firebase
+    let app, auth, db;
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      console.log("Firebase erfolgreich initialisiert");
+    } catch (error) {
+      console.error("Fehler bei der Firebase-Initialisierung:", error);
+    }
+
+    // DOM Elements
+    const registerForm = document.getElementById('registerForm');
+    const userTypeButtons = document.querySelectorAll('.user-type-btn');
+    const userTypeInput = document.getElementById('userType');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    // User Type Button Handler
+    userTypeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Aktiven Button aktualisieren
+        userTypeButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        // Hidden Input aktualisieren
+        userTypeInput.value = button.dataset.userType;
+      });
+    });
+
+    // Register Form Handler
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const userType = userTypeInput.value;
+      const termsAgreement = document.getElementById('termsAgreement').checked;
+      
+      errorMessage.style.display = "none";
+      successMessage.style.display = "none";
+      
+      // Validierungen
+      if (password !== confirmPassword) {
+        errorMessage.textContent = "Die Passwörter stimmen nicht überein";
+        errorMessage.style.display = "block";
+        return;
+      }
+      
+      if (password.length < 8) {
+        errorMessage.textContent = "Das Passwort muss mindestens 8 Zeichen lang sein";
+        errorMessage.style.display = "block";
+        return;
+      }
+      
+      if (!termsAgreement) {
+        errorMessage.textContent = "Bitte akzeptieren Sie die Nutzungsbedingungen und Datenschutzrichtlinien";
+        errorMessage.style.display = "block";
+        return;
+      }
+      
+      try {
+        // Überprüfe, ob die E-Mail-Adresse in der Whitelist ist
+        const whitelistRef = collection(db, "whitelist");
+        const q = query(whitelistRef, where("email", "==", email.toLowerCase()));
+        const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+          errorMessage.textContent = "Diese E-Mail-Adresse ist nicht für die Registrierung freigegeben. Bitte kontaktieren Sie uns für Zugang.";
+          errorMessage.style.display = "block";
+          return;
+        }
+
+        const whitelistDoc = querySnapshot.docs[0].data();
+        if (!whitelistDoc.isActive) {
+          errorMessage.textContent = "Ihr Zugang wurde deaktiviert. Bitte kontaktieren Sie uns für weitere Informationen.";
+          errorMessage.style.display = "block";
+          return;
+        }
+
+        // Überprüfe, ob die Rolle in der Whitelist mit der gewählten Rolle übereinstimmt
+        if (whitelistDoc.role && whitelistDoc.role !== userType) {
+          errorMessage.textContent = `Sie sind nur für die Rolle '${whitelistDoc.role === 'driver' ? 'Fahrer' : whitelistDoc.role === 'client' ? 'Auftraggeber' : 'Manager'}' freigegeben.`;
+          errorMessage.style.display = "block";
+          return;
+        }
+        
+        // Benutzer mit Firebase Auth erstellen
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Benutzerdaten in Firestore speichern
+        const userData = {
+          uid: user.uid,
+          email: user.email.toLowerCase(),
+          firstName: firstName,
+          lastName: lastName,
+          role: userType,
+          createdAt: new Date().toISOString(),
+          isActive: true,
+          whitelistId: querySnapshot.docs[0].id // Speichere die Referenz zur Whitelist
+        };
+        
+        await setDoc(doc(db, "users", user.uid), userData);
+        
+        // Erfolgsmeldung anzeigen
+        successMessage.textContent = "Registrierung erfolgreich! Sie werden weitergeleitet...";
+        successMessage.style.display = "block";
+        
+        // Weiterleitung zum entsprechenden Dashboard
+        setTimeout(() => {
+          switch(userType) {
+            case 'driver':
+              window.location.href = 'driver-dashboard.html';
+              break;
+            case 'client':
+              window.location.href = 'client-dashboard.html';
+              break;
+            case 'manager':
+              window.location.href = 'manager-dashboard.html';
+              break;
+          }
+        }, 1500);
+      } catch (error) {
+        console.error("Registrierungsfehler:", error);
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage.textContent = "Diese E-Mail-Adresse wird bereits verwendet";
+            break;
+          case 'auth/invalid-email':
+            errorMessage.textContent = "Ungültige E-Mail-Adresse";
+            break;
+          case 'auth/operation-not-allowed':
+            errorMessage.textContent = "E-Mail/Passwort-Registrierung ist nicht aktiviert";
+            break;
+          case 'auth/weak-password':
+            errorMessage.textContent = "Das Passwort ist zu schwach";
+            break;
+          default:
+            errorMessage.textContent = "Ein Fehler ist aufgetreten: " + error.message;
+        }
+        errorMessage.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html> 

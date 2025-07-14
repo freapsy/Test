@@ -1,16 +1,37 @@
 {
+<<<<<<< HEAD
   "hosting": {
     "public": "Test-main (1)/Test-main",
+=======
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": ".",
+>>>>>>> 5e11b677c302326ce3f9e497b787da7e0bcf575e
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+<<<<<<< HEAD
     ],
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
       }
+=======
+>>>>>>> 5e11b677c302326ce3f9e497b787da7e0bcf575e
     ]
   }
 }

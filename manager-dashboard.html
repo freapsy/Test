@@ -1,0 +1,3945 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manager Dashboard - NorthDrive</title>
+  <link rel="stylesheet" href="transport-style.css">
+  <style>
+    .dashboard-container {
+      display: flex;
+      min-height: 70vh;
+    }
+    
+    .sidebar {
+      width: 250px;
+      background-color: var(--bg-light);
+      padding: 2rem 1rem;
+      border-right: 1px solid var(--border-color);
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .sidebar-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      color: var(--text-color-primary);
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .sidebar-menu a i {
+      margin-right: 0.5rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .content-area {
+      flex: 1;
+      padding: 2rem;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .user-welcome {
+      font-size: 1.2rem;
+    }
+    
+    .user-welcome strong {
+      color: var(--accent-blue);
+    }
+    
+    .loading-name {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+    }
+    
+    .loading-name::after {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 8px;
+      border: 2px solid var(--accent-blue);
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: loading-spinner 1s linear infinite;
+    }
+    
+    @keyframes loading-spinner {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .logout-btn {
+      background-color: transparent;
+      color: var(--accent-blue);
+      border: 1px solid var(--accent-blue);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background-color: var(--bg-light);
+      border-radius: 4px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .stat-card h3 {
+      margin-top: 0;
+      color: var(--text-color-secondary);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin: 0.5rem 0;
+    }
+    
+    .stat-card .stat-change {
+      font-size: 0.9rem;
+      color: #5cb85c;
+    }
+    
+    .stat-card .stat-change.negative {
+      color: #d9534f;
+    }
+    
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .section-title h2 {
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+    
+    .section-title .view-all {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .section-title .view-all:hover {
+      text-decoration: underline;
+    }
+    
+    .section-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .search-input {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      width: 250px;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(0, 102, 179, 0.1);
+    }
+    
+    .dashboard-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .dashboard-card.full-width {
+      width: 100%;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+    }
+    
+    .dashboard-card {
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    
+    .dashboard-card-header {
+      background-color: var(--bg-light);
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .dashboard-card-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--primary-navy);
+    }
+    
+    .dashboard-card-body {
+      padding: 1.5rem;
+    }
+
+    /* Omni-Ansicht Styles */
+    .omni-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .omni-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      padding: 0.8rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+    }
+
+    .tab-btn:hover {
+      background-color: var(--bg-light);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .search-input {
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-table th {
+      background-color: var(--bg-light);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .data-table tr:hover {
+      background-color: var(--bg-light);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-badge.active {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .status-badge.inactive {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-badge.pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .action-btn-small {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+      margin-right: 0.25rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn-small.view {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .action-btn-small.edit {
+      background-color: #ffc107;
+      color: #212529;
+    }
+
+    .action-btn-small.delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .action-btn-small:hover {
+      opacity: 0.8;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .analytics-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .analytics-item:last-child {
+      border-bottom: none;
+    }
+
+    .user-card, .client-card, .order-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+
+    .user-card h3, .client-card h3, .order-card h3 {
+      margin-top: 0;
+      color: var(--primary-navy);
+    }
+
+    .user-info, .client-info, .order-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 0.8rem;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-weight: 500;
+      color: var(--text-color-primary);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: white;
+      border-radius: 8px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-light);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      color: var(--primary-navy);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-color-secondary);
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background-color: var(--border-color);
+      color: var(--text-color-primary);
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .detail-item {
+      padding: 0.75rem;
+      background-color: var(--bg-light);
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .detail-item strong {
+      color: var(--primary-navy);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color-primary);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-navy);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-color-secondary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-light);
+      color: var(--text-color-primary);
+    }
+    
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      background-color: white;
+    }
+    
+    .orders-table th, 
+    .orders-table td {
+      padding: 1.2rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    
+    .orders-table th {
+      background-color: var(--bg-light);
+      color: var(--text-color-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .orders-table tr:hover {
+      background-color: rgba(0, 102, 179, 0.05);
+    }
+    
+    .orders-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-badge.pending {
+      background-color: rgba(255, 193, 7, 0.2);
+      color: #856404;
+    }
+    
+    .status-badge.in-progress {
+      background-color: rgba(0, 123, 255, 0.2);
+      color: #004085;
+    }
+    
+    .status-badge.completed {
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #155724;
+    }
+    
+    .status-badge.cancelled {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #721c24;
+    }
+    
+    .drivers-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem 0;
+      margin: 0;
+    }
+    
+    .driver-preview-card {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.2rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .driver-preview-card:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .driver-preview-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      padding-right: 5rem;
+    }
+    
+    .driver-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-blue), #0056b3);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-right: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .driver-info {
+      flex: 1;
+    }
+    
+    .driver-name {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--primary-navy);
+      font-size: 1rem;
+      line-height: 1.2;
+      word-wrap: break-word;
+    }
+    
+    .driver-email {
+      font-size: 0.85rem;
+      color: var(--text-color-secondary);
+      margin: 0;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    
+    .driver-status-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 1;
+    }
+    
+    .driver-status-badge.available {
+      background-color: rgba(40, 167, 69, 0.15);
+      color: #155724;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    
+    .driver-status-badge.busy {
+      background-color: rgba(255, 193, 7, 0.15);
+      color: #856404;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    .driver-location {
+      font-size: 0.85rem;
+      color: var(--text-color-secondary);
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      line-height: 1.3;
+    }
+    
+    .driver-location::before {
+      content: "📍";
+      margin-right: 0.4rem;
+      flex-shrink: 0;
+    }
+    
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .action-btn {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .action-btn:hover {
+      background-color: var(--accent-color-darker);
+    }
+    
+    .notification-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+    
+    .notification-title {
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    
+    .notification-time {
+      font-size: 0.8rem;
+      color: var(--text-color-secondary);
+    }
+
+    /* Whitelist-Verwaltung Styles */
+    .whitelist-section {
+      padding: 1.5rem;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .whitelist-form {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1.5rem;
+    }
+
+    .whitelist-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .whitelist-table th,
+    .whitelist-table td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .whitelist-table th {
+      background-color: var(--bg-light);
+      font-weight: 500;
+    }
+
+    .whitelist-table tr:hover {
+      background-color: var(--bg-light);
+    }
+
+    .whitelist-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .whitelist-status {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+
+    .whitelist-status.active {
+      background-color: #dff0d8;
+      color: #3c763d;
+    }
+
+    .whitelist-status.inactive {
+      background-color: #f2dede;
+      color: #a94442;
+    }
+
+    .btn-small {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.9rem;
+      border-radius: 3px;
+    }
+
+    .btn-danger {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+    }
+
+    .btn-warning {
+      background-color: #f0ad4e;
+      color: white;
+      border: none;
+    }
+
+    /* Whitelist Styles */
+    .whitelist-section {
+      margin-bottom: 2rem;
+    }
+
+    .whitelist-form,
+    .whitelist-table {
+      margin-bottom: 2rem;
+    }
+
+    .add-email-form {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-color-primary);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .form-group textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-navy);
+    }
+
+    /* Tabellen-Styles */
+    #whitelistTable {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #whitelistTable th,
+    #whitelistTable td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    #whitelistTable th {
+      background-color: var(--bg-light);
+      font-weight: 600;
+      color: var(--text-color-primary);
+    }
+
+    #whitelistTable tbody tr:hover {
+      background-color: var(--bg-light);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .status-active {
+      background-color: #e6f4ea;
+      color: #1e7e34;
+    }
+
+    .status-inactive {
+      background-color: #fbe9e7;
+      color: #d32f2f;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-action {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      border: 1px solid;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+
+    .btn-toggle {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    .btn-toggle:hover {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-delete {
+      border-color: #dc3545;
+      color: #dc3545;
+    }
+
+    .btn-delete:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    /* Fahrer-Übersicht Styles */
+    .drivers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem 0;
+    }
+
+    .driver-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+    }
+
+    .driver-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .driver-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--accent-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-right: 1rem;
+    }
+
+    .driver-info {
+      flex: 1;
+    }
+
+    .driver-name {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .driver-contact {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+    }
+
+    .driver-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    .status-free {
+      background-color: #e6f4ea;
+      color: #1e7e34;
+    }
+
+    .status-busy {
+      background-color: #fef3cd;
+      color: #856404;
+    }
+
+    .current-order {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .order-title {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-details {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .progress-container {
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      height: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      background-color: var(--accent-blue);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: var(--text-color-secondary);
+      margin-top: 0.25rem;
+      text-align: right;
+    }
+
+    /* Fahrer-Grid Styles */
+    .drivers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    .driver-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .driver-card .driver-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .driver-card .driver-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--accent-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-right: 1rem;
+    }
+
+    .driver-card .driver-info {
+      flex: 1;
+    }
+
+    .driver-card .driver-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+      color: var(--primary-navy);
+    }
+
+    .driver-card .driver-email {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin: 0;
+    }
+
+    .driver-card .status-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .driver-card .status-badge.available {
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #155724;
+    }
+
+    .driver-card .status-badge.busy {
+      background-color: rgba(0, 123, 255, 0.2);
+      color: #004085;
+    }
+
+    .driver-card .order-info {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    .driver-card .order-info p {
+      margin: 0.25rem 0;
+      color: var(--text-color-secondary);
+    }
+
+    .driver-card .order-info strong {
+      color: var(--text-color-primary);
+    }
+    
+    /* Detaillierte Fahrer-Karten für die Hauptansicht */
+    .driver-card-detailed {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      position: relative;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+    }
+    
+    .driver-card-detailed:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .driver-card-detailed .driver-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-right: 6rem;
+    }
+    
+    .driver-card-detailed .driver-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-blue), #0056b3);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-right: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .driver-card-detailed .driver-info {
+      flex: 1;
+    }
+    
+    .driver-card-detailed .driver-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 0.4rem 0;
+      color: var(--primary-navy);
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    
+    .driver-card-detailed .driver-email {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin: 0 0 0.3rem 0;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    
+    .driver-card-detailed .driver-phone {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin: 0;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+    
+    .driver-card-detailed .driver-status-badge {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+    
+    .driver-card-detailed .driver-status-badge.available {
+      background: linear-gradient(135deg, #d4edda, #c3e6cb);
+      color: #155724;
+      border: 1px solid #b8dabc;
+    }
+    
+    .driver-card-detailed .driver-status-badge.busy {
+      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+      color: #856404;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .driver-card-detailed .driver-location {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin: 0.5rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      background-color: rgba(0, 102, 179, 0.05);
+      border-radius: 6px;
+    }
+    
+    .driver-card-detailed .driver-location::before {
+      content: "📍";
+      margin-right: 0.5rem;
+      font-size: 1rem;
+    }
+    
+    .availability-info {
+      text-align: center;
+      padding: 1rem;
+      background-color: rgba(40, 167, 69, 0.1);
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    
+    .availability-info p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    
+    /* Dokumente-Tabelle Styles */
+    .documents-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      background-color: white;
+    }
+    
+    .documents-table th, 
+    .documents-table td {
+      padding: 1.2rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    
+    .documents-table th {
+      background-color: var(--bg-light);
+      color: var(--text-color-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .documents-table tr:hover {
+      background-color: rgba(0, 102, 179, 0.05);
+    }
+    
+    .documents-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .documents-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .action-btn-small {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-right: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .action-btn-small.view {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .action-btn-small.view:hover {
+      background-color: var(--primary-navy);
+    }
+    
+    .action-btn-small.delete {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .action-btn-small.delete:hover {
+      background-color: #c82333;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .dashboard-content {
+        gap: 1.5rem;
+      }
+      
+      .drivers-preview-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .orders-table {
+        font-size: 0.85rem;
+      }
+      
+      .orders-table th, 
+      .orders-table td {
+        padding: 0.8rem 0.5rem;
+      }
+    }
+    
+    @media (min-width: 1200px) {
+      .drivers-preview-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+
+    <header class="section hero-small">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="manager-dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="impressum.html">Impressum</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li><a href="#dashboard" class="active" data-section="dashboard-section">📊 Dashboard</a></li>
+          <li><a href="#omni-view" data-section="omni-section">🌐 Omni-Ansicht</a></li>
+
+
+          <li><a href="#clients" data-section="clients-section">🏢 Auftraggeber</a></li>
+          <li><a href="#orders" data-section="orders-section">📋 Aufträge</a></li>
+          <li><a href="#payroll" data-section="payroll-section">💰 Gehaltsabrechnungen</a></li>
+          <li><a href="#whitelist" data-section="whitelist-section">✅ Whitelist</a></li>
+
+          
+        </ul>
+      </div>
+
+      <div class="content-area">
+        <div class="dashboard-header">
+          <div class="user-welcome">
+            Willkommen, <span id="userName" class="loading-name">Manager</span>
+          </div>
+          <button id="logoutBtn" class="logout-btn">Abmelden</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="content-section active">
+          <!-- Bestehender Dashboard-Content -->
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <h3>Aktive Aufträge</h3>
+              <div id="activeOrdersValue" class="stat-value">-</div>
+              <div id="activeOrdersChange" class="stat-change">Wird geladen...</div>
+            </div>
+            
+            <div class="stat-card">
+              <h3>Verfügbare Fahrer</h3>
+              <div id="availableDriversValue" class="stat-value">-</div>
+              <div id="availableDriversChange" class="stat-change">Wird geladen...</div>
+            </div>
+            
+            <div class="stat-card">
+              <h3>Offene Aufträge</h3>
+              <div id="availableOrdersValue" class="stat-value">-</div>
+              <div id="availableOrdersChange" class="stat-change">Wird geladen...</div>
+            </div>
+            
+            <div class="stat-card">
+              <h3>Abgeschlossene Aufträge</h3>
+              <div id="completedOrdersValue" class="stat-value">-</div>
+              <div id="completedOrdersChange" class="stat-change">Wird geladen...</div>
+            </div>
+          </div>
+          
+          <div class="action-buttons">
+            <button id="newOrderBtn" class="action-btn">Neuen Auftrag erstellen</button>
+            <button id="addDriverBtn" class="action-btn">Fahrer hinzufügen</button>
+            <button id="generateReportBtn" class="action-btn">Bericht erstellen</button>
+          </div>
+          
+          <div class="dashboard-content">
+            <div class="dashboard-card full-width">
+              <div class="dashboard-card-header">
+                <h3>Aktuelle Aufträge</h3>
+                <a href="#" class="view-all">Alle anzeigen</a>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-container">
+                  <table class="orders-table">
+                    <thead>
+                      <tr>
+                        <th>Auftrag-Nr.</th>
+                        <th>Kunde</th>
+                        <th>Route</th>
+                        <th>Fahrer</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                      <!-- Orders will be loaded dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dashboard-card full-width">
+              <div class="dashboard-card-header">
+                <h3>Verfügbare Fahrer</h3>
+                <a href="#" class="view-all">Alle anzeigen</a>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="drivers-preview-grid" id="driverList">
+                  <!-- Drivers will be loaded dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Auftragsstatistik</h3>
+                <select id="chartPeriod">
+                  <option value="week">Diese Woche</option>
+                  <option value="month" selected>Dieser Monat</option>
+                  <option value="year">Dieses Jahr</option>
+                </select>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="chart-container">
+                  <!-- Chart will be rendered here -->
+                  <p style="text-align: center; padding: 100px 0;">Hier würde ein Chart angezeigt werden.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Benachrichtigungen</h3>
+                <a href="#" class="view-all">Alle anzeigen</a>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="notification-list" id="notificationList">
+                  <!-- Notifications will be loaded dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Whitelist Section -->
+        <div id="whitelist-section" class="content-section">
+          <div class="section-title">
+            <h2>Whitelist-Verwaltung</h2>
+          </div>
+          
+          <!-- Formular zum Hinzufügen neuer E-Mail-Adressen -->
+          <div class="whitelist-form dashboard-card">
+            <div class="dashboard-card-header">
+              <h3>Neue E-Mail-Adresse hinzufügen</h3>
+            </div>
+            <div class="dashboard-card-body">
+              <form id="whitelistForm" class="add-email-form">
+                <div class="form-group">
+                  <label for="email">E-Mail-Adresse</label>
+                  <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                  <label for="role">Rolle</label>
+                  <select id="role" required>
+                    <option value="driver">Fahrer</option>
+                    <option value="client">Auftraggeber</option>
+                    <option value="manager">Manager</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="notes">Notizen</label>
+                  <textarea id="notes"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Hinzufügen</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Whitelist-Tabelle -->
+          <div class="whitelist-table dashboard-card">
+            <div class="dashboard-card-header">
+              <h3>Freigeschaltete E-Mail-Adressen</h3>
+            </div>
+            <div class="dashboard-card-body">
+              <table id="whitelistTable">
+                <thead>
+                  <tr>
+                    <th>E-Mail</th>
+                    <th>Rolle</th>
+                    <th>Status</th>
+                    <th>Erstellt am</th>
+                    <th>Notizen</th>
+                    <th>Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody id="whitelistTableBody">
+                  <!-- Wird dynamisch befüllt -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Omni-Ansicht Section -->
+        <div id="omni-section" class="content-section">
+          <div class="section-title">
+            <h2>🌐 Omni-Ansicht - Alle Firebase-Daten</h2>
+            <button id="refreshOmniBtn" class="action-btn">🔄 Aktualisieren</button>
+          </div>
+
+          <div class="omni-stats">
+            <div class="stat-card">
+              <h3>👥 Benutzer</h3>
+              <div id="totalUsersValue" class="stat-value">-</div>
+              <div class="stat-change">Gesamt registriert</div>
+            </div>
+            <div class="stat-card">
+              <h3>🚗 Fahrer</h3>
+              <div id="totalDriversValue" class="stat-value">-</div>
+              <div class="stat-change">Aktive Fahrer</div>
+            </div>
+            <div class="stat-card">
+              <h3>🏢 Auftraggeber</h3>
+              <div id="totalClientsValue" class="stat-value">-</div>
+              <div class="stat-change">Registrierte Kunden</div>
+            </div>
+            <div class="stat-card">
+              <h3>📋 Aufträge</h3>
+              <div id="totalOrdersValue" class="stat-value">-</div>
+              <div class="stat-change">Alle Aufträge</div>
+            </div>
+            <div class="stat-card">
+              <h3>📄 Dokumente</h3>
+              <div id="totalDocumentsValue" class="stat-value">-</div>
+              <div class="stat-change">Hochgeladene Dateien</div>
+            </div>
+          </div>
+
+          <div class="omni-tabs">
+            <button class="tab-btn active" data-tab="users-tab">👥 Benutzer</button>
+            <button class="tab-btn" data-tab="orders-tab">📋 Aufträge</button>
+            <button class="tab-btn" data-tab="documents-tab">📄 Dokumente</button>
+            <button class="tab-btn" data-tab="analytics-tab">📊 Analytics</button>
+          </div>
+
+          <div id="users-tab" class="tab-content active">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Alle Benutzer</h3>
+                <input type="text" id="userSearchInput" placeholder="Benutzer suchen..." class="search-input">
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>E-Mail</th>
+                        <th>Name</th>
+                        <th>Rolle</th>
+                        <th>Registriert</th>
+                        <th>Letzter Login</th>
+                        <th>Status</th>
+                        <th>Aktionen</th>
+                      </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                      <!-- Wird dynamisch befüllt -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="orders-tab" class="tab-content">
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Alle Aufträge</h3>
+                <input type="text" id="orderSearchInput" placeholder="Aufträge suchen..." class="search-input">
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Titel</th>
+                        <th>Kunde</th>
+                        <th>Fahrer</th>
+                        <th>Status</th>
+                        <th>Preis</th>
+                        <th>Erstellt</th>
+                        <th>Aktionen</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ordersTableBodyOmni">
+                      <!-- Wird dynamisch befüllt -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="documents-tab" class="tab-content">
+            <div class="documents-stats">
+              <div class="stat-card">
+                <h3>📄 Gesamt Dokumente</h3>
+                <div id="totalDocumentsCountOmni" class="stat-value">-</div>
+                <div class="stat-change">Alle hochgeladen</div>
+              </div>
+              <div class="stat-card">
+                <h3>📋 Führerscheine</h3>
+                <div id="fuehrerscheinCountOmni" class="stat-value">-</div>
+                <div class="stat-change">Dokumente</div>
+              </div>
+              <div class="stat-card">
+                <h3>🆔 Personalausweise</h3>
+                <div id="personalausweisCountOmni" class="stat-value">-</div>
+                <div class="stat-change">Dokumente</div>
+              </div>
+              <div class="stat-card">
+                <h3>📋 Führungszeugnisse</h3>
+                <div id="fuehrungszeugnis-CountOmni" class="stat-value">-</div>
+                <div class="stat-change">Dokumente</div>
+              </div>
+            </div>
+            
+            <div class="dashboard-card">
+              <div class="dashboard-card-header">
+                <h3>Alle Dokumente</h3>
+                <div class="section-controls">
+                  <input type="text" id="documentSearchInput" placeholder="Dokumente suchen..." class="search-input">
+                  <button id="refreshDocumentsOmniBtn" class="action-btn">🔄 Aktualisieren</button>
+                </div>
+              </div>
+              <div class="dashboard-card-body">
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Dateiname</th>
+                        <th>Benutzer</th>
+                        <th>Typ</th>
+                        <th>Größe</th>
+                        <th>Hochgeladen</th>
+                        <th>Aktionen</th>
+                      </tr>
+                    </thead>
+                    <tbody id="documentsTableBody">
+                      <!-- Wird dynamisch befüllt -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="analytics-tab" class="tab-content">
+            <div class="analytics-grid">
+              <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                  <h3>Benutzer-Analytics</h3>
+                </div>
+                <div class="dashboard-card-body">
+                  <div class="analytics-item">
+                    <span>Neue Registrierungen (7 Tage):</span>
+                    <strong id="newUsersWeek">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Aktive Benutzer (30 Tage):</span>
+                    <strong id="activeUsersMonth">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Fahrer/Kunden Verhältnis:</span>
+                    <strong id="driverClientRatio">-</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                  <h3>Auftrags-Analytics</h3>
+                </div>
+                <div class="dashboard-card-body">
+                  <div class="analytics-item">
+                    <span>Neue Aufträge (7 Tage):</span>
+                    <strong id="newOrdersWeek">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Abgeschlossene Aufträge (30 Tage):</span>
+                    <strong id="completedOrdersMonth">-</strong>
+                  </div>
+                  <div class="analytics-item">
+                    <span>Durchschnittlicher Auftragswert:</span>
+                    <strong id="avgOrderValue">-</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Auftraggeber Section -->
+        <div id="clients-section" class="content-section">
+          <div class="section-title">
+            <h2>🏢 Auftraggeber-Verwaltung</h2>
+          </div>
+          <div class="clients-grid" id="clientsGrid">
+            <!-- Auftraggeber-Karten werden hier dynamisch eingefügt -->
+          </div>
+        </div>
+
+        <!-- Aufträge Section -->
+        <div id="orders-section" class="content-section">
+          <div class="section-title">
+            <h2>📋 Auftrags-Verwaltung</h2>
+          </div>
+          <div class="orders-management" id="ordersManagement">
+            <!-- Auftrags-Verwaltung wird hier dynamisch eingefügt -->
+          </div>
+        </div>
+
+        <!-- Gehaltsabrechnungen Section -->
+        <div id="payroll-section" class="content-section">
+          <div class="section-title">
+            <h2>💰 Gehaltsabrechnungen</h2>
+          </div>
+          
+          <!-- Upload-Formular -->
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <h3>Gehaltsabrechnung hochladen</h3>
+            </div>
+            <div class="dashboard-card-body">
+              <form id="payrollUploadForm" class="form-grid">
+                <div class="form-group">
+                  <label for="payrollDriver">Fahrer auswählen</label>
+                  <select id="payrollDriver" required>
+                    <option value="">Bitte wählen...</option>
+                    <!-- Fahrer werden dynamisch geladen -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="payrollMonth">Monat</label>
+                  <input type="month" id="payrollMonth" required>
+                </div>
+                <div class="form-group">
+                  <label for="payrollAmount">Bruttobetrag (€)</label>
+                  <input type="number" id="payrollAmount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label for="payrollFile">Abrechnungsdatei (PDF)</label>
+                  <input type="file" id="payrollFile" accept=".pdf" required>
+                </div>
+                <div class="form-group full-width">
+                  <label for="payrollNotes">Notizen</label>
+                  <textarea id="payrollNotes" placeholder="Zusätzliche Informationen..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                  <button type="submit" class="btn-primary">Abrechnung hochladen</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Übersicht der Abrechnungen -->
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <h3>Hochgeladene Abrechnungen</h3>
+              <div class="section-controls">
+                <input type="text" id="payrollSearchInput" placeholder="Suche nach Fahrer oder Monat..." class="search-input">
+                <button id="refreshPayrollBtn" class="action-btn">🔄 Aktualisieren</button>
+              </div>
+            </div>
+            <div class="dashboard-card-body">
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Fahrer</th>
+                      <th>Monat</th>
+                      <th>Bruttobetrag</th>
+                      <th>Hochgeladen am</th>
+                      <th>Notizen</th>
+                      <th>Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody id="payrollTableBody">
+                    <!-- Abrechnungen werden dynamisch geladen -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+
+    <script type="module">
+      // Firebase SDK v9+ modular imports
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+      import { 
+        getFirestore, 
+        collection, 
+        query, 
+        where, 
+        getDocs, 
+        doc, 
+        getDoc, 
+        onSnapshot,
+        orderBy,
+        limit,
+        addDoc, 
+        updateDoc,
+        deleteDoc,
+        serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+      import { 
+        getStorage, 
+        ref, 
+        listAll, 
+        getDownloadURL, 
+        getMetadata,
+        deleteObject 
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyC_KAYTuhfjpASvzvI1zgdNam7BzliB3mM",
+        authDomain: "appnorthdrive.firebaseapp.com",
+        projectId: "appnorthdrive",
+        storageBucket: "appnorthdrive.firebasestorage.app",
+        messagingSenderId: "559746363897",
+        appId: "1:559746363897:web:959bffc6e2f374e5448d28",
+        measurementId: "G-ZSJL11E70J"
+      };
+
+      // Initialize Firebase
+      let app = null;
+      let auth = null;
+      let db = null;
+      let storage = null;
+
+      try {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        storage = getStorage(app);
+        console.log("Firebase erfolgreich initialisiert");
+      } catch (error) {
+        console.error("Fehler bei der Firebase-Initialisierung:", error);
+        alert("Fehler bei der Firebase-Initialisierung: " + error.message);
+      }
+
+      // DOM Elements
+      const userNameElement = document.getElementById('userName');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const ordersTableBody = document.getElementById('ordersTableBody');
+      const driverList = document.getElementById('driverList');
+      const notificationList = document.getElementById('notificationList');
+      const newOrderBtn = document.getElementById('newOrderBtn');
+      const addDriverBtn = document.getElementById('addDriverBtn');
+      const generateReportBtn = document.getElementById('generateReportBtn');
+      const chartPeriod = document.getElementById('chartPeriod');
+      
+      // Whitelist-Verwaltung Elemente
+      const whitelistForm = document.getElementById('whitelistForm');
+      const whitelistTableBody = document.getElementById('whitelistTableBody');
+      let unsubscribeWhitelist = null;
+
+      // Check if user is logged in
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          // User is signed in
+          try {
+            // Get user data from Firestore
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              
+              // Check if user is a manager
+              if (userData.role !== 'manager') {
+                alert("Sie haben keine Berechtigung für den Manager-Bereich.");
+                window.location.href = "login.html";
+                return;
+              }
+              
+              // Letzten Login aktualisieren
+              try {
+                await updateDoc(doc(db, "users", user.uid), {
+                  lastLogin: serverTimestamp()
+                });
+                console.log("Letzter Login aktualisiert (Manager-Dashboard)");
+              } catch (updateError) {
+                console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+              }
+              
+              // Display user name
+              userNameElement.textContent = userData.displayName || userData.name || user.email || "Manager";
+              userNameElement.classList.remove('loading-name');
+              
+              // Load dashboard data
+              loadDashboardStats();
+              loadOrders();
+              loadDrivers();
+              loadNotifications();
+              initializeWhitelistListener(); // Whitelist-Daten laden
+              loadPayrollDrivers(); // Fahrer für Payroll-Dropdown vorladen
+            } else {
+              console.error("Keine Benutzerdaten gefunden");
+              window.location.href = "login.html";
+            }
+          } catch (error) {
+            console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+            alert("Fehler beim Abrufen der Benutzerdaten: " + error.message);
+          }
+        } else {
+          // User is signed out, redirect to login page
+          window.location.href = "login.html";
+        }
+      });
+
+      // Whitelist-Formular Handler
+      whitelistForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const role = document.getElementById('role').value;
+        const notes = document.getElementById('notes').value;
+
+        try {
+          await addDoc(collection(db, "whitelist"), {
+            email: email.toLowerCase(),
+            role: role,
+            notes: notes,
+            status: 'active',
+            createdAt: serverTimestamp()
+          });
+
+          // Formular zurücksetzen
+          whitelistForm.reset();
+          alert('E-Mail-Adresse erfolgreich zur Whitelist hinzugefügt!');
+        } catch (error) {
+          console.error("Fehler beim Hinzufügen zur Whitelist:", error);
+          alert('Fehler beim Hinzufügen zur Whitelist. Bitte versuchen Sie es erneut.');
+        }
+      });
+
+      // Whitelist-Tabelle Listener
+      function initializeWhitelistListener() {
+        if (unsubscribeWhitelist) {
+          unsubscribeWhitelist();
+        }
+
+        const whitelistQuery = query(collection(db, "whitelist"));
+        unsubscribeWhitelist = onSnapshot(whitelistQuery, (snapshot) => {
+          whitelistTableBody.innerHTML = '';
+          
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            const tr = document.createElement('tr');
+            
+            const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt';
+            
+            tr.innerHTML = `
+              <td>${data.email}</td>
+              <td>${translateRole(data.role)}</td>
+              <td>
+                <span class="status-badge ${data.status === 'active' ? 'status-active' : 'status-inactive'}">
+                  ${data.status === 'active' ? 'Aktiv' : 'Inaktiv'}
+                </span>
+              </td>
+              <td>${createdAt}</td>
+              <td>${data.notes || '-'}</td>
+              <td class="action-buttons">
+                <button class="btn-action btn-toggle" onclick="toggleWhitelistStatus('${doc.id}', '${data.status}')">
+                  ${data.status === 'active' ? 'Deaktivieren' : 'Aktivieren'}
+                </button>
+                <button class="btn-action btn-delete" onclick="deleteWhitelistEntry('${doc.id}')">
+                  Löschen
+                </button>
+              </td>
+            `;
+            
+            whitelistTableBody.appendChild(tr);
+          });
+        });
+      }
+
+      // Hilfsfunktion zum Übersetzen der Rollen
+      function translateRole(role) {
+        const roles = {
+          'driver': 'Fahrer',
+          'client': 'Auftraggeber',
+          'manager': 'Manager'
+        };
+        return roles[role] || role;
+      }
+
+      // Whitelist-Funktionen global verfügbar machen
+      window.toggleWhitelistStatus = async (docId, currentStatus) => {
+        try {
+          const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+          await updateDoc(doc(db, "whitelist", docId), {
+            status: newStatus
+          });
+        } catch (error) {
+          console.error("Fehler beim Ändern des Status:", error);
+          alert('Fehler beim Ändern des Status. Bitte versuchen Sie es erneut.');
+        }
+      };
+
+      window.deleteWhitelistEntry = async (docId) => {
+        if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
+          try {
+            await deleteDoc(doc(db, "whitelist", docId));
+          } catch (error) {
+            console.error("Fehler beim Löschen des Eintrags:", error);
+            alert('Fehler beim Löschen des Eintrags. Bitte versuchen Sie es erneut.');
+          }
+        }
+      };
+
+      // Logout-Funktion
+      logoutBtn.addEventListener('click', () => {
+        signOut(auth).then(() => {
+          window.location.href = 'login.html';
+        }).catch((error) => {
+          console.error("Fehler beim Abmelden:", error);
+        });
+      });
+
+      // Load orders
+      function loadOrders() {
+        try {
+          // Aktuelle Routen abfragen (die letzten 5)
+          const routesQuery = query(
+            collection(db, "routes"),
+            orderBy("createdAt", "desc"),
+            limit(5)
+          );
+          
+          // Echtzeit-Listener für Routen
+          onSnapshot(routesQuery, async (snapshot) => {
+            if (snapshot.empty) {
+              ordersTableBody.innerHTML = `
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 2rem;">
+                    Keine Aufträge gefunden.
+                  </td>
+                </tr>
+              `;
+              return;
+            }
+            
+            // HTML für jeden Auftrag generieren
+            let ordersHTML = '';
+            const ordersPromises = snapshot.docs.map(async (doc) => {
+              const orderData = doc.data();
+              const orderId = doc.id;
+              
+              // Kundendaten abrufen
+              let customerName = "Unbekannter Kunde";
+              if (orderData.clientId) {
+                try {
+                  const clientDoc = await getDoc(doc(db, "users", orderData.clientId));
+                  if (clientDoc.exists()) {
+                    const clientData = clientDoc.data();
+                    customerName = clientData.displayName || clientData.name || clientData.email || "Unbekannter Kunde";
+                  }
+                } catch (error) {
+                  console.error("Fehler beim Abrufen der Kundendaten:", error);
+                }
+              }
+              
+              // Fahrerdaten abrufen
+              let driverName = "Nicht zugewiesen";
+              if (orderData.driverId) {
+                try {
+                  const driverDoc = await getDoc(doc(db, "users", orderData.driverId));
+                  if (driverDoc.exists()) {
+                    const driverData = driverDoc.data();
+                    driverName = driverData.displayName || driverData.name || driverData.email || "Unbekannter Fahrer";
+                  }
+                } catch (error) {
+                  console.error("Fehler beim Abrufen der Fahrerdaten:", error);
+                }
+              }
+              
+              // Route erstellen
+              const pickupLocation = orderData.pickupLocation || "Unbekannt";
+              const deliveryLocation = orderData.deliveryLocation || "Unbekannt";
+              const route = `${pickupLocation} → ${deliveryLocation}`;
+              
+              // Status-Badge erstellen
+              let statusBadge = '';
+              let statusText = '';
+              switch(orderData.status) {
+                case 'available':
+                  statusBadge = '<span class="status-badge pending">Ausstehend</span>';
+                  statusText = 'Ausstehend';
+                  break;
+                case 'assigned':
+                  statusBadge = '<span class="status-badge in-progress">In Bearbeitung</span>';
+                  statusText = 'In Bearbeitung';
+                  break;
+                case 'completed':
+                  statusBadge = '<span class="status-badge completed">Abgeschlossen</span>';
+                  statusText = 'Abgeschlossen';
+                  break;
+                case 'cancelled':
+                  statusBadge = '<span class="status-badge cancelled">Storniert</span>';
+                  statusText = 'Storniert';
+                  break;
+                default:
+                  statusBadge = '<span class="status-badge pending">Ausstehend</span>';
+                  statusText = 'Ausstehend';
+              }
+              
+              return `
+                <tr>
+                  <td>ORD-${orderId.substring(0, 6)}</td>
+                  <td>${customerName}</td>
+                  <td>${route}</td>
+                  <td>${driverName}</td>
+                  <td>${statusBadge}</td>
+                </tr>
+              `;
+            });
+            
+            // Alle Aufträge laden und HTML aktualisieren
+            const ordersHTMLArray = await Promise.all(ordersPromises);
+            ordersTableBody.innerHTML = ordersHTMLArray.join('');
+            
+          }, (error) => {
+            console.error("Fehler beim Laden der Aufträge:", error);
+            ordersTableBody.innerHTML = `
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem;">
+                  Fehler beim Laden der Aufträge. Bitte versuchen Sie es später erneut.
+                </td>
+              </tr>
+            `;
+          });
+          
+        } catch (error) {
+          console.error("Fehler beim Laden der Aufträge:", error);
+          ordersTableBody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem;">
+                Fehler beim Laden der Aufträge. Bitte versuchen Sie es später erneut.
+              </td>
+            </tr>
+          `;
+        }
+      }
+
+      // Load drivers
+      function loadDrivers() {
+        try {
+          // Fahrer abfragen (die letzten 5)
+          const driversQuery = query(
+            collection(db, "users"),
+            where("role", "==", "driver"),
+            limit(5)
+          );
+          
+          // Echtzeit-Listener für Fahrer
+          onSnapshot(driversQuery, (snapshot) => {
+            if (snapshot.empty) {
+              driverList.innerHTML = `
+                <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                  <p style="color: var(--text-color-secondary); font-size: 1rem;">Keine Fahrer gefunden.</p>
+                </div>
+              `;
+              return;
+            }
+            
+            // HTML für jeden Fahrer generieren
+            let driversHTML = '';
+            snapshot.forEach(doc => {
+              const driverData = doc.data();
+              const driverId = doc.id;
+              
+              // Name und Initialen erstellen
+              const fullName = `${driverData.firstName || ''} ${driverData.lastName || ''}`.trim();
+              const displayName = fullName || driverData.displayName || driverData.email || "Unbekannter Fahrer";
+              const initials = fullName ? 
+                `${driverData.firstName?.[0] || ''}${driverData.lastName?.[0] || ''}` : 
+                displayName.split(' ').map(n => n[0]).join('').substring(0, 2);
+              
+              // Status bestimmen
+              const driverStatus = driverData.status || "available";
+              const statusClass = driverStatus === 'available' ? 'available' : 'busy';
+              const statusText = driverStatus === 'available' ? 'Verfügbar' : 'Beschäftigt';
+              
+              // Standort (falls vorhanden)
+              let locationText = driverData.currentLocation || driverData.address || "Standort unbekannt";
+              
+              driversHTML += `
+                <div class="driver-preview-card">
+                  <div class="driver-status-badge ${statusClass}">${statusText}</div>
+                  <div class="driver-preview-header">
+                    <div class="driver-avatar">${initials}</div>
+                    <div class="driver-info">
+                      <div class="driver-name">${displayName}</div>
+                      <div class="driver-email">${driverData.email}</div>
+                    </div>
+                  </div>
+                  <div class="driver-location">${locationText}</div>
+                </div>
+              `;
+            });
+            
+            driverList.innerHTML = driversHTML;
+            
+          }, (error) => {
+            console.error("Fehler beim Laden der Fahrer:", error);
+            driverList.innerHTML = `
+              <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                <p style="color: #dc3545; font-size: 1rem;">⚠️ Fehler beim Laden der Fahrer. Bitte versuchen Sie es später erneut.</p>
+              </div>
+            `;
+          });
+          
+        } catch (error) {
+          console.error("Fehler beim Laden der Fahrer:", error);
+          driverList.innerHTML = `
+            <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+              <p style="color: #dc3545; font-size: 1rem;">⚠️ Fehler beim Laden der Fahrer. Bitte versuchen Sie es später erneut.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Load notifications
+      function loadNotifications() {
+        try {
+          // Benachrichtigungen abfragen (die letzten 5)
+          const notificationsQuery = query(
+            collection(db, "notifications"),
+            orderBy("timestamp", "desc"),
+            limit(5)
+          );
+          
+          // Echtzeit-Listener für Benachrichtigungen
+          onSnapshot(notificationsQuery, (snapshot) => {
+            if (snapshot.empty) {
+              notificationList.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                  Keine Benachrichtigungen vorhanden.
+                </div>
+              `;
+              return;
+            }
+            
+            // HTML für jede Benachrichtigung generieren
+            let notificationsHTML = '';
+            snapshot.forEach(doc => {
+              const notificationData = doc.data();
+              
+              // Zeitstempel formatieren
+              let timeText = "Gerade eben";
+              if (notificationData.timestamp) {
+                const timestamp = notificationData.timestamp.toDate();
+                const now = new Date();
+                const diffMs = now - timestamp;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                if (diffDays > 0) {
+                  timeText = `Vor ${diffDays} ${diffDays === 1 ? 'Tag' : 'Tagen'}`;
+                } else if (diffHours > 0) {
+                  timeText = `Vor ${diffHours} ${diffHours === 1 ? 'Stunde' : 'Stunden'}`;
+                } else if (diffMins > 0) {
+                  timeText = `Vor ${diffMins} ${diffMins === 1 ? 'Minute' : 'Minuten'}`;
+                }
+              }
+              
+              notificationsHTML += `
+                <div class="notification-item">
+                  <div class="notification-title">${notificationData.title || 'Benachrichtigung'}</div>
+                  <div class="notification-message">${notificationData.message || 'Keine Nachricht'}</div>
+                  <div class="notification-time">${timeText}</div>
+                </div>
+              `;
+            });
+            
+            notificationList.innerHTML = notificationsHTML;
+            
+          }, (error) => {
+            console.error("Fehler beim Laden der Benachrichtigungen:", error);
+            notificationList.innerHTML = `
+              <div style="text-align: center; padding: 2rem;">
+                Fehler beim Laden der Benachrichtigungen. Bitte versuchen Sie es später erneut.
+              </div>
+            `;
+          });
+          
+        } catch (error) {
+          console.error("Fehler beim Laden der Benachrichtigungen:", error);
+          notificationList.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+              Fehler beim Laden der Benachrichtigungen. Bitte versuchen Sie es später erneut.
+            </div>
+          `;
+        }
+      }
+
+      // Dashboard-Statistiken laden
+      function loadDashboardStats() {
+        // Aktive Routen (assigned)
+        const activeRoutesQuery = query(
+          collection(db, "routes"),
+          where("status", "==", "assigned")
+        );
+        
+        // Verfügbare Fahrer (ohne aktiven Auftrag)
+        const availableDriversQuery = query(
+          collection(db, "users"),
+          where("role", "==", "driver"),
+          where("status", "==", "available")
+        );
+        
+        // Offene Routen (available)
+        const availableRoutesQuery = query(
+          collection(db, "routes"),
+          where("status", "==", "available")
+        );
+        
+        // Abgeschlossene Routen
+        const completedRoutesQuery = query(
+          collection(db, "routes"),
+          where("status", "==", "completed")
+        );
+        
+        // Echtzeit-Listener für aktive Routen
+        onSnapshot(activeRoutesQuery, (snapshot) => {
+          const count = snapshot.size;
+          activeOrdersValue.textContent = count;
+          activeOrdersChange.textContent = count === 1 ? "Aktiver Auftrag" : "Aktive Aufträge";
+        }, (error) => {
+          console.error("Fehler beim Laden der aktiven Routen:", error);
+          activeOrdersValue.textContent = "-";
+          activeOrdersChange.textContent = "Fehler beim Laden";
+        });
+        
+        // Echtzeit-Listener für verfügbare Fahrer
+        onSnapshot(availableDriversQuery, (snapshot) => {
+          const count = snapshot.size;
+          availableDriversValue.textContent = count;
+          availableDriversChange.textContent = count === 1 ? "Verfügbarer Fahrer" : "Verfügbare Fahrer";
+        }, (error) => {
+          console.error("Fehler beim Laden der verfügbaren Fahrer:", error);
+          availableDriversValue.textContent = "-";
+          availableDriversChange.textContent = "Fehler beim Laden";
+        });
+        
+        // Echtzeit-Listener für offene Routen
+        onSnapshot(availableRoutesQuery, (snapshot) => {
+          const count = snapshot.size;
+          availableOrdersValue.textContent = count;
+          availableOrdersChange.textContent = count === 1 ? "Offener Auftrag" : "Offene Aufträge";
+        }, (error) => {
+          console.error("Fehler beim Laden der offenen Routen:", error);
+          availableOrdersValue.textContent = "-";
+          availableOrdersChange.textContent = "Fehler beim Laden";
+        });
+        
+        // Echtzeit-Listener für abgeschlossene Routen
+        onSnapshot(completedRoutesQuery, (snapshot) => {
+          const count = snapshot.size;
+          completedOrdersValue.textContent = count;
+          
+          // Letzten Monat berechnen (für die Änderungsanzeige)
+          const oneMonthAgo = new Date();
+          oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+          
+          // Zählen, wie viele Routen im letzten Monat abgeschlossen wurden
+          let lastMonthCount = 0;
+          snapshot.forEach(doc => {
+            const completedAt = doc.data().completedAt?.toDate();
+            if (completedAt && completedAt > oneMonthAgo) {
+              lastMonthCount++;
+            }
+          });
+          
+          completedOrdersChange.textContent = `+${lastMonthCount} im letzten Monat`;
+        }, (error) => {
+          console.error("Fehler beim Laden der abgeschlossenen Routen:", error);
+          completedOrdersValue.textContent = "-";
+          completedOrdersChange.textContent = "Fehler beim Laden";
+        });
+      }
+
+      // Button event listeners
+      newOrderBtn.addEventListener('click', () => {
+        alert('Funktion zum Erstellen eines neuen Auftrags wird geöffnet.');
+      });
+
+      addDriverBtn.addEventListener('click', () => {
+        alert('Funktion zum Hinzufügen eines neuen Fahrers wird geöffnet.');
+      });
+
+      generateReportBtn.addEventListener('click', () => {
+        alert('Funktion zum Erstellen eines Berichts wird geöffnet.');
+      });
+
+      // Chart period change
+      chartPeriod.addEventListener('change', () => {
+        alert(`Diagramm wird für Zeitraum "${chartPeriod.options[chartPeriod.selectedIndex].text}" aktualisiert.`);
+        // In a real application, you would update the chart here
+      });
+
+      // Navigation zwischen Sektionen
+      document.querySelectorAll('.sidebar-menu a[data-section]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          // Aktive Klasse von allen Links entfernen
+          document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+          
+          // Aktive Klasse zum geklickten Link hinzufügen
+          e.target.classList.add('active');
+          
+          // Alle Sektionen ausblenden
+          document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+          });
+          
+          // Gewählte Sektion einblenden
+          const sectionId = e.target.getAttribute('data-section');
+          document.getElementById(sectionId).classList.add('active');
+          
+          // Whitelist-Daten laden, wenn Whitelist-Sektion aktiviert wird
+          if (sectionId === 'whitelist-section') {
+            initializeWhitelistListener();
+          }
+
+
+
+          // Omni-Ansicht laden, wenn Omni-Sektion aktiviert wird
+          if (sectionId === 'omni-section') {
+            loadOmniView();
+          }
+          
+          // Payroll-Sektion laden, wenn sie aktiviert wird
+          if (sectionId === 'payroll-section') {
+            initializePayrollSection();
+          }
+          
+                
+        });
+      });
+
+
+
+      // Omni-Ansicht laden
+      async function loadOmniView() {
+        console.log("Lade Omni-Ansicht...");
+        
+        // Statistiken laden
+        await loadOmniStats();
+        
+        // Benutzer-Daten laden
+        await loadAllUsers();
+        
+        // Aufträge laden
+        await loadAllOrders();
+        
+        // Dokumente laden
+        await loadAllDocuments();
+        
+        // Tab-Funktionalität initialisieren
+        initializeOmniTabs();
+        
+        // Suchfunktionalität initialisieren
+        initializeOmniSearch();
+      }
+
+      // Omni-Statistiken laden
+      async function loadOmniStats() {
+        try {
+          // Alle Benutzer zählen
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          document.getElementById('totalUsersValue').textContent = usersSnapshot.size;
+          
+          // Fahrer zählen
+          const driversQuery = query(collection(db, "users"), where("role", "==", "driver"));
+          const driversSnapshot = await getDocs(driversQuery);
+          document.getElementById('totalDriversValue').textContent = driversSnapshot.size;
+          
+          // Auftraggeber zählen
+          const clientsQuery = query(collection(db, "users"), where("role", "==", "client"));
+          const clientsSnapshot = await getDocs(clientsQuery);
+          document.getElementById('totalClientsValue').textContent = clientsSnapshot.size;
+          
+          // Routen zählen
+          const routesSnapshot = await getDocs(collection(db, "routes"));
+          document.getElementById('totalOrdersValue').textContent = routesSnapshot.size;
+          
+          // Dokumente zählen
+          const documentsSnapshot = await getDocs(collection(db, "driver_documents"));
+          document.getElementById('totalDocumentsValue').textContent = documentsSnapshot.size;
+          
+        } catch (error) {
+          console.error("Fehler beim Laden der Omni-Statistiken:", error);
+        }
+      }
+
+      // Alle Benutzer laden
+      async function loadAllUsers() {
+        try {
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          const usersTableBody = document.getElementById('usersTableBody');
+          usersTableBody.innerHTML = '';
+          
+          usersSnapshot.forEach(doc => {
+            const userData = doc.data();
+            const tr = document.createElement('tr');
+            
+            const registeredAt = userData.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt';
+            const lastLogin = userData.lastLogin ? new Date(userData.lastLogin.seconds * 1000).toLocaleString('de-DE') : 'Nie';
+            
+            tr.innerHTML = `
+              <td>${doc.id.substring(0, 8)}...</td>
+              <td>${userData.email}</td>
+              <td>${userData.firstName || ''} ${userData.lastName || ''}</td>
+              <td><span class="status-badge ${userData.role}">${translateRole(userData.role)}</span></td>
+              <td>${registeredAt}</td>
+              <td>${lastLogin}</td>
+              <td><span class="status-badge ${userData.status || 'active'}">${userData.status === 'inactive' ? 'Inaktiv' : 'Aktiv'}</span></td>
+              <td>
+                <button class="action-btn-small view" onclick="viewUserDetails('${doc.id}')">👁️</button>
+                <button class="action-btn-small edit" onclick="editUser('${doc.id}')">✏️</button>
+                <button class="action-btn-small delete" onclick="deleteUser('${doc.id}')">🗑️</button>
+              </td>
+            `;
+            
+            usersTableBody.appendChild(tr);
+          });
+        } catch (error) {
+          console.error("Fehler beim Laden der Benutzer:", error);
+        }
+      }
+
+      // Alle Routen laden
+      async function loadAllOrders() {
+        try {
+          const routesSnapshot = await getDocs(collection(db, "routes"));
+          const ordersTableBody = document.getElementById('ordersTableBodyOmni');
+          ordersTableBody.innerHTML = '';
+          
+          routesSnapshot.forEach(doc => {
+            const routeData = doc.data();
+            const tr = document.createElement('tr');
+            
+            const createdAt = routeData.createdAt ? new Date(routeData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt';
+            const price = routeData.price ? `${routeData.price.toFixed(2)} €` : 'N/A';
+            
+            tr.innerHTML = `
+              <td>${doc.id.substring(0, 8)}...</td>
+              <td>${routeData.title || 'Unbekannt'}</td>
+              <td>${routeData.customerEmail || 'Unbekannt'}</td>
+              <td>${routeData.driverEmail || 'Nicht zugewiesen'}</td>
+              <td><span class="status-badge ${routeData.status}">${translateOrderStatus(routeData.status)}</span></td>
+              <td>${price}</td>
+              <td>${createdAt}</td>
+              <td>
+                <button class="action-btn-small view" onclick="viewOrderDetails('${doc.id}')">👁️</button>
+                <button class="action-btn-small edit" onclick="editOrder('${doc.id}')">✏️</button>
+                <button class="action-btn-small delete" onclick="deleteOrder('${doc.id}')">🗑️</button>
+              </td>
+            `;
+            
+            ordersTableBody.appendChild(tr);
+          });
+        } catch (error) {
+          console.error("Fehler beim Laden der Routen:", error);
+        }
+      }
+
+      // Alle Dokumente laden (für Omni-Ansicht)
+      async function loadAllDocuments() {
+        try {
+          // Verwende die gleiche Logik wie loadDocumentsView
+          const allDocuments = [];
+          
+          // Aus Firebase Storage laden
+          const storageBasePath = 'driver_documents/';
+          const storageRef = ref(storage, storageBasePath);
+          
+          try {
+            const storageList = await listAll(storageRef);
+            
+            for (const userPrefix of storageList.prefixes) {
+              const userFolderList = await listAll(userPrefix);
+              
+              for (const typePrefix of userFolderList.prefixes) {
+                const typeList = await listAll(typePrefix);
+                
+                for (const fileRef of typeList.items) {
+                  try {
+                    const downloadURL = await getDownloadURL(fileRef);
+                    const metadata = await getMetadata(fileRef);
+                    
+                    allDocuments.push({
+                      id: fileRef.fullPath,
+                      name: fileRef.name,
+                      originalName: fileRef.name,
+                      type: typePrefix.name,
+                      downloadURL: downloadURL,
+                      storagePath: fileRef.fullPath,
+                      fileSize: metadata.size,
+                      uploadedAt: new Date(metadata.timeCreated),
+                      userId: userPrefix.name,
+                      source: 'storage'
+                    });
+                  } catch (fileError) {
+                    console.warn(`Fehler beim Laden von ${fileRef.name}:`, fileError);
+                  }
+                }
+              }
+            }
+          } catch (storageError) {
+            console.warn("Fehler beim Laden aus Storage:", storageError);
+          }
+          
+          // Aus Firestore laden
+          const documentsSnapshot = await getDocs(collection(db, "driver_documents"));
+          
+          documentsSnapshot.forEach(doc => {
+            const docData = doc.data();
+            const existsInStorage = allDocuments.find(d => 
+              d.storagePath === docData.storagePath || 
+              d.downloadURL === docData.downloadURL
+            );
+            
+            if (!existsInStorage) {
+              allDocuments.push({
+                id: doc.id,
+                name: docData.originalName || docData.fileName,
+                type: docData.type,
+                downloadURL: docData.downloadURL,
+                storagePath: docData.storagePath,
+                fileSize: docData.fileSize,
+                uploadedAt: docData.uploadedAt?.toDate?.() || new Date(docData.uploadedAt),
+                userId: docData.userId,
+                source: 'firestore'
+              });
+            }
+          });
+          
+          // Statistiken berechnen
+          let counts = { fuehrerschein: 0, personalausweis: 0, fuehrungszeugnis: 0 };
+          allDocuments.forEach(doc => {
+            if (doc.type === 'fuehrerschein') counts.fuehrerschein++;
+            else if (doc.type === 'personalausweis') counts.personalausweis++;
+            else if (doc.type === 'fuehrungszeugnis') counts.fuehrungszeugnis++;
+          });
+          
+          // Omni-Statistiken aktualisieren
+          document.getElementById('totalDocumentsCountOmni').textContent = allDocuments.length;
+          document.getElementById('fuehrerscheinCountOmni').textContent = counts.fuehrerschein;
+          document.getElementById('personalausweisCountOmni').textContent = counts.personalausweis;
+          document.getElementById('fuehrungszeugnis-CountOmni').textContent = counts.fuehrungszeugnis;
+          
+          // Tabelle befüllen
+          const documentsTableBody = document.getElementById('documentsTableBody');
+          documentsTableBody.innerHTML = '';
+          
+          if (allDocuments.length === 0) {
+            documentsTableBody.innerHTML = `
+              <tr><td colspan="6" style="text-align: center; padding: 2rem;">Keine Dokumente gefunden.</td></tr>
+            `;
+            return;
+          }
+          
+          // Sortieren
+          allDocuments.sort((a, b) => {
+            const timeA = a.uploadedAt instanceof Date ? a.uploadedAt.getTime() : 0;
+            const timeB = b.uploadedAt instanceof Date ? b.uploadedAt.getTime() : 0;
+            return timeB - timeA;
+          });
+          
+          // Tabelle befüllen
+          for (const docData of allDocuments) {
+            const tr = document.createElement('tr');
+            
+            let userName = 'Unbekannt';
+            if (docData.userId) {
+              try {
+                const userDoc = await getDoc(doc(db, "users", docData.userId));
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.email || 'Unbekannt';
+                } else {
+                  userName = `User: ${docData.userId.substring(0, 8)}...`;
+                }
+              } catch (error) {
+                userName = `User: ${docData.userId.substring(0, 8)}...`;
+              }
+            }
+            
+            const uploadedAt = docData.uploadedAt instanceof Date ? 
+              docData.uploadedAt.toLocaleDateString('de-DE') : 'Unbekannt';
+            const fileSize = docData.fileSize ? formatFileSize(docData.fileSize) : 'Unbekannt';
+            
+            tr.innerHTML = `
+              <td>
+                ${docData.name}
+                <br><small style="color: var(--text-color-secondary);">${docData.source === 'storage' ? '📦 Storage' : '🗃️ Firestore'}</small>
+              </td>
+              <td>${userName}</td>
+              <td><span class="status-badge ${docData.type}">${translateDocumentType(docData.type)}</span></td>
+              <td>${fileSize}</td>
+              <td>${uploadedAt}</td>
+              <td>
+                <button class="action-btn-small view" onclick="downloadDocument('${docData.downloadURL}', '${docData.name}')">📥</button>
+                <button class="action-btn-small delete" onclick="deleteDocument('${docData.id}', '${docData.storagePath}')">🗑️</button>
+              </td>
+            `;
+            
+            documentsTableBody.appendChild(tr);
+          }
+        } catch (error) {
+          console.error("Fehler beim Laden der Dokumente:", error);
+        }
+      }
+
+      // Tab-Funktionalität initialisieren
+      function initializeOmniTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            // Alle Tabs deaktivieren
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Aktiven Tab aktivieren
+            btn.classList.add('active');
+            const tabId = btn.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+          });
+        });
+      }
+
+      // Suchfunktionalität initialisieren
+      function initializeOmniSearch() {
+        // Benutzer-Suche
+        const userSearchInput = document.getElementById('userSearchInput');
+        userSearchInput.addEventListener('input', (e) => {
+          filterTable('usersTableBody', e.target.value);
+        });
+        
+        // Aufträge-Suche
+        const orderSearchInput = document.getElementById('orderSearchInput');
+        orderSearchInput.addEventListener('input', (e) => {
+          filterTable('ordersTableBodyOmni', e.target.value);
+        });
+        
+        // Dokumente-Suche
+        const documentSearchInput = document.getElementById('documentSearchInput');
+        documentSearchInput.addEventListener('input', (e) => {
+          filterTable('documentsTableBody', e.target.value);
+        });
+      }
+
+      // Tabelle filtern
+      function filterTable(tableBodyId, searchTerm) {
+        const tableBody = document.getElementById(tableBodyId);
+        const rows = tableBody.getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const text = row.textContent || row.innerText;
+          
+          if (text.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      }
+
+      // Hilfsfunktionen
+      function translateOrderStatus(status) {
+        const statuses = {
+          'available': 'Verfügbar',
+          'assigned': 'Zugewiesen',
+          'in_progress': 'In Bearbeitung',
+          'completed': 'Abgeschlossen',
+          'cancelled': 'Storniert'
+        };
+        return statuses[status] || status;
+      }
+
+      function translateDocumentType(type) {
+        const types = {
+          'fuehrerschein': 'Führerschein',
+          'fuehrungszeugnis': 'Führungszeugnis',
+          'personalausweis': 'Personalausweis'
+        };
+        return types[type] || type;
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // Globale Funktionen für Aktionen
+      window.viewUserDetails = async function(userId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", userId));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            showUserDetailsModal(userId, userData);
+          } else {
+            alert('Benutzer nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Benutzer-Details:', error);
+          alert('Fehler beim Laden der Benutzer-Details');
+        }
+      };
+
+      window.editUser = async function(userId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", userId));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            showEditUserModal(userId, userData);
+          } else {
+            alert('Benutzer nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Benutzer-Daten:', error);
+          alert('Fehler beim Laden der Benutzer-Daten');
+        }
+      };
+
+      window.deleteUser = async function(userId) {
+        if (confirm('Möchten Sie diesen Benutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+          try {
+            await deleteDoc(doc(db, "users", userId));
+            alert('Benutzer erfolgreich gelöscht');
+            loadAllUsers(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Löschen des Benutzers:', error);
+            alert('Fehler beim Löschen des Benutzers');
+          }
+        }
+      };
+
+      window.viewOrderDetails = async function(orderId) {
+        try {
+          const orderDoc = await getDoc(doc(db, "orders", orderId));
+          if (orderDoc.exists()) {
+            const orderData = orderDoc.data();
+            showOrderDetailsModal(orderId, orderData);
+          } else {
+            alert('Auftrag nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Auftrags-Details:', error);
+          alert('Fehler beim Laden der Auftrags-Details');
+        }
+      };
+
+      window.editOrder = async function(orderId) {
+        try {
+          const orderDoc = await getDoc(doc(db, "orders", orderId));
+          if (orderDoc.exists()) {
+            const orderData = orderDoc.data();
+            showEditOrderModal(orderId, orderData);
+          } else {
+            alert('Auftrag nicht gefunden');
+          }
+        } catch (error) {
+          console.error('Fehler beim Laden der Auftrags-Daten:', error);
+          alert('Fehler beim Laden der Auftrags-Daten');
+        }
+      };
+
+      window.deleteOrder = async function(orderId) {
+        if (confirm('Möchten Sie diesen Auftrag wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+          try {
+            await deleteDoc(doc(db, "orders", orderId));
+            alert('Auftrag erfolgreich gelöscht');
+            loadAllOrders(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Löschen des Auftrags:', error);
+            alert('Fehler beim Löschen des Auftrags');
+          }
+        }
+      };
+
+      window.downloadDocument = function(url, filename) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      window.deleteDocument = async function(docId, storagePath) {
+        if (!confirm('Möchten Sie dieses Dokument wirklich löschen?')) {
+          return;
+        }
+        
+        try {
+          let deletedFromStorage = false;
+          let deletedFromFirestore = false;
+          
+          // Aus Firebase Storage löschen falls storagePath vorhanden
+          if (storagePath) {
+            try {
+              const storageRef = ref(storage, storagePath);
+              await deleteObject(storageRef);
+              deletedFromStorage = true;
+              console.log("Dokument aus Storage gelöscht");
+            } catch (storageError) {
+              console.warn("Fehler beim Löschen aus Storage:", storageError);
+            }
+          }
+          
+          // Aus Firestore löschen falls docId vorhanden und nicht nur ein Pfad
+          if (docId && !docId.startsWith('driver_documents/')) {
+            try {
+              await deleteDoc(doc(db, "driver_documents", docId));
+              deletedFromFirestore = true;
+              console.log("Dokument aus Firestore gelöscht");
+            } catch (firestoreError) {
+              console.warn("Fehler beim Löschen aus Firestore:", firestoreError);
+            }
+          }
+          
+          if (deletedFromStorage || deletedFromFirestore) {
+            alert("Dokument erfolgreich gelöscht");
+            // Dokumente neu laden
+            await loadDocumentsView();
+          } else {
+            alert("Dokument konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.");
+          }
+          
+        } catch (error) {
+          console.error("Fehler beim Löschen des Dokuments:", error);
+          alert("Fehler beim Löschen des Dokuments. Bitte versuchen Sie es erneut.");
+        }
+      };
+
+      // Refresh-Button für Omni-Ansicht
+      document.getElementById('refreshOmniBtn').addEventListener('click', () => {
+        loadOmniView();
+      });
+      
+      // Refresh-Button für Omni-Dokumente
+      setTimeout(() => {
+        const refreshOmniBtn = document.getElementById('refreshDocumentsOmniBtn');
+        if (refreshOmniBtn) {
+          refreshOmniBtn.addEventListener('click', () => {
+            console.log("Omni-Dokumente Refresh-Button geklickt");
+            loadAllDocuments();
+          });
+        }
+      }, 100);
+      
+      // Refresh-Button für Dokumente-Ansicht - mit Delay um sicherzustellen, dass DOM geladen ist
+      setTimeout(() => {
+        const refreshBtn = document.getElementById('refreshDocumentsBtn');
+        if (refreshBtn) {
+          refreshBtn.addEventListener('click', () => {
+            console.log("Refresh-Button für Dokumente geklickt");
+            loadDocumentsView();
+          });
+          console.log("Refresh-Button Event Listener hinzugefügt");
+        } else {
+          console.warn("Refresh-Button nicht gefunden - Element existiert nicht");
+        }
+      }, 100);
+      
+      // Suchfunktion für Dokumente
+      document.getElementById('documentsSearchInput').addEventListener('input', (e) => {
+        filterDocumentsTable(e.target.value);
+      });
+      
+      // Globale Funktionen für Tests
+      window.testDocumentsView = function() {
+        console.log("Test-Funktion aufgerufen");
+        loadDocumentsView();
+      };
+      
+      window.testRefreshButton = function() {
+        const refreshBtn = document.getElementById('refreshDocumentsBtn');
+        console.log("Refresh-Button Element:", refreshBtn);
+        if (refreshBtn) {
+          console.log("Button gefunden, simuliere Klick");
+          refreshBtn.click();
+        } else {
+          console.log("Button nicht gefunden");
+        }
+      };
+      
+      // Dokumente-Ansicht laden
+      async function loadDocumentsView() {
+        console.log("Lade Dokumente-Ansicht...");
+        console.log("Firebase DB:", db);
+        console.log("Dokumente-Tabelle Element:", document.getElementById('documentsTableBodyMain'));
+        
+        try {
+          // Alle Dokumente aus Firebase Storage und Firestore laden
+          const allDocuments = [];
+          
+          // Zuerst aus Firebase Storage laden
+          console.log("Lade Dokumente aus Firebase Storage...");
+          const storageBasePath = 'driver_documents/';
+          const storageRef = ref(storage, storageBasePath);
+          
+          try {
+            const storageList = await listAll(storageRef);
+            console.log("Storage-Ordner gefunden:", storageList.prefixes.length);
+            
+            // Für jeden Benutzer-Ordner
+            for (const userPrefix of storageList.prefixes) {
+              console.log("Lade Dokumente für Benutzer:", userPrefix.name);
+              const userFolderList = await listAll(userPrefix);
+              
+              // Für jeden Dokumenttyp-Ordner
+              for (const typePrefix of userFolderList.prefixes) {
+                console.log("Lade Dokumenttyp:", typePrefix.name);
+                const typeList = await listAll(typePrefix);
+                
+                // Für jede Datei
+                for (const fileRef of typeList.items) {
+                  try {
+                    const downloadURL = await getDownloadURL(fileRef);
+                    const metadata = await getMetadata(fileRef);
+                    
+                    allDocuments.push({
+                      id: fileRef.fullPath,
+                      name: fileRef.name,
+                      originalName: fileRef.name,
+                      fileName: fileRef.name,
+                      type: typePrefix.name,
+                      downloadURL: downloadURL,
+                      storagePath: fileRef.fullPath,
+                      fileSize: metadata.size,
+                      uploadedAt: new Date(metadata.timeCreated),
+                      contentType: metadata.contentType,
+                      userId: userPrefix.name,
+                      source: 'storage'
+                    });
+                  } catch (fileError) {
+                    console.warn(`Fehler beim Laden von ${fileRef.name}:`, fileError);
+                  }
+                }
+              }
+            }
+          } catch (storageError) {
+            console.warn("Fehler beim Laden aus Storage:", storageError);
+          }
+          
+          // Aus Firestore laden
+          const documentsSnapshot = await getDocs(collection(db, "driver_documents"));
+          console.log("Dokumente-Snapshot:", documentsSnapshot);
+          console.log("Anzahl Dokumente:", documentsSnapshot.size);
+          
+          // Statistiken werden später berechnet
+          
+          documentsSnapshot.forEach(doc => {
+            const docData = doc.data();
+            
+            // Prüfen, ob diese Datei bereits aus Storage geladen wurde
+            const existsInStorage = allDocuments.find(d => 
+              d.storagePath === docData.storagePath || 
+              d.downloadURL === docData.downloadURL
+            );
+            
+            if (!existsInStorage) {
+              allDocuments.push({
+                id: doc.id,
+                name: docData.originalName || docData.fileName,
+                originalName: docData.originalName || docData.fileName,
+                fileName: docData.fileName,
+                type: docData.type,
+                downloadURL: docData.downloadURL,
+                storagePath: docData.storagePath,
+                fileSize: docData.fileSize,
+                uploadedAt: docData.uploadedAt?.toDate?.() || new Date(docData.uploadedAt),
+                contentType: docData.fileType,
+                userId: docData.userId,
+                source: 'firestore'
+              });
+            }
+          });
+          
+          // Statistiken nach dem Laden aller Dokumente zählen
+          let counts = {
+            fuehrerschein: 0,
+            personalausweis: 0,
+            fuehrungszeugnis: 0
+          };
+          
+          allDocuments.forEach(doc => {
+            if (doc.type === 'fuehrerschein') counts.fuehrerschein++;
+            else if (doc.type === 'personalausweis') counts.personalausweis++;
+            else if (doc.type === 'fuehrungszeugnis') counts.fuehrungszeugnis++;
+          });
+          
+          // Statistiken aktualisieren
+          document.getElementById('totalDocumentsCount').textContent = allDocuments.length;
+          document.getElementById('fuehrerscheinCount').textContent = counts.fuehrerschein;
+          document.getElementById('personalausweisCount').textContent = counts.personalausweis;
+          // Führungszeugnis-Element
+          try {
+            const elem = document.getElementById('fuehrungszeugnis-Count');
+            if (elem) elem.textContent = counts.fuehrungszeugnis;
+          } catch (e) {
+            console.warn('Führungszeugnis-Element nicht gefunden');
+          }
+          
+          // Tabelle befüllen
+          const documentsTableBody = document.getElementById('documentsTableBodyMain');
+          documentsTableBody.innerHTML = '';
+          
+          if (allDocuments.length === 0) {
+            console.log("Keine Dokumente gefunden - zeige leere Nachricht");
+            documentsTableBody.innerHTML = `
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem;">
+                  <p style="color: var(--text-color-secondary); font-size: 1rem;">Keine Dokumente gefunden.</p>
+                  <p style="color: var(--text-color-secondary); font-size: 0.9rem;">Dokumente werden von Fahrern über das Fahrer-Dashboard hochgeladen.</p>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+          
+          // Nach Upload-Datum sortieren (neueste zuerst)
+          allDocuments.sort((a, b) => {
+            let timeA = 0;
+            let timeB = 0;
+            
+            if (a.uploadedAt) {
+              timeA = a.uploadedAt instanceof Date ? a.uploadedAt.getTime() : 
+                     (a.uploadedAt.seconds ? new Date(a.uploadedAt.seconds * 1000).getTime() : 0);
+            }
+            
+            if (b.uploadedAt) {
+              timeB = b.uploadedAt instanceof Date ? b.uploadedAt.getTime() : 
+                     (b.uploadedAt.seconds ? new Date(b.uploadedAt.seconds * 1000).getTime() : 0);
+            }
+            
+            return timeB - timeA;
+          });
+          
+          // Für jedes Dokument eine Zeile erstellen
+          for (const docData of allDocuments) {
+            const tr = document.createElement('tr');
+            
+            // Benutzer-Informationen abrufen
+            let userName = 'Unbekannt';
+            if (docData.userId) {
+              try {
+                const userDoc = await getDoc(doc(db, "users", docData.userId));
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userData.email || 'Unbekannt';
+                } else {
+                  // Fallback: User-ID als Teilstring anzeigen
+                  userName = `User: ${docData.userId.substring(0, 8)}...`;
+                }
+              } catch (error) {
+                console.warn("Fehler beim Laden der Benutzerdaten:", error);
+                userName = `User: ${docData.userId.substring(0, 8)}...`;
+              }
+            }
+            
+            const uploadedAt = docData.uploadedAt ? 
+              (docData.uploadedAt instanceof Date ? 
+                docData.uploadedAt.toLocaleDateString('de-DE') : 
+                (docData.uploadedAt.seconds ? 
+                  new Date(docData.uploadedAt.seconds * 1000).toLocaleDateString('de-DE') : 
+                  'Unbekannt'
+                )
+              ) : 'Unbekannt';
+            const fileSize = docData.fileSize ? formatFileSize(docData.fileSize) : 'Unbekannt';
+            const fileName = docData.originalName || docData.fileName || 'Unbekannt';
+            
+            tr.innerHTML = `
+              <td>
+                ${fileName}
+                <br><small style="color: var(--text-color-secondary);">${docData.source === 'storage' ? '📦 Storage' : '🗃️ Firestore'}</small>
+              </td>
+              <td>${userName}</td>
+              <td><span class="status-badge ${docData.type}">${translateDocumentType(docData.type)}</span></td>
+              <td>${fileSize}</td>
+              <td>${uploadedAt}</td>
+              <td>
+                <button class="action-btn-small view" onclick="downloadDocument('${docData.downloadURL}', '${fileName}')">📥</button>
+                <button class="action-btn-small delete" onclick="deleteDocument('${docData.id}', '${docData.storagePath}')">🗑️</button>
+              </td>
+            `;
+            
+            documentsTableBody.appendChild(tr);
+          }
+          
+        } catch (error) {
+          console.error("Fehler beim Laden der Dokumente:", error);
+          console.error("Fehler-Details:", error.stack);
+          const documentsTableBody = document.getElementById('documentsTableBodyMain');
+          if (documentsTableBody) {
+            documentsTableBody.innerHTML = `
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem;">
+                  <p style="color: #dc3545; font-size: 1rem;">⚠️ Fehler beim Laden der Dokumente: ${error.message}</p>
+                  <p style="color: #dc3545; font-size: 0.9rem;">Bitte prüfen Sie die Browser-Konsole für weitere Details.</p>
+                </td>
+              </tr>
+            `;
+          } else {
+            console.error("Dokumente-Tabelle nicht gefunden!");
+          }
+        }
+      }
+      
+      // Dokumente-Tabelle filtern
+      function filterDocumentsTable(searchTerm) {
+        const tableBody = document.getElementById('documentsTableBodyMain');
+        const rows = tableBody.getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const text = row.textContent || row.innerText;
+          
+          if (text.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      }
+
+      // Modal-Funktionen
+      function showUserDetailsModal(userId, userData) {
+        const modal = createModal('Benutzer-Details', `
+          <div class="user-details">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <strong>ID:</strong> ${userId}
+              </div>
+              <div class="detail-item">
+                <strong>E-Mail:</strong> ${userData.email}
+              </div>
+              <div class="detail-item">
+                <strong>Vorname:</strong> ${userData.firstName || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Nachname:</strong> ${userData.lastName || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Rolle:</strong> ${translateRole(userData.role)}
+              </div>
+              <div class="detail-item">
+                <strong>Status:</strong> ${userData.status === 'inactive' ? 'Inaktiv' : 'Aktiv'}
+              </div>
+              <div class="detail-item">
+                <strong>Telefon:</strong> ${userData.phone || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Adresse:</strong> ${userData.address || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Registriert:</strong> ${userData.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt'}
+              </div>
+              <div class="detail-item">
+                <strong>Letzter Login:</strong> ${userData.lastLogin ? new Date(userData.lastLogin.seconds * 1000).toLocaleString('de-DE') : 'Nie'}
+              </div>
+            </div>
+          </div>
+        `);
+        
+        document.body.appendChild(modal);
+      }
+
+      function showEditUserModal(userId, userData) {
+        const modal = createModal('Benutzer bearbeiten', `
+          <form id="editUserForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="editFirstName">Vorname:</label>
+                <input type="text" id="editFirstName" value="${userData.firstName || ''}" required>
+              </div>
+              <div class="form-group">
+                <label for="editLastName">Nachname:</label>
+                <input type="text" id="editLastName" value="${userData.lastName || ''}" required>
+              </div>
+              <div class="form-group">
+                <label for="editEmail">E-Mail:</label>
+                <input type="email" id="editEmail" value="${userData.email}" required>
+              </div>
+              <div class="form-group">
+                <label for="editPhone">Telefon:</label>
+                <input type="tel" id="editPhone" value="${userData.phone || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editRole">Rolle:</label>
+                <select id="editRole" required>
+                  <option value="client" ${userData.role === 'client' ? 'selected' : ''}>Auftraggeber</option>
+                  <option value="driver" ${userData.role === 'driver' ? 'selected' : ''}>Fahrer</option>
+                  <option value="manager" ${userData.role === 'manager' ? 'selected' : ''}>Manager</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="editStatus">Status:</label>
+                <select id="editStatus" required>
+                  <option value="active" ${userData.status !== 'inactive' ? 'selected' : ''}>Aktiv</option>
+                  <option value="inactive" ${userData.status === 'inactive' ? 'selected' : ''}>Inaktiv</option>
+                </select>
+              </div>
+              <div class="form-group full-width">
+                <label for="editAddress">Adresse:</label>
+                <textarea id="editAddress" rows="3">${userData.address || ''}</textarea>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" onclick="closeModal()" class="btn-secondary">Abbrechen</button>
+              <button type="submit" class="btn-primary">Speichern</button>
+            </div>
+          </form>
+        `);
+        
+        document.body.appendChild(modal);
+        
+        // Form-Handler
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const updatedData = {
+            firstName: document.getElementById('editFirstName').value,
+            lastName: document.getElementById('editLastName').value,
+            email: document.getElementById('editEmail').value,
+            phone: document.getElementById('editPhone').value,
+            role: document.getElementById('editRole').value,
+            status: document.getElementById('editStatus').value,
+            address: document.getElementById('editAddress').value,
+            updatedAt: serverTimestamp()
+          };
+          
+          try {
+            await updateDoc(doc(db, "users", userId), updatedData);
+            alert('Benutzer erfolgreich aktualisiert');
+            closeModal();
+            loadAllUsers(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Aktualisieren des Benutzers:', error);
+            alert('Fehler beim Aktualisieren des Benutzers');
+          }
+        });
+      }
+
+      function showOrderDetailsModal(orderId, orderData) {
+        const modal = createModal('Auftrags-Details', `
+          <div class="order-details">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <strong>ID:</strong> ${orderId}
+              </div>
+              <div class="detail-item">
+                <strong>Titel:</strong> ${orderData.title || 'Unbekannt'}
+              </div>
+              <div class="detail-item">
+                <strong>Kunde:</strong> ${orderData.customerEmail || 'Unbekannt'}
+              </div>
+              <div class="detail-item">
+                <strong>Fahrer:</strong> ${orderData.driverEmail || 'Nicht zugewiesen'}
+              </div>
+              <div class="detail-item">
+                <strong>Status:</strong> ${translateOrderStatus(orderData.status)}
+              </div>
+              <div class="detail-item">
+                <strong>Preis:</strong> ${orderData.price ? orderData.price.toFixed(2) + ' €' : 'N/A'}
+              </div>
+              <div class="detail-item">
+                <strong>Abholort:</strong> ${orderData.pickupLocation || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Zielort:</strong> ${orderData.deliveryLocation || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Datum:</strong> ${orderData.date || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item">
+                <strong>Uhrzeit:</strong> ${orderData.time || 'Nicht angegeben'}
+              </div>
+              <div class="detail-item full-width">
+                <strong>Beschreibung:</strong><br>
+                ${orderData.description || 'Keine Beschreibung'}
+              </div>
+              <div class="detail-item">
+                <strong>Erstellt:</strong> ${orderData.createdAt ? new Date(orderData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt'}
+              </div>
+            </div>
+          </div>
+        `);
+        
+        document.body.appendChild(modal);
+      }
+
+      function showEditOrderModal(orderId, orderData) {
+        const modal = createModal('Auftrag bearbeiten', `
+          <form id="editOrderForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="editOrderTitle">Titel:</label>
+                <input type="text" id="editOrderTitle" value="${orderData.title || ''}" required>
+              </div>
+              <div class="form-group">
+                <label for="editOrderStatus">Status:</label>
+                <select id="editOrderStatus" required>
+                  <option value="available" ${orderData.status === 'available' ? 'selected' : ''}>Verfügbar</option>
+                  <option value="assigned" ${orderData.status === 'assigned' ? 'selected' : ''}>Zugewiesen</option>
+                  <option value="in_progress" ${orderData.status === 'in_progress' ? 'selected' : ''}>In Bearbeitung</option>
+                  <option value="completed" ${orderData.status === 'completed' ? 'selected' : ''}>Abgeschlossen</option>
+                  <option value="cancelled" ${orderData.status === 'cancelled' ? 'selected' : ''}>Storniert</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="editOrderPrice">Preis (€):</label>
+                <input type="number" id="editOrderPrice" value="${orderData.price || ''}" step="0.01" min="0">
+              </div>
+              <div class="form-group">
+                <label for="editOrderDate">Datum:</label>
+                <input type="date" id="editOrderDate" value="${orderData.date || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editOrderTime">Uhrzeit:</label>
+                <input type="time" id="editOrderTime" value="${orderData.time || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editPickupLocation">Abholort:</label>
+                <input type="text" id="editPickupLocation" value="${orderData.pickupLocation || ''}">
+              </div>
+              <div class="form-group">
+                <label for="editDeliveryLocation">Zielort:</label>
+                <input type="text" id="editDeliveryLocation" value="${orderData.deliveryLocation || ''}">
+              </div>
+              <div class="form-group full-width">
+                <label for="editOrderDescription">Beschreibung:</label>
+                <textarea id="editOrderDescription" rows="4">${orderData.description || ''}</textarea>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" onclick="closeModal()" class="btn-secondary">Abbrechen</button>
+              <button type="submit" class="btn-primary">Speichern</button>
+            </div>
+          </form>
+        `);
+        
+        document.body.appendChild(modal);
+        
+        // Form-Handler
+        document.getElementById('editOrderForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const updatedData = {
+            title: document.getElementById('editOrderTitle').value,
+            status: document.getElementById('editOrderStatus').value,
+            price: parseFloat(document.getElementById('editOrderPrice').value) || 0,
+            date: document.getElementById('editOrderDate').value,
+            time: document.getElementById('editOrderTime').value,
+            pickupLocation: document.getElementById('editPickupLocation').value,
+            deliveryLocation: document.getElementById('editDeliveryLocation').value,
+            description: document.getElementById('editOrderDescription').value,
+            updatedAt: serverTimestamp()
+          };
+          
+          try {
+            await updateDoc(doc(db, "routes", orderId), updatedData);
+            
+            alert('Auftrag erfolgreich aktualisiert');
+            closeModal();
+            loadAllOrders(); // Tabelle aktualisieren
+          } catch (error) {
+            console.error('Fehler beim Aktualisieren des Auftrags:', error);
+            alert('Fehler beim Aktualisieren des Auftrags');
+          }
+        });
+      }
+
+      function createModal(title, content) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>${title}</h3>
+              <button class="modal-close" type="button">&times;</button>
+            </div>
+            <div class="modal-body">
+              ${content}
+            </div>
+          </div>
+        `;
+        
+        // Schließen bei Klick auf Close-Button
+        const closeButton = modal.querySelector('.modal-close');
+        closeButton.addEventListener('click', () => {
+          closeModal();
+        });
+        
+        // Schließen bei Klick auf Overlay
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeModal();
+          }
+        });
+        
+        // Schließen bei ESC-Taste
+        const handleEscape = (e) => {
+          if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', handleEscape);
+          }
+        };
+        document.addEventListener('keydown', handleEscape);
+        
+        return modal;
+      }
+
+      window.closeModal = function() {
+        console.log("closeModal wurde aufgerufen");
+        const modals = document.querySelectorAll('.modal-overlay');
+        console.log("Anzahl gefundener Modals:", modals.length);
+        
+        // Alle Modals entfernen
+        modals.forEach(modal => {
+          console.log("Modal wird entfernt:", modal);
+          modal.remove();
+        });
+        
+        // Doppelte Sicherheit: Nochmal prüfen, ob noch Modals da sind
+        const remainingModals = document.querySelectorAll('.modal-overlay');
+        if (remainingModals.length > 0) {
+          console.log("Noch vorhandene Modals werden entfernt:", remainingModals.length);
+          remainingModals.forEach(modal => modal.remove());
+        }
+        
+        console.log("Modal erfolgreich geschlossen");
+      };
+
+      // Gehaltsabrechnungen-Funktionalität
+      
+      // Fahrer für Payroll-Dropdown laden
+      async function loadPayrollDrivers() {
+        try {
+          console.log("Lade Fahrer für Payroll-Dropdown...");
+          
+          // Alle Benutzer laden und dann nach Rolle filtern (für Debugging)
+          const allUsersSnapshot = await getDocs(collection(db, "users"));
+          console.log("Alle Benutzer:", allUsersSnapshot.size);
+          
+          const drivers = [];
+          allUsersSnapshot.forEach(doc => {
+            const userData = doc.data();
+            console.log("Benutzer:", userData.email, "Rolle:", userData.role);
+            if (userData.role === "driver" || userData.role === "Driver" || userData.role === "fahrer") {
+              drivers.push({id: doc.id, data: userData});
+            }
+          });
+          
+          console.log("Gefundene Fahrer:", drivers.length);
+          
+          const payrollDriverSelect = document.getElementById('payrollDriver');
+          if (!payrollDriverSelect) {
+            console.error("Payroll-Driver-Select-Element nicht gefunden");
+            return;
+          }
+          
+          payrollDriverSelect.innerHTML = '<option value="">Bitte wählen...</option>';
+          
+          if (drivers.length === 0) {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "Keine Fahrer gefunden";
+            option.disabled = true;
+            payrollDriverSelect.appendChild(option);
+            console.warn("Keine Fahrer gefunden! Überprüfen Sie die Rollen in der Datenbank.");
+          } else {
+            drivers.forEach(driver => {
+              const driverData = driver.data;
+              console.log("Fahrer gefunden:", driverData.email, driverData);
+              
+              // Bessere Namensdarstellung
+              const fullName = `${driverData.firstName || ''} ${driverData.lastName || ''}`.trim();
+              const displayName = fullName || driverData.displayName || driverData.name || 'Unbekannt';
+              
+              const option = document.createElement('option');
+              option.value = driver.id;
+              option.textContent = `${displayName} (${driverData.email})`;
+              payrollDriverSelect.appendChild(option);
+            });
+          }
+          
+          console.log(`${drivers.length} Fahrer für Payroll-Dropdown geladen`);
+        } catch (error) {
+          console.error("Fehler beim Laden der Fahrer für Payroll:", error);
+        }
+      }
+      
+      // Gehaltsabrechnungen laden
+      async function loadPayrollRecords() {
+        try {
+          const payrollQuery = query(collection(db, "payroll"), orderBy("uploadedAt", "desc"));
+          const payrollSnapshot = await getDocs(payrollQuery);
+          
+          const payrollTableBody = document.getElementById('payrollTableBody');
+          payrollTableBody.innerHTML = '';
+          
+          if (payrollSnapshot.empty) {
+            payrollTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Keine Abrechnungen gefunden</td></tr>';
+            return;
+          }
+          
+          for (const doc of payrollSnapshot.docs) {
+            const payrollData = doc.data();
+            
+            // Fahrer-Daten laden
+            let driverName = 'Unbekannt';
+            try {
+              const driverDoc = await getDoc(doc(db, "users", payrollData.driverId));
+              if (driverDoc.exists()) {
+                const driverData = driverDoc.data();
+                driverName = driverData.displayName || driverData.name || 'Unbekannt';
+              }
+            } catch (error) {
+              console.warn("Fehler beim Laden der Fahrer-Daten:", error);
+            }
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${driverName}</td>
+              <td>${payrollData.month}</td>
+              <td>${payrollData.amount.toFixed(2)} €</td>
+              <td>${payrollData.uploadedAt?.toDate().toLocaleDateString('de-DE') || 'Unbekannt'}</td>
+              <td>${payrollData.notes || '-'}</td>
+              <td>
+                <button class="action-btn-small view" onclick="downloadPayrollFile('${doc.id}')">📄 Herunterladen</button>
+                <button class="action-btn-small delete" onclick="deletePayrollRecord('${doc.id}')">🗑️ Löschen</button>
+              </td>
+            `;
+            payrollTableBody.appendChild(row);
+          }
+          
+          console.log(`${payrollSnapshot.size} Gehaltsabrechnungen geladen`);
+        } catch (error) {
+          console.error("Fehler beim Laden der Gehaltsabrechnungen:", error);
+        }
+      }
+      
+      // Gehaltsabrechnung hochladen
+      async function uploadPayrollRecord(formData) {
+        try {
+          const file = formData.get('file');
+          const driverId = formData.get('driverId');
+          const month = formData.get('month');
+          const amount = parseFloat(formData.get('amount'));
+          const notes = formData.get('notes') || '';
+          
+          // Datei zu Firebase Storage hochladen
+          const fileName = `payroll_${driverId}_${month}_${Date.now()}.pdf`;
+          const storageRef = ref(storage, `payroll/${fileName}`);
+          
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          
+          // Metadaten in Firestore speichern
+          await addDoc(collection(db, "payroll"), {
+            driverId: driverId,
+            month: month,
+            amount: amount,
+            notes: notes,
+            fileName: fileName,
+            downloadURL: downloadURL,
+            uploadedAt: serverTimestamp(),
+            uploadedBy: auth.currentUser.uid
+          });
+          
+          console.log("Gehaltsabrechnung erfolgreich hochgeladen");
+          return true;
+        } catch (error) {
+          console.error("Fehler beim Hochladen der Gehaltsabrechnung:", error);
+          throw error;
+        }
+      }
+      
+      // Gehaltsabrechnung herunterladen
+      async function downloadPayrollFile(payrollId) {
+        try {
+          const payrollDoc = await getDoc(doc(db, "payroll", payrollId));
+          if (payrollDoc.exists()) {
+            const payrollData = payrollDoc.data();
+            window.open(payrollData.downloadURL, '_blank');
+          }
+        } catch (error) {
+          console.error("Fehler beim Herunterladen der Datei:", error);
+          alert("Fehler beim Herunterladen der Datei");
+        }
+      }
+      
+      // Gehaltsabrechnung löschen
+      async function deletePayrollRecord(payrollId) {
+        if (!confirm("Sind Sie sicher, dass Sie diese Gehaltsabrechnung löschen möchten?")) return;
+        
+        try {
+          const payrollDoc = await getDoc(doc(db, "payroll", payrollId));
+          if (payrollDoc.exists()) {
+            const payrollData = payrollDoc.data();
+            
+            // Datei aus Storage löschen
+            const storageRef = ref(storage, `payroll/${payrollData.fileName}`);
+            await deleteObject(storageRef);
+            
+            // Dokument aus Firestore löschen
+            await deleteDoc(doc(db, "payroll", payrollId));
+            
+            alert("Gehaltsabrechnung erfolgreich gelöscht");
+            loadPayrollRecords();
+          }
+        } catch (error) {
+          console.error("Fehler beim Löschen der Gehaltsabrechnung:", error);
+          alert("Fehler beim Löschen der Gehaltsabrechnung");
+        }
+      }
+      
+      // Event-Listener für Payroll-Formular
+      document.getElementById('payrollUploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('driverId', document.getElementById('payrollDriver').value);
+        formData.append('month', document.getElementById('payrollMonth').value);
+        formData.append('amount', document.getElementById('payrollAmount').value);
+        formData.append('notes', document.getElementById('payrollNotes').value);
+        formData.append('file', document.getElementById('payrollFile').files[0]);
+        
+        try {
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          submitButton.disabled = true;
+          submitButton.textContent = 'Wird hochgeladen...';
+          
+          await uploadPayrollRecord(formData);
+          
+          alert("Gehaltsabrechnung erfolgreich hochgeladen!");
+          e.target.reset();
+          loadPayrollRecords();
+        } catch (error) {
+          alert("Fehler beim Hochladen: " + error.message);
+        } finally {
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          submitButton.disabled = false;
+          submitButton.textContent = 'Abrechnung hochladen';
+        }
+      });
+      
+      // Event-Listener für Payroll-Refresh
+      document.getElementById('refreshPayrollBtn').addEventListener('click', () => {
+        loadPayrollRecords();
+      });
+      
+      // Payroll-Suchfunktion
+      document.getElementById('payrollSearchInput').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('#payrollTableBody tr');
+        
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+      });
+      
+      // Payroll-Sektion initialisieren
+      function initializePayrollSection() {
+        console.log("Initialisiere Payroll-Sektion...");
+        loadPayrollDrivers();
+        loadPayrollRecords();
+      }
+      
+
+      
+      // Globale Funktionen für onclick-Handler
+      window.downloadPayrollFile = downloadPayrollFile;
+      window.deletePayrollRecord = deletePayrollRecord;
+      
+    </script>
+  </div>
+</body>
+</html> 
+</html> 

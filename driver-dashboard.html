@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fahrer Dashboard - NorthDrive</title>
+  <link rel="stylesheet" href="transport-style.css">
+  <style>
+    .dashboard-container {
+      display: flex;
+      min-height: 70vh;
+    }
+    
+    .sidebar {
+      width: 250px;
+      background-color: var(--bg-light);
+      padding: 2rem 1rem;
+      border-right: 1px solid var(--border-color);
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .sidebar-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      color: var(--text-color-primary);
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .sidebar-menu a i {
+      margin-right: 0.5rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .content-area {
+      flex: 1;
+      padding: 2rem;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .user-welcome {
+      font-size: 1.2rem;
+    }
+    
+    .user-welcome strong {
+      color: var(--accent-blue);
+    }
+    
+    .loading-name {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+    }
+    
+    .loading-name::after {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 8px;
+      border: 2px solid var(--accent-blue);
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: loading-spinner 1s linear infinite;
+    }
+    
+    @keyframes loading-spinner {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .logout-btn {
+      background-color: transparent;
+      color: var(--accent-blue);
+      border: 1px solid var(--accent-blue);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background-color: var(--bg-light);
+      border-radius: 4px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .stat-card h3 {
+      margin-top: 0;
+      color: var(--text-color-secondary);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin: 0.5rem 0;
+    }
+    
+    .stat-card .stat-change {
+      font-size: 0.9rem;
+      color: #5cb85c;
+    }
+    
+    .stat-card .stat-change.negative {
+      color: #d9534f;
+    }
+    
+    .dashboard-info {
+      background-color: white;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 1px solid var(--border-color);
+    }
+    
+    .dashboard-info h2 {
+      color: var(--primary-navy);
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    
+    .dashboard-info p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    
+    .dashboard-info a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .dashboard-info a:hover {
+      color: var(--primary-navy);
+      text-decoration: underline;
+    }
+    
+    .upcoming-trips {
+      margin-top: 2rem;
+    }
+    
+    .trip-card {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .trip-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    
+    .trip-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--primary-navy);
+    }
+    
+    .trip-date {
+      color: var(--text-color-secondary);
+    }
+    
+    .trip-details {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+    
+    .trip-detail {
+      flex: 1;
+    }
+    
+    .trip-detail-label {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.3rem;
+    }
+    
+    .trip-detail-value {
+      font-weight: 500;
+    }
+    
+    .trip-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    
+    .trip-actions button {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+    }
+    
+    .trip-actions .accept-btn {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+    
+    .trip-actions .decline-btn {
+      background-color: transparent;
+      color: var(--text-color-secondary);
+      border: 1px solid var(--border-color);
+    }
+    
+    .trip-actions button:hover {
+      opacity: 0.9;
+    }
+    
+    .no-trips {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-color-secondary);
+      background-color: var(--bg-light);
+      border-radius: 4px;
+    }
+
+    /* Neue Stile für Standortabfrage-Dialog */
+    .location-permission-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .location-permission-dialog {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .location-permission-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: var(--accent-blue);
+    }
+
+    .location-permission-dialog h3 {
+      color: var(--text-color-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .location-permission-dialog p {
+      color: var(--text-color-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .location-permission-buttons {
+      display: flex;
+      justify-content: space-around;
+      gap: 1rem;
+    }
+
+    .location-permission-allow,
+    .location-permission-deny {
+      padding: 0.8rem 1.5rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .location-permission-allow {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .location-permission-deny {
+      background-color: var(--bg-light);
+      color: var(--text-color-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .location-permission-allow:hover {
+      background-color: var(--accent-dark);
+    }
+
+    .location-permission-deny:hover {
+      background-color: var(--bg-light);
+      color: var(--text-color-primary);
+      border-color: var(--accent-blue);
+    }
+
+    /* Neue Stile für Status-Meldungen */
+    .location-status {
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    .location-status.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .location-status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .location-status.warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    /* Styles für den Bestätigungsdialog */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .confirmation-dialog h3 {
+      color: var(--primary-navy);
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 1.5rem;
+    }
+    
+    .important-notice {
+      background-color: #fff8e1;
+      border-left: 4px solid var(--accent-gold);
+      padding: 12px;
+      margin: 16px 0;
+      font-weight: 500;
+    }
+    
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    .cancel-btn, .submit-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .cancel-btn {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .submit-btn {
+      background-color: var(--primary-navy);
+      color: white;
+    }
+    
+    .cancel-btn:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .submit-btn:hover {
+      background-color: #0c2340;
+    }
+    
+    @media (max-width: 600px) {
+      .modal-content {
+        width: 95%;
+        padding: 16px;
+      }
+      
+      .modal-actions {
+        flex-direction: column;
+      }
+      
+      .cancel-btn, .submit-btn {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+    }
+
+    .earnings-display {
+      margin-left: 20px;
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+      display: inline-block;
+    }
+    
+    .earnings-display strong {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+    
+    .highlight-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    
+    .positive-change {
+      color: #28a745;
+      font-weight: 600;
+    }
+    
+    .negative-change {
+      color: #dc3545;
+      font-weight: 600;
+    }
+
+    /* Auftragsanzahl-Anzeige */
+    .orders-count {
+      font-size: 1rem;
+      font-weight: normal;
+      color: var(--text-color-secondary);
+      margin-left: 0.5rem;
+    }
+
+    /* Dokumente Upload Styles */
+    .documents-upload-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-card {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .upload-card h3 {
+      margin-top: 0;
+      color: var(--primary-navy);
+      font-size: 1.2rem;
+    }
+
+    .upload-card p {
+      color: var(--text-color-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .upload-card input[type="file"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .upload-btn {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .upload-btn:hover {
+      background-color: var(--accent-dark);
+    }
+
+    .upload-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .upload-status {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .upload-status.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .upload-status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .upload-status.uploading {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .documents-list-section {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .document-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .document-item:last-child {
+      border-bottom: none;
+    }
+
+    .document-info {
+      flex: 1;
+    }
+
+    .document-name {
+      font-weight: 500;
+      color: var(--text-color-primary);
+    }
+
+    .document-date {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+    }
+
+    .document-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-download, .btn-delete {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-download {
+      background-color: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-download:hover {
+      background-color: var(--primary-navy);
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+
+    /* Payroll/Abrechnungen Styles */
+    .payroll-overview {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .payroll-info {
+      padding: 1.5rem;
+      background-color: var(--bg-light);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .payroll-info p {
+      margin: 0;
+      color: var(--text-color-secondary);
+    }
+
+    .payroll-table-container {
+      overflow-x: auto;
+    }
+
+    .payroll-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .payroll-table th,
+    .payroll-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .payroll-table th {
+      background-color: var(--bg-light);
+      font-weight: 600;
+      color: var(--text-color-primary);
+    }
+
+    .payroll-table tbody tr:hover {
+      background-color: var(--bg-light);
+    }
+
+    .payroll-amount {
+      font-weight: 600;
+      color: var(--primary-navy);
+    }
+
+    .payroll-download-btn {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .payroll-download-btn:hover {
+      background-color: var(--primary-navy);
+    }
+
+    .no-payroll-message {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-color-secondary);
+    }
+
+    .no-payroll-message h3 {
+      margin-bottom: 1rem;
+      color: var(--text-color-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+
+    <header class="section hero-small">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="driver-dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="impressum.html">Impressum</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li><a href="#" class="active" data-section="dashboard">Dashboard</a></li>
+          <li><a href="#" data-section="my-trips">Meine Fahrten</a></li>
+          <li><a href="#" data-section="available-orders">Verfügbare Aufträge</a></li>
+          <li><a href="#" data-section="payroll">Abrechnungen</a></li>
+          <li><a href="#" data-section="documents">Dokumente</a></li>
+          <li><a href="#">Profil</a></li>
+          <li><a href="#">Einstellungen</a></li>
+        </ul>
+      </div>
+      
+      <div class="content-area">
+        <div class="dashboard-header">
+          <div class="user-welcome">
+            Willkommen zurück, <strong id="userName" class="loading-name">Wird geladen...</strong>!
+            <span class="earnings-display">Verdienst: <strong id="headerEarningsValue" class="highlight-value">-</strong> (<span id="headerEarningsChange" class="positive-change">+0 €</span> im letzten Monat)</span>
+          </div>
+          <button id="logoutBtn" class="logout-btn">Abmelden</button>
+        </div>
+        
+        <!-- Dashboard Bereich -->
+        <div class="content-section active" id="dashboard-section">
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <h3>Abgeschlossene Fahrten</h3>
+              <div id="completedTripsValue" class="stat-value">-</div>
+              <div id="completedTripsChange" class="stat-change">Wird geladen...</div>
+            </div>
+            
+            <div class="stat-card">
+              <h3>Zugewiesene Fahrten</h3>
+              <div id="assignedTripsValue" class="stat-value">-</div>
+              <div id="assignedTripsChange" class="stat-change">Wird geladen...</div>
+            </div>
+            
+            <div class="stat-card">
+              <h3>Stornierte Aufträge</h3>
+              <div id="cancelledOrdersValue" class="stat-value">-</div>
+              <div id="cancelledOrdersChange" class="stat-change">Wird geladen...</div>
+            </div>
+          </div>
+          
+          <div class="dashboard-info">
+            <h2>Willkommen bei deinem persönlichen Dashboard</h2>
+            <p>Hier siehst du eine Übersicht deiner Fahreraktivitäten.</p>
+            <p>Um deine aktuellen Fahrten zu sehen, wechsle bitte zu <a href="#" onclick="switchToSection('my-trips'); return false;">Meine Fahrten</a>.</p>
+            <p>Um neue Aufträge anzunehmen, besuche die <a href="#" onclick="switchToSection('available-orders'); return false;">Verfügbare Aufträge</a> Sektion.</p>
+          </div>
+        </div>
+
+        <!-- Meine Fahrten Bereich -->
+        <div class="content-section" id="my-trips-section" style="display: none;">
+          <h2>Meine Fahrten <span id="myTripsCount" class="orders-count">(0)</span></h2>
+          <div id="my-trips-container">
+            <p class="loading-text">Lade Ihre Fahrten...</p>
+          </div>
+        </div>
+
+        <!-- Verfügbare Aufträge Bereich -->
+        <div class="content-section" id="available-orders-section" style="display: none;">
+          <h2>Verfügbare Aufträge <span id="availableOrdersCount" class="orders-count">(0)</span></h2>
+          <div class="order-filters">
+            <div class="location-filter">
+              <button id="getLocationBtn" class="action-btn">Standort aktualisieren</button>
+              <div id="locationStatus" class="location-status">Standort nicht verfügbar</div>
+            </div>
+            <div class="distance-filter">
+              <label for="maxDistance">Maximale Entfernung:</label>
+              <select id="maxDistance" class="filter-dropdown">
+                <option value="all">Alle Entfernungen</option>
+                <option value="10">< 10 km</option>
+                <option value="25">< 25 km</option>
+                <option value="50">< 50 km</option>
+                <option value="100">< 100 km</option>
+                <option value="200">< 200 km</option>
+              </select>
+            </div>
+          </div>
+          <div id="available-orders-container">
+            <p class="loading-text">Lade verfügbare Aufträge...</p>
+          </div>
+        </div>
+
+        <!-- Dokumente Bereich -->
+        <div class="content-section" id="documents-section" style="display: none;">
+          <h2>Dokumente</h2>
+          <div class="documents-upload-section">
+            <div class="upload-card">
+              <h3>📄 Führerschein</h3>
+              <p>Laden Sie eine Kopie Ihres Führerscheins hoch (Vorder- und Rückseite)</p>
+              <input type="file" id="fuehrerschein-upload" accept=".pdf,.jpg,.jpeg,.png" multiple>
+              <button onclick="uploadDocument('fuehrerschein')" class="upload-btn">Hochladen</button>
+              <div id="fuehrerschein-status" class="upload-status"></div>
+            </div>
+            
+            <div class="upload-card">
+              <h3>📋 Führungszeugnis</h3>
+              <p>Aktuelles Führungszeugnis (nicht älter als 3 Monate)</p>
+              <input type="file" id="fuehrungszeugnis-upload" accept=".pdf,.jpg,.jpeg,.png">
+              <button onclick="uploadDocument('fuehrungszeugnis')" class="upload-btn">Hochladen</button>
+              <div id="fuehrungszeugnis-status" class="upload-status"></div>
+            </div>
+            
+            <div class="upload-card">
+              <h3>🆔 Personalausweis</h3>
+              <p>Kopie des Personalausweises (Vorder- und Rückseite)</p>
+              <input type="file" id="personalausweis-upload" accept=".pdf,.jpg,.jpeg,.png" multiple>
+              <button onclick="uploadDocument('personalausweis')" class="upload-btn">Hochladen</button>
+              <div id="personalausweis-status" class="upload-status"></div>
+            </div>
+          </div>
+          
+          <div class="documents-list-section">
+            <h3>Hochgeladene Dokumente</h3>
+            <div id="documents-list">
+              <p class="loading-text">Lade Dokumente...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abrechnungen Bereich -->
+        <div class="content-section" id="payroll-section" style="display: none;">
+          <h2>Meine Gehaltsabrechnungen</h2>
+          <div class="payroll-overview">
+            <div class="payroll-info">
+              <p>Hier finden Sie alle Ihre Gehaltsabrechnungen. Sie können diese einsehen und als PDF herunterladen.</p>
+            </div>
+            
+            <div class="payroll-table-container">
+              <table class="payroll-table">
+                <thead>
+                  <tr>
+                    <th>Monat</th>
+                    <th>Bruttobetrag</th>
+                    <th>Hochgeladen am</th>
+                    <th>Notizen</th>
+                    <th>Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody id="payroll-table-body">
+                  <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem;">
+                      <div class="loading-text">Lade Abrechnungen...</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Standortabfrage-Dialog (wird programmatisch angezeigt) -->
+    <div id="locationPermissionOverlay" class="location-permission-overlay" style="display: none;">
+      <div class="location-permission-dialog">
+        <div class="location-permission-icon">📍</div>
+        <h3>Standortzugriff erlauben</h3>
+        <p>Um Ihnen Aufträge in Ihrer Nähe anzeigen zu können, benötigt NorthDrive Zugriff auf Ihren Standort. Ihre Daten werden sicher behandelt und nur für die Entfernungsberechnung verwendet.</p>
+        <div class="location-permission-buttons">
+          <button id="allowLocationBtn" class="location-permission-allow">Standort freigeben</button>
+          <button id="denyLocationBtn" class="location-permission-deny">Später entscheiden</button>
+        </div>
+      </div>
+    </div>
+  
+  <!-- Bestätigungsdialog für Auftragsannahme -->
+  <div id="confirmOrderDialog" class="modal-overlay">
+    <div class="modal-content confirmation-dialog">
+      <h3>Auftrag annehmen</h3>
+      <p>Sind Sie sicher, dass Sie diesen Auftrag annehmen möchten?</p>
+      <p class="important-notice">Mit der Annahme verpflichten Sie sich verbindlich zur Durchführung des Transports. Bei Stornierung müssen Sie die anfallenden Stornokosten selbst tragen.</p>
+      <div class="modal-actions">
+        <button id="cancelOrderBtn" class="cancel-btn">Abbrechen</button>
+        <button id="confirmOrderBtn" class="submit-btn">Verbindlich annehmen</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDK v9+ modular imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      collection, 
+      query, 
+      where, 
+      orderBy, 
+      limit, 
+      onSnapshot,
+      updateDoc,
+      addDoc,
+      deleteDoc,
+      getDocs,
+      Timestamp,
+      GeoPoint,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { 
+      getStorage, 
+      ref, 
+      uploadBytes, 
+      getDownloadURL, 
+      deleteObject,
+      listAll,
+      getMetadata
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_KAYTuhfjpASvzvI1zgdNam7BzliB3mM",
+      authDomain: "appnorthdrive.firebaseapp.com",
+      projectId: "appnorthdrive",
+      storageBucket: "appnorthdrive.firebasestorage.app",
+      messagingSenderId: "559746363897",
+      appId: "1:559746363897:web:959bffc6e2f374e5448d28",
+      measurementId: "G-ZSJL11E70J"
+    };
+
+    // Initialize Firebase
+    let app, auth, db, storage, currentUser;
+
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      storage = getStorage(app);
+      console.log("Firebase erfolgreich initialisiert");
+    } catch (error) {
+      console.error("Fehler bei der Firebase-Initialisierung:", error);
+    }
+
+    // DOM-Elemente
+    const userNameElement = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+    const contentSections = document.querySelectorAll('.content-section');
+    const availableOrdersContainer = document.getElementById('available-orders-container');
+    const myTripsContainer = document.getElementById('my-trips-container');
+    const getLocationBtn = document.getElementById('getLocationBtn');
+    const locationStatus = document.getElementById('locationStatus');
+    const maxDistance = document.getElementById('maxDistance');
+    const locationPermissionOverlay = document.getElementById('locationPermissionOverlay');
+    const allowLocationBtn = document.getElementById('allowLocationBtn');
+    const denyLocationBtn = document.getElementById('denyLocationBtn');
+    
+    // Dashboard Statistik Elemente
+    const completedTripsValue = document.getElementById('completedTripsValue');
+    const completedTripsChange = document.getElementById('completedTripsChange');
+    const assignedTripsValue = document.getElementById('assignedTripsValue');
+    const assignedTripsChange = document.getElementById('assignedTripsChange');
+    const cancelledOrdersValue = document.getElementById('cancelledOrdersValue');
+    const cancelledOrdersChange = document.getElementById('cancelledOrdersChange');
+    const headerEarningsValue = document.getElementById('headerEarningsValue');
+    const headerEarningsChange = document.getElementById('headerEarningsChange');
+    
+    // Geolocation-Variablen
+    let driverLocation = null;
+    let cachedOrders = [];
+
+    // Event-Listener für Sidebar-Navigation
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Aktiven Link setzen
+        sidebarLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Entsprechenden Content-Bereich anzeigen
+        const sectionId = this.getAttribute('data-section');
+        if (sectionId) {
+          contentSections.forEach(section => {
+            section.style.display = 'none';
+          });
+          document.getElementById(`${sectionId}-section`).style.display = 'block';
+          
+          // Daten laden, wenn nötig
+          if (sectionId === 'available-orders') {
+            loadAvailableOrders();
+          } else if (sectionId === 'my-trips') {
+            loadMyTrips();
+          } else if (sectionId === 'documents') {
+            loadDocuments();
+          } else if (sectionId === 'payroll') {
+            loadPayrollRecords();
+          }
+        }
+      });
+    });
+    
+    // Funktion zum Wechseln der Ansicht (kann von überall aufgerufen werden)
+    function switchToSection(sectionId) {
+      const link = document.querySelector(`.sidebar-menu a[data-section="${sectionId}"]`);
+      if (link) {
+        link.click();
+      }
+    }
+    
+    // Verfügbare Aufträge laden
+    function loadAvailableOrders() {
+      if (!currentUser) return;
+      
+      availableOrdersContainer.innerHTML = '<p class="loading-text">Lade verfügbare Aufträge...</p>';
+      
+      // Nur verfügbare Routen laden, ohne Sortierung nach createdAt
+      const routesQuery = query(
+        collection(db, "routes"),
+        where("status", "==", "available")
+        // Sortierung entfernt, um keinen zusammengesetzten Index zu benötigen
+      );
+      
+      // Echtzeit-Listener für Routen
+      const unsubscribe = onSnapshot(routesQuery, (querySnapshot) => {
+        if (querySnapshot.empty) {
+          availableOrdersContainer.innerHTML = `
+            <div class="no-orders">
+              <p>Keine verfügbaren Aufträge gefunden.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Alle Aufträge zwischenspeichern
+        cachedOrders = [];
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          console.log("Auftrag geladen:", doc.id, data.title);
+          cachedOrders.push({id: doc.id, ...data});
+        });
+        
+        // Manuelles Sortieren nach createdAt (absteigend)
+        cachedOrders.sort((a, b) => {
+          // Prüfen, ob createdAt existiert und ein gültiger Timestamp ist
+          const timeA = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+          const timeB = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+          return timeB - timeA; // Absteigend sortieren (neueste zuerst)
+        });
+        
+        console.log(`${cachedOrders.length} verfügbare Aufträge geladen`);
+        
+        // Aufträge nach Entfernung filtern und anzeigen
+        filterAndDisplayOrders();
+      }, (error) => {
+        console.error("Fehler beim Laden der verfügbaren Aufträge:", error);
+        availableOrdersContainer.innerHTML = `
+          <div class="error-message">
+            <p>Fehler beim Laden der Aufträge.</p>
+            <p>Details: ${error.message}</p>
+          </div>
+        `;
+      });
+      
+      // Aufräumen des Listeners beim Verlassen des Bereichs
+      return unsubscribe;
+    }
+    
+    // Aufträge filtern und anzeigen
+    function filterAndDisplayOrders() {
+      const selectedMaxDistance = maxDistance.value;
+      let filteredOrders = [...cachedOrders];
+      
+      // Nach Entfernung filtern, wenn Standort verfügbar ist und eine spezifische Entfernung ausgewählt ist
+      if (driverLocation && selectedMaxDistance !== 'all') {
+        const maxDistanceKm = parseInt(selectedMaxDistance);
+        
+        // Berechne Distanzen für Aufträge mit Geocoding-Information und filtere nach Entfernung
+        filteredOrders = filteredOrders.filter(orderData => {
+          // Entfernung berechnen, falls Geocoding-Information vorhanden
+          if (orderData.pickupLocationGeo) {
+            const distance = calculateDistance(
+              driverLocation.latitude,
+              driverLocation.longitude,
+              orderData.pickupLocationGeo.latitude,
+              orderData.pickupLocationGeo.longitude
+            );
+            
+            // Entfernung zum Auftrag für die Anzeige hinzufügen
+            orderData.distance = distance;
+            
+            // Filtern nach maximaler Entfernung
+            return distance <= maxDistanceKm;
+          }
+          
+          // Wenn keine Geocoding-Infos vorhanden, diesen Auftrag ausschließen wenn
+          // nach Entfernung gefiltert wird
+          return false;
+        });
+      } else {
+        // Berechne Distanzen für Aufträge mit Geocoding-Information (ohne zu filtern)
+        // nur um Distanz anzuzeigen falls vorhanden
+        if (driverLocation) {
+          filteredOrders.forEach(orderData => {
+            if (orderData.pickupLocationGeo) {
+              orderData.distance = calculateDistance(
+                driverLocation.latitude,
+                driverLocation.longitude,
+                orderData.pickupLocationGeo.latitude,
+                orderData.pickupLocationGeo.longitude
+              );
+            }
+          });
+        }
+        
+        // Bei "Alle Aufträge" zeigen wir auch die ohne Geocoding an
+        console.log("Zeige alle Aufträge an, auch ohne Geocoding:", filteredOrders.length);
+      }
+      
+      // Anzahl der verfügbaren Aufträge aktualisieren
+      const availableOrdersCount = document.getElementById('availableOrdersCount');
+      availableOrdersCount.textContent = `(${filteredOrders.length})`;
+      
+      // Wenn keine Aufträge verfügbar sind
+      if (filteredOrders.length === 0) {
+        availableOrdersContainer.innerHTML = `
+          <div class="no-orders">
+            <p>Keine verfügbaren Aufträge gefunden.</p>
+            ${selectedMaxDistance !== 'all' ? '<p>Versuchen Sie es mit einem größeren Suchradius oder einem anderen Standort.</p>' : ''}
+          </div>
+        `;
+        return;
+      }
+      
+      // Nach Entfernung sortieren (wenn Distanz vorhanden)
+      if (driverLocation) {
+        filteredOrders.sort((a, b) => {
+          const distA = a.distance !== undefined ? a.distance : Number.MAX_SAFE_INTEGER;
+          const distB = b.distance !== undefined ? b.distance : Number.MAX_SAFE_INTEGER;
+          return distA - distB;
+        });
+      }
+      
+      // Keine Aufträge nach Filterung
+      if (filteredOrders.length === 0) {
+        availableOrdersContainer.innerHTML = `
+          <div class="no-orders">
+            <p>Keine Aufträge in der gewählten Entfernung gefunden.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Aufträge anzeigen
+      availableOrdersContainer.innerHTML = '';
+      
+      filteredOrders.forEach((orderData) => {
+        // Order-Card erstellen
+        const orderCard = document.createElement('div');
+        orderCard.classList.add('trip-card');
+        
+        const pickupDate = orderData.pickupDate?.toDate ? orderData.pickupDate.toDate() : new Date();
+        const formattedPickupDate = pickupDate.toLocaleDateString('de-DE') + ' ' + 
+                                  pickupDate.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+        
+        // Entfernungs-Anzeige, falls verfügbar
+        const distanceDisplay = orderData.distance !== undefined
+          ? `<div class="distance-badge">${orderData.distance.toFixed(1)} km</div>`
+          : '';
+        
+        orderCard.innerHTML = `
+          <div class="trip-header">
+            <span class="trip-title">${orderData.title || 'Transportauftrag'}</span>
+            <span class="trip-date">${formattedPickupDate}</span>
+          </div>
+          <div class="trip-details">
+            <div class="trip-detail">
+              <div class="trip-detail-label">Von</div>
+              <div class="trip-detail-value">${orderData.pickupLocation || 'Nicht angegeben'}</div>
+            </div>
+            <div class="trip-detail">
+              <div class="trip-detail-label">Nach</div>
+              <div class="trip-detail-value">${orderData.deliveryLocation || 'Nicht angegeben'}</div>
+            </div>
+            <div class="trip-detail">
+              <div class="trip-detail-label">Fracht</div>
+              <div class="trip-detail-value">${orderData.cargoDescription || 'Keine Angabe'}</div>
+            </div>
+            ${distanceDisplay ? `
+            <div class="trip-detail">
+              <div class="trip-detail-label">Entfernung</div>
+              <div class="trip-detail-value">${distanceDisplay}</div>
+            </div>
+            ` : ''}
+          </div>
+          <div class="trip-detail">
+            <div class="trip-detail-label">Beschreibung</div>
+            <div class="trip-detail-value">${orderData.description || 'Keine Beschreibung verfügbar'}</div>
+          </div>
+          <div class="trip-detail">
+            <div class="trip-detail-label">Preis</div>
+            <div class="trip-detail-value">${orderData.price ? orderData.price + ' €' : 'Auf Anfrage'}</div>
+          </div>
+          <div class="trip-actions">
+            <button class="accept-btn" data-order-id="${orderData.id}">Auftrag annehmen</button>
+            <button class="decline-btn" data-order-id="${orderData.id}">Ablehnen</button>
+          </div>
+        `;
+        
+        availableOrdersContainer.appendChild(orderCard);
+        
+        // Event-Listener für Buttons hinzufügen
+        orderCard.querySelector('.accept-btn').addEventListener('click', () => acceptOrder(orderData.id));
+        orderCard.querySelector('.decline-btn').addEventListener('click', () => declineOrder(orderData.id));
+      });
+    }
+    
+    // Entfernung zwischen zwei Koordinaten berechnen (Haversine-Formel)
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Erdradius in km
+      const dLat = toRadians(lat2 - lat1);
+      const dLon = toRadians(lon2 - lon1);
+      const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c; // Entfernung in km
+      
+      return distance;
+    }
+    
+    function toRadians(degrees) {
+      return degrees * (Math.PI / 180);
+    }
+    
+    // Aktuellen Standort des Fahrers ermitteln
+    getLocationBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        showLocationStatus('error', 'Geolocation wird von Ihrem Browser nicht unterstützt');
+        return;
+      }
+      
+      // Anstatt sofort nach der Berechtigung zu fragen, zeigen wir unseren eigenen Dialog
+      locationPermissionOverlay.style.display = 'flex';
+    });
+    
+    // Event-Listener für unseren eigenen Dialog
+    allowLocationBtn.addEventListener('click', () => {
+      locationPermissionOverlay.style.display = 'none';
+      requestAndProcessLocation();
+    });
+    
+    denyLocationBtn.addEventListener('click', () => {
+      locationPermissionOverlay.style.display = 'none';
+      showLocationStatus('warning', 'Standortabfrage abgelehnt. Filter nach Entfernung ist nicht verfügbar.');
+    });
+    
+    // Standortabfrage und Verarbeitung
+    function requestAndProcessLocation() {
+      showLocationStatus('', 'Standort wird ermittelt...');
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          // Standort in Variablen speichern
+          driverLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          };
+          
+          showLocationStatus('success', 'Standort erfolgreich aktualisiert');
+          
+          try {
+            // Optional: Standort des Fahrers in Firestore speichern
+            if (currentUser) {
+              await updateDoc(doc(db, "users", currentUser.uid), {
+                location: new GeoPoint(position.coords.latitude, position.coords.longitude),
+                locationUpdatedAt: Timestamp.now()
+              });
+            }
+            
+            // Aufträge neu filtern mit aktuellem Standort
+            filterAndDisplayOrders();
+            
+          } catch (error) {
+            console.error("Fehler beim Speichern des Standorts:", error);
+          }
+        },
+        (error) => {
+          let errorMessage = 'Standortermittlung fehlgeschlagen';
+          
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = 'Standortzugriff verweigert. Bitte erteilen Sie die Berechtigung in den Browser-Einstellungen.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = 'Standort ist derzeit nicht verfügbar.';
+              break;
+            case error.TIMEOUT:
+              errorMessage = 'Zeitüberschreitung bei der Standortabfrage.';
+              break;
+          }
+          
+          showLocationStatus('error', errorMessage);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    }
+    
+    // Status-Anzeige für die Standortermittlung
+    function showLocationStatus(type, message) {
+      locationStatus.textContent = message;
+      
+      // CSS-Klassen für verschiedene Status-Typen
+      locationStatus.classList.remove('success', 'error', 'warning');
+      if (type) {
+        locationStatus.classList.add(type);
+      }
+    }
+    
+    // Änderungen am Entfernungsfilter überwachen
+    maxDistance.addEventListener('change', filterAndDisplayOrders);
+    
+    // Meine Fahrten laden
+    function loadMyTrips() {
+      if (!currentUser) return;
+      
+      myTripsContainer.innerHTML = '<p class="loading-text">Lade Ihre Fahrten...</p>';
+      
+      // Fahrten des angemeldeten Fahrers abfragen, ohne Sortierung nach pickupDate
+      const tripsQuery = query(
+        collection(db, "routes"),
+        where("driverId", "==", currentUser.uid),
+        where("status", "==", "assigned")
+      );
+      
+      const unsubscribe = onSnapshot(tripsQuery, (querySnapshot) => {
+        // Anzahl der Fahrten aktualisieren
+        const myTripsCount = document.getElementById('myTripsCount');
+        myTripsCount.textContent = `(${querySnapshot.size})`;
+        
+        if (querySnapshot.empty) {
+          myTripsContainer.innerHTML = `
+            <div class="no-trips">
+              <p>Sie haben derzeit keine zugewiesenen Fahrten.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        myTripsContainer.innerHTML = '';
+        console.log(`${querySnapshot.size} zugewiesene Fahrten geladen`);
+        
+        // Alle Fahrten sammeln und manuell sortieren
+        const trips = [];
+        querySnapshot.forEach((tripDoc) => {
+          trips.push({id: tripDoc.id, ...tripDoc.data()});
+        });
+        
+        // Manuell nach pickupDate sortieren (absteigend)
+        trips.sort((a, b) => {
+          const dateA = a.pickupDate?.toDate ? a.pickupDate.toDate() : new Date();
+          const dateB = b.pickupDate?.toDate ? b.pickupDate.toDate() : new Date();
+          return dateB - dateA; // Absteigend sortieren (neueste zuerst)
+        });
+        
+        // Sortierte Fahrten anzeigen
+        trips.forEach((tripData) => {
+          console.log("Fahrt geladen:", tripData.id, tripData.title, "Status:", tripData.status);
+          
+          // Trip-Card erstellen
+          const tripCard = document.createElement('div');
+          tripCard.classList.add('trip-card');
+          
+          const pickupDate = tripData.pickupDate?.toDate ? tripData.pickupDate.toDate() : new Date();
+          const formattedPickupDate = pickupDate.toLocaleDateString('de-DE') + ' ' + 
+                                    pickupDate.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+          
+          tripCard.innerHTML = `
+            <div class="trip-header">
+              <span class="trip-title">${tripData.title || 'Transportauftrag'}</span>
+              <span class="trip-date">${formattedPickupDate}</span>
+            </div>
+            <div class="trip-details">
+              <div class="trip-detail">
+                <div class="trip-detail-label">Von</div>
+                <div class="trip-detail-value">${tripData.pickupLocation || 'Nicht angegeben'}</div>
+              </div>
+              <div class="trip-detail">
+                <div class="trip-detail-label">Nach</div>
+                <div class="trip-detail-value">${tripData.deliveryLocation || 'Nicht angegeben'}</div>
+              </div>
+            </div>
+            <div class="trip-detail">
+              <div class="trip-detail-label">Beschreibung</div>
+              <div class="trip-detail-value">${tripData.description || 'Keine Beschreibung verfügbar'}</div>
+            </div>
+            <div class="trip-detail">
+              <div class="trip-detail-label">Kontakt Auftraggeber</div>
+              <div class="trip-detail-value">${tripData.clientName || 'Nicht verfügbar'} - ${tripData.clientEmail || 'Keine E-Mail'}</div>
+            </div>
+            <div class="trip-actions">
+              <button class="complete-btn" data-trip-id="${tripData.id}">Als abgeschlossen markieren</button>
+            </div>
+          `;
+          
+          myTripsContainer.appendChild(tripCard);
+          
+          // Event-Listener für Buttons
+          tripCard.querySelector('.complete-btn').addEventListener('click', () => completeTrip(tripData.id));
+        });
+      }, (error) => {
+        console.error("Fehler beim Laden der eigenen Fahrten:", error);
+        myTripsContainer.innerHTML = `
+          <div class="error-message">
+            <p>Fehler beim Laden Ihrer Fahrten.</p>
+            <p>Details: ${error.message}</p>
+          </div>
+        `;
+      });
+      
+      return unsubscribe;
+    }
+    
+    // Status-Text je nach Status-Code zurückgeben
+    function getStatusText(status) {
+      switch(status) {
+        case 'available': return 'Verfügbar';
+        case 'assigned': return 'Zugewiesen';
+        case 'completed': return 'Abgeschlossen';
+        case 'cancelled': return 'Storniert';
+        default: return 'Unbekannt';
+      }
+    }
+    
+    // Auftrag annehmen
+    async function acceptOrder(orderId) {
+      if (!currentUser) return;
+      
+      // Statt confirm() den benutzerdefinierten Dialog anzeigen
+      showConfirmDialog(orderId);
+    }
+    
+    // Benutzerdefinierten Bestätigungsdialog anzeigen
+    function showConfirmDialog(orderId) {
+      const confirmDialog = document.getElementById('confirmOrderDialog');
+      const confirmBtn = document.getElementById('confirmOrderBtn');
+      const cancelBtn = document.getElementById('cancelOrderBtn');
+      
+      // Dialog anzeigen
+      confirmDialog.style.display = 'flex';
+      
+      // Event-Listener für Buttons
+      confirmBtn.onclick = async () => {
+        confirmDialog.style.display = 'none';
+        await processOrderAcceptance(orderId);
+      };
+      
+      cancelBtn.onclick = () => {
+        confirmDialog.style.display = 'none';
+        console.log("Auftragsannahme abgebrochen");
+      };
+      
+      // Klick außerhalb des Dialogs schließt ihn
+      confirmDialog.onclick = (event) => {
+        if (event.target === confirmDialog) {
+          confirmDialog.style.display = 'none';
+        }
+      };
+    }
+    
+    // Verarbeitung der Auftragsannahme nach Bestätigung
+    async function processOrderAcceptance(orderId) {
+      try {
+        // Benutzerdaten des Fahrers abrufen
+        const driverDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (!driverDoc.exists()) {
+          console.error("Fahrer-Profil nicht gefunden");
+          return;
+        }
+        
+        const driverData = driverDoc.data();
+        
+        // Route aktualisieren
+        await updateDoc(doc(db, "routes", orderId), {
+          status: "assigned",
+          driverId: currentUser.uid,
+          driverName: driverData.displayName || driverData.name || "Unbekannter Fahrer",
+          driverEmail: driverData.email || "Keine E-Mail",
+          assignedAt: Timestamp.now()
+        });
+        
+        alert("Auftrag erfolgreich angenommen!");
+        
+        // Zur "Meine Fahrten" Ansicht wechseln und Fahrten neu laden
+        switchToSection('my-trips');
+        
+      } catch (error) {
+        console.error("Fehler beim Annehmen des Auftrags:", error);
+        alert("Fehler beim Annehmen des Auftrags: " + error.message);
+      }
+    }
+    
+    // Auftrag ablehnen
+    function declineOrder(orderId) {
+      // Optional: Hier könnte eine Bestätigung oder ein Grund für die Ablehnung abgefragt werden
+      console.log("Auftrag abgelehnt:", orderId);
+    }
+    
+    // Fahrt als abgeschlossen markieren
+    async function completeTrip(tripId) {
+      try {
+        await updateDoc(doc(db, "routes", tripId), {
+          status: "completed",
+          completedAt: Timestamp.now()
+        });
+        
+        alert("Fahrt erfolgreich als abgeschlossen markiert!");
+        
+      } catch (error) {
+        console.error("Fehler beim Abschließen der Fahrt:", error);
+        alert("Fehler beim Abschließen der Fahrt: " + error.message);
+      }
+    }
+    
+    // Ausloggen
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "login.html";
+      } catch (error) {
+        console.error("Fehler beim Ausloggen:", error);
+      }
+    });
+
+    // Authentifizierungsstatus überwachen
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        
+        try {
+          // Benutzerdaten aus Firestore abrufen
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // Letzten Login aktualisieren
+            try {
+              await updateDoc(doc(db, "users", user.uid), {
+                lastLogin: serverTimestamp()
+              });
+              console.log("Letzter Login aktualisiert (Fahrer-Dashboard)");
+            } catch (updateError) {
+              console.warn("Fehler beim Aktualisieren des letzten Logins:", updateError);
+            }
+            
+            // Benutzername anzeigen
+            userNameElement.textContent = userData.displayName || userData.name || user.email || "Benutzer";
+            userNameElement.classList.remove('loading-name');
+            
+            // Überprüfen, ob der Benutzer ein Fahrer ist
+            if (userData.role !== 'driver') {
+              alert("Sie haben keine Berechtigung für den Fahrer-Bereich.");
+              window.location.href = "login.html";
+            }
+            
+            // Dashboard-Statistiken laden
+            loadDashboardStats(user.uid);
+          }
+        } catch (error) {
+          console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+        }
+      } else {
+        // Nicht eingeloggt, zur Login-Seite umleiten
+        window.location.href = "login.html";
+      }
+    });
+    
+    // Dashboard-Statistiken laden
+    function loadDashboardStats(driverId) {
+      // Abgeschlossene Fahrten zählen
+      const completedTripsQuery = query(
+        collection(db, "routes"),
+        where("driverId", "==", driverId),
+        where("status", "==", "completed")
+      );
+      
+      // Zugewiesene Fahrten zählen
+      const assignedTripsQuery = query(
+        collection(db, "routes"),
+        where("driverId", "==", driverId),
+        where("status", "==", "assigned")
+      );
+      
+      // Stornierte Aufträge zählen
+      const cancelledOrdersQuery = query(
+        collection(db, "routes"),
+        where("driverId", "==", driverId),
+        where("status", "==", "cancelled")
+      );
+      
+      // Echtzeit-Listener für abgeschlossene Fahrten
+      onSnapshot(completedTripsQuery, (snapshot) => {
+        const count = snapshot.size;
+        completedTripsValue.textContent = count;
+        
+        // Letzten Monat berechnen (für die Änderungsanzeige)
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        // Zählen, wie viele Aufträge im letzten Monat abgeschlossen wurden
+        let lastMonthCount = 0;
+        snapshot.forEach(doc => {
+          const completedAt = doc.data().completedAt?.toDate();
+          if (completedAt && completedAt > oneMonthAgo) {
+            lastMonthCount++;
+          }
+        });
+        
+        completedTripsChange.textContent = `+${lastMonthCount} im letzten Monat`;
+      }, (error) => {
+        console.error("Fehler beim Laden der abgeschlossenen Fahrten:", error);
+        completedTripsValue.textContent = "-";
+        completedTripsChange.textContent = "Fehler beim Laden";
+      });
+      
+      // Echtzeit-Listener für zugewiesene Fahrten
+      onSnapshot(assignedTripsQuery, (snapshot) => {
+        const count = snapshot.size;
+        assignedTripsValue.textContent = count;
+        assignedTripsChange.textContent = count === 1 ? "Aktive Fahrt" : "Aktive Fahrten";
+      }, (error) => {
+        console.error("Fehler beim Laden der zugewiesenen Fahrten:", error);
+        assignedTripsValue.textContent = "-";
+        assignedTripsChange.textContent = "Fehler beim Laden";
+      });
+      
+      // Echtzeit-Listener für stornierte Aufträge
+      onSnapshot(cancelledOrdersQuery, (snapshot) => {
+        const count = snapshot.size;
+        cancelledOrdersValue.textContent = count;
+        
+        // Letzten Monat berechnen (für die Änderungsanzeige)
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        // Zählen, wie viele Aufträge im letzten Monat storniert wurden
+        let lastMonthCount = 0;
+        snapshot.forEach(doc => {
+          const cancelledAt = doc.data().cancelledAt?.toDate();
+          if (cancelledAt && cancelledAt > oneMonthAgo) {
+            lastMonthCount++;
+          }
+        });
+        
+        // Text und Farbe basierend auf der Anzahl setzen
+        if (lastMonthCount > 0) {
+          cancelledOrdersChange.textContent = `+${lastMonthCount} im letzten Monat`;
+          cancelledOrdersChange.classList.add('negative-change');
+        } else {
+          cancelledOrdersChange.textContent = `Keine im letzten Monat`;
+          cancelledOrdersChange.classList.remove('negative-change');
+        }
+        
+        // Auch den Wert einfärben, wenn größer als 0
+        if (count > 0) {
+          cancelledOrdersValue.style.color = '#dc3545';
+        } else {
+          cancelledOrdersValue.style.color = '';
+        }
+      }, (error) => {
+        console.error("Fehler beim Laden der stornierten Aufträge:", error);
+        cancelledOrdersValue.textContent = "-";
+        cancelledOrdersChange.textContent = "Fehler beim Laden";
+      });
+      
+      // Echtzeit-Listener für Gesamtverdienst
+      onSnapshot(completedTripsQuery, (snapshot) => {
+        let totalEarnings = 0;
+        let lastMonthEarnings = 0;
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        snapshot.forEach(doc => {
+          const orderData = doc.data();
+          const price = orderData.price || 0;
+          
+          // Gesamtverdienst berechnen
+          totalEarnings += price;
+          
+          // Verdienst im letzten Monat berechnen
+          const completedAt = orderData.completedAt?.toDate();
+          if (completedAt && completedAt > oneMonthAgo) {
+            lastMonthEarnings += price;
+          }
+        });
+        
+        // Formatierung mit Euro-Zeichen
+        const formattedTotal = `${totalEarnings.toFixed(2)} €`;
+        const formattedLastMonth = `+${lastMonthEarnings.toFixed(2)} €`;
+        
+        // Aktualisiere den Header
+        headerEarningsValue.textContent = formattedTotal;
+        headerEarningsChange.textContent = formattedLastMonth;
+      }, (error) => {
+        console.error("Fehler beim Laden des Gesamtverdienstes:", error);
+        headerEarningsValue.textContent = "-";
+        headerEarningsChange.textContent = "+0 €";
+      });
+    }
+
+    // Dokumente laden
+    async function loadDocuments() {
+      if (!currentUser) return;
+      
+      const documentsList = document.getElementById('documents-list');
+      documentsList.innerHTML = '<p class="loading-text">Lade Dokumente...</p>';
+      
+      try {
+        // Direkt aus Firebase Storage laden
+        const storageBasePath = `driver_documents/${currentUser.uid}/`;
+        const documentTypes = ['fuehrerschein', 'fuehrungszeugnis', 'personalausweis'];
+        const allDocuments = [];
+        
+        // Für jeden Dokumenttyp die Dateien aus Storage laden
+        for (const type of documentTypes) {
+          try {
+            const folderRef = ref(storage, `${storageBasePath}${type}/`);
+            const listResult = await listAll(folderRef);
+            
+            for (const itemRef of listResult.items) {
+              try {
+                const downloadURL = await getDownloadURL(itemRef);
+                const metadata = await getMetadata(itemRef);
+                
+                allDocuments.push({
+                  name: itemRef.name,
+                  type: type,
+                  downloadURL: downloadURL,
+                  storagePath: itemRef.fullPath,
+                  size: metadata.size,
+                  uploadedAt: metadata.timeCreated,
+                  contentType: metadata.contentType
+                });
+              } catch (error) {
+                console.warn(`Fehler beim Laden von ${itemRef.name}:`, error);
+              }
+            }
+          } catch (error) {
+            console.warn(`Fehler beim Laden des Ordners ${type}:`, error);
+          }
+        }
+        
+        // Fallback: Auch aus Firestore laden falls Storage leer ist
+        try {
+          const documentsQuery = query(
+            collection(db, "driver_documents"),
+            where("userId", "==", currentUser.uid)
+          );
+          
+          const querySnapshot = await getDocs(documentsQuery);
+          querySnapshot.forEach(doc => {
+            const data = doc.data();
+            // Nur hinzufügen wenn nicht bereits aus Storage geladen
+            if (!allDocuments.find(d => d.storagePath === data.storagePath)) {
+              allDocuments.push({
+                id: doc.id,
+                name: data.originalName || data.fileName,
+                type: data.type,
+                downloadURL: data.downloadURL,
+                storagePath: data.storagePath,
+                size: data.fileSize,
+                uploadedAt: data.uploadedAt?.toDate?.() || new Date(data.uploadedAt),
+                contentType: data.fileType
+              });
+            }
+          });
+        } catch (firestoreError) {
+          console.warn("Firestore Fallback fehlgeschlagen:", firestoreError);
+        }
+        
+        if (allDocuments.length === 0) {
+          documentsList.innerHTML = `
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">Noch keine Dokumente hochgeladen</div>
+                <div class="document-date">Laden Sie Ihre Dokumente über die Upload-Bereiche oben hoch</div>
+              </div>
+            </div>
+          `;
+          return;
+        }
+        
+        // Nach Datum sortieren (neueste zuerst)
+        allDocuments.sort((a, b) => {
+          const timeA = new Date(a.uploadedAt).getTime();
+          const timeB = new Date(b.uploadedAt).getTime();
+          return timeB - timeA;
+        });
+        
+        let documentsHTML = '';
+        allDocuments.forEach(data => {
+          const uploadDate = new Date(data.uploadedAt).toLocaleDateString('de-DE');
+          const documentTypeNames = {
+            'fuehrerschein': 'Führerschein',
+            'fuehrungszeugnis': 'Führungszeugnis',
+            'personalausweis': 'Personalausweis'
+          };
+          
+          // Dateigröße formatieren
+          const formatFileSize = (bytes) => {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+          };
+          
+          documentsHTML += `
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">${data.name}</div>
+                <div class="document-date">${documentTypeNames[data.type] || data.type} - ${uploadDate} (${formatFileSize(data.size)})</div>
+              </div>
+              <div class="document-actions">
+                <button onclick="downloadDocument('${data.id || ''}', '${data.downloadURL}', '${data.name}')" class="btn-download">
+                  Download
+                </button>
+                <button onclick="deleteDocumentFromStorage('${data.storagePath}')" class="btn-delete">
+                  Löschen
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        documentsList.innerHTML = documentsHTML;
+        
+      } catch (error) {
+        console.error("Fehler beim Laden der Dokumente:", error);
+        documentsList.innerHTML = `
+          <div class="document-item">
+            <div class="document-info">
+              <div class="document-name">Fehler beim Laden der Dokumente</div>
+              <div class="document-date">Details: ${error.message}</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Standardmäßig das Dashboard laden
+    document.querySelector('.sidebar-menu a[data-section="dashboard"]').click();
+
+    // Globale Upload-Funktion
+    window.uploadDocument = async function(type) {
+      if (!currentUser) {
+        alert('Sie müssen angemeldet sein, um Dokumente hochzuladen.');
+        return;
+      }
+      
+      const fileInput = document.getElementById(`${type}-upload`);
+      const statusDiv = document.getElementById(`${type}-status`);
+      const files = fileInput.files;
+      
+      if (!files || files.length === 0) {
+        statusDiv.innerHTML = '<span class="error">Bitte wählen Sie eine Datei aus.</span>';
+        statusDiv.className = 'upload-status error';
+        return;
+      }
+      
+      // Validierung
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+      
+      for (let file of files) {
+        if (file.size > maxSize) {
+          statusDiv.innerHTML = '<span class="error">Datei zu groß. Maximum 10MB.</span>';
+          statusDiv.className = 'upload-status error';
+          return;
+        }
+        
+        if (!allowedTypes.includes(file.type)) {
+          statusDiv.innerHTML = '<span class="error">Nur PDF, JPG und PNG Dateien erlaubt.</span>';
+          statusDiv.className = 'upload-status error';
+          return;
+        }
+      }
+      
+      // Upload zu Firebase Storage
+      statusDiv.innerHTML = '<span class="uploading">Wird hochgeladen...</span>';
+      statusDiv.className = 'upload-status uploading';
+      
+      try {
+        const uploadPromises = Array.from(files).map(async (file) => {
+          // Eindeutigen Dateinamen generieren
+          const timestamp = Date.now();
+          const fileName = `${timestamp}_${file.name}`;
+          const storagePath = `driver_documents/${currentUser.uid}/${type}/${fileName}`;
+          
+          // Datei zu Firebase Storage hochladen
+          const storageRef = ref(storage, storagePath);
+          const snapshot = await uploadBytes(storageRef, file);
+          
+          // Download-URL erhalten
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          
+          // Metadaten in Firestore speichern
+          await addDoc(collection(db, "driver_documents"), {
+            userId: currentUser.uid,
+            type: type,
+            originalName: file.name,
+            fileName: fileName,
+            storagePath: storagePath,
+            downloadURL: downloadURL,
+            fileSize: file.size,
+            fileType: file.type,
+            uploadedAt: Timestamp.now()
+          });
+          
+          return { fileName, downloadURL };
+        });
+        
+        await Promise.all(uploadPromises);
+        
+        statusDiv.innerHTML = '<span class="success">✓ Erfolgreich hochgeladen!</span>';
+        statusDiv.className = 'upload-status success';
+        
+        // Eingabefeld zurücksetzen
+        fileInput.value = '';
+        
+        // Dokumente-Liste wird automatisch über onSnapshot aktualisiert
+        
+      } catch (error) {
+        console.error("Fehler beim Hochladen:", error);
+        statusDiv.innerHTML = '<span class="error">Fehler beim Hochladen. Bitte versuchen Sie es erneut.</span>';
+        statusDiv.className = 'upload-status error';
+      }
+    };
+    
+    // Dokument herunterladen
+    window.downloadDocument = function(docId, downloadURL, fileName) {
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    
+    // Dokument löschen (alte Funktion für Firestore-Dokumente)
+    window.deleteDocument = async function(docId, storagePath) {
+      if (!confirm('Möchten Sie dieses Dokument wirklich löschen?')) {
+        return;
+      }
+      
+      try {
+        // Aus Firebase Storage löschen
+        const storageRef = ref(storage, storagePath);
+        await deleteObject(storageRef);
+        
+        // Aus Firestore löschen falls docId vorhanden
+        if (docId) {
+          await deleteDoc(doc(db, "driver_documents", docId));
+        }
+        
+        console.log("Dokument erfolgreich gelöscht");
+        
+        // Dokumente neu laden
+        await loadDocuments();
+        
+      } catch (error) {
+        console.error("Fehler beim Löschen des Dokuments:", error);
+        alert("Fehler beim Löschen des Dokuments. Bitte versuchen Sie es erneut.");
+      }
+    };
+    
+    // Dokument direkt aus Storage löschen
+    window.deleteDocumentFromStorage = async function(storagePath) {
+      if (!confirm('Möchten Sie dieses Dokument wirklich löschen?')) {
+        return;
+      }
+      
+      try {
+        // Aus Firebase Storage löschen
+        const storageRef = ref(storage, storagePath);
+        await deleteObject(storageRef);
+        
+        // Auch aus Firestore löschen falls vorhanden
+        try {
+          const documentsQuery = query(
+            collection(db, "driver_documents"),
+            where("userId", "==", currentUser.uid),
+            where("storagePath", "==", storagePath)
+          );
+          const querySnapshot = await getDocs(documentsQuery);
+          querySnapshot.forEach(async (docSnapshot) => {
+            await deleteDoc(docSnapshot.ref);
+          });
+        } catch (firestoreError) {
+          console.warn("Firestore-Löschung fehlgeschlagen:", firestoreError);
+        }
+        
+        console.log("Dokument erfolgreich gelöscht");
+        
+        // Dokumente neu laden
+        await loadDocuments();
+        
+      } catch (error) {
+        console.error("Fehler beim Löschen des Dokuments:", error);
+        alert("Fehler beim Löschen des Dokuments. Bitte versuchen Sie es erneut.");
+      }
+    };
+
+    // Payroll/Abrechnungen-Funktionen
+    
+    // Abrechnungen für den aktuellen Fahrer laden
+    async function loadPayrollRecords() {
+      if (!currentUser) {
+        console.error("Kein Benutzer angemeldet");
+        return;
+      }
+      
+      try {
+        console.log("Lade Abrechnungen für Fahrer:", currentUser.uid);
+        
+        const payrollTableBody = document.getElementById('payroll-table-body');
+        payrollTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="loading-text">Lade Abrechnungen...</div></td></tr>';
+        
+        // Erst versuchen mit orderBy, falls das fehlschlägt ohne orderBy
+        let payrollSnapshot;
+        try {
+          console.log("Versuche Abfrage mit orderBy...");
+          const payrollQuery = query(
+            collection(db, "payroll"),
+            where("driverId", "==", currentUser.uid),
+            orderBy("uploadedAt", "desc")
+          );
+          payrollSnapshot = await getDocs(payrollQuery);
+        } catch (orderError) {
+          console.warn("orderBy fehlgeschlagen, versuche ohne orderBy:", orderError);
+          // Fallback: Ohne orderBy
+          const payrollQuery = query(
+            collection(db, "payroll"),
+            where("driverId", "==", currentUser.uid)
+          );
+          payrollSnapshot = await getDocs(payrollQuery);
+        }
+        
+        console.log("Abfrage erfolgreich, Anzahl Dokumente:", payrollSnapshot.size);
+        
+        if (payrollSnapshot.empty) {
+          payrollTableBody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem;">
+                <div class="no-payroll-message">
+                  <h3>Keine Abrechnungen gefunden</h3>
+                  <p>Sie haben derzeit keine Gehaltsabrechnungen. Wenden Sie sich an Ihren Manager, falls Sie Fragen haben.</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        // Tabelle mit Abrechnungen füllen
+        payrollTableBody.innerHTML = '';
+        
+        // Dokumente in Array sammeln für manuelle Sortierung
+        const payrollRecords = [];
+        payrollSnapshot.forEach((doc) => {
+          payrollRecords.push({
+            id: doc.id,
+            data: doc.data()
+          });
+        });
+        
+        // Manuell nach uploadedAt sortieren (falls orderBy nicht funktioniert hat)
+        payrollRecords.sort((a, b) => {
+          const dateA = a.data.uploadedAt?.toDate() || new Date(0);
+          const dateB = b.data.uploadedAt?.toDate() || new Date(0);
+          return dateB - dateA; // Absteigende Sortierung (neueste zuerst)
+        });
+        
+        payrollRecords.forEach((record) => {
+          const payrollData = record.data;
+          
+          console.log("Verarbeite Abrechnung:", record.id, payrollData);
+          
+          // Datum formatieren
+          const uploadedAt = payrollData.uploadedAt?.toDate 
+            ? payrollData.uploadedAt.toDate().toLocaleDateString('de-DE')
+            : 'Unbekannt';
+          
+          // Monat formatieren (YYYY-MM zu MM/YYYY)
+          const formattedMonth = payrollData.month 
+            ? payrollData.month.split('-').reverse().join('/')
+            : 'Unbekannt';
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${formattedMonth}</td>
+            <td><span class="payroll-amount">${payrollData.amount?.toFixed(2) || '0.00'} €</span></td>
+            <td>${uploadedAt}</td>
+            <td>${payrollData.notes || '-'}</td>
+            <td>
+              <button class="payroll-download-btn" onclick="downloadPayrollRecord('${record.id}', '${payrollData.downloadURL}', '${payrollData.fileName}')">
+                📄 Herunterladen
+              </button>
+            </td>
+          `;
+          
+          payrollTableBody.appendChild(row);
+        });
+        
+        console.log(`${payrollRecords.length} Abrechnungen erfolgreich geladen`);
+        
+      } catch (error) {
+        console.error("Fehler beim Laden der Abrechnungen:", error);
+        console.error("Fehler-Details:", error.message);
+        console.error("Fehler-Stack:", error.stack);
+        
+        const payrollTableBody = document.getElementById('payroll-table-body');
+        payrollTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 2rem;">
+              <div class="no-payroll-message">
+                <h3>Fehler beim Laden</h3>
+                <p>Die Abrechnungen konnten nicht geladen werden.</p>
+                <p><strong>Fehler:</strong> ${error.message}</p>
+                <p>Bitte versuchen Sie es später erneut oder wenden Sie sich an den Support.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+    
+    // Abrechnung herunterladen
+    window.downloadPayrollRecord = function(payrollId, downloadURL, fileName) {
+      try {
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = fileName || `Abrechnung_${payrollId}.pdf`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log("Abrechnung heruntergeladen:", fileName);
+      } catch (error) {
+        console.error("Fehler beim Herunterladen der Abrechnung:", error);
+        alert("Fehler beim Herunterladen der Abrechnung. Bitte versuchen Sie es erneut.");
+      }
+    };
+    
+  </script>
+</body>
+</html> 
