@@ -1445,7 +1445,7 @@
 
           <li><a href="#clients" data-section="clients-section">🏢 Auftraggeber</a></li>
           <li><a href="#orders" data-section="orders-section">📋 Aufträge</a></li>
-          
+          <li><a href="#payroll" data-section="payroll-section">💰 Gehaltsabrechnungen</a></li>
           <li><a href="#whitelist" data-section="whitelist-section">✅ Whitelist</a></li>
 
           
@@ -1847,6 +1847,80 @@
           </div>
         </div>
 
+        <!-- Gehaltsabrechnungen Section -->
+        <div id="payroll-section" class="content-section">
+          <div class="section-title">
+            <h2>💰 Gehaltsabrechnungen</h2>
+          </div>
+          
+          <!-- Upload-Formular -->
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <h3>Gehaltsabrechnung hochladen</h3>
+            </div>
+            <div class="dashboard-card-body">
+              <form id="payrollUploadForm" class="form-grid">
+                <div class="form-group">
+                  <label for="payrollDriver">Fahrer auswählen</label>
+                  <select id="payrollDriver" required>
+                    <option value="">Bitte wählen...</option>
+                    <!-- Fahrer werden dynamisch geladen -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="payrollMonth">Monat</label>
+                  <input type="month" id="payrollMonth" required>
+                </div>
+                <div class="form-group">
+                  <label for="payrollAmount">Bruttobetrag (€)</label>
+                  <input type="number" id="payrollAmount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label for="payrollFile">Abrechnungsdatei (PDF)</label>
+                  <input type="file" id="payrollFile" accept=".pdf" required>
+                </div>
+                <div class="form-group full-width">
+                  <label for="payrollNotes">Notizen</label>
+                  <textarea id="payrollNotes" placeholder="Zusätzliche Informationen..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                  <button type="submit" class="btn-primary">Abrechnung hochladen</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Übersicht der Abrechnungen -->
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <h3>Hochgeladene Abrechnungen</h3>
+              <div class="section-controls">
+                <input type="text" id="payrollSearchInput" placeholder="Suche nach Fahrer oder Monat..." class="search-input">
+                <button id="refreshPayrollBtn" class="action-btn">🔄 Aktualisieren</button>
+              </div>
+            </div>
+            <div class="dashboard-card-body">
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Fahrer</th>
+                      <th>Monat</th>
+                      <th>Bruttobetrag</th>
+                      <th>Hochgeladen am</th>
+                      <th>Notizen</th>
+                      <th>Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody id="payrollTableBody">
+                    <!-- Abrechnungen werden dynamisch geladen -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
 
 
@@ -1968,6 +2042,7 @@
               loadDrivers();
               loadNotifications();
               initializeWhitelistListener(); // Whitelist-Daten laden
+              loadPayrollDrivers(); // Fahrer für Payroll-Dropdown vorladen
             } else {
               console.error("Keine Benutzerdaten gefunden");
               window.location.href = "login.html";
@@ -2095,15 +2170,15 @@
       // Load orders
       function loadOrders() {
         try {
-          // Aktuelle Aufträge abfragen (die letzten 5)
-          const ordersQuery = query(
-            collection(db, "orders"),
+          // Aktuelle Routen abfragen (die letzten 5)
+          const routesQuery = query(
+            collection(db, "routes"),
             orderBy("createdAt", "desc"),
             limit(5)
           );
           
-          // Echtzeit-Listener für Aufträge
-          onSnapshot(ordersQuery, async (snapshot) => {
+          // Echtzeit-Listener für Routen
+          onSnapshot(routesQuery, async (snapshot) => {
             if (snapshot.empty) {
               ordersTableBody.innerHTML = `
                 <tr>
@@ -2372,9 +2447,9 @@
 
       // Dashboard-Statistiken laden
       function loadDashboardStats() {
-        // Aktive Aufträge (assigned)
-        const activeOrdersQuery = query(
-          collection(db, "orders"),
+        // Aktive Routen (assigned)
+        const activeRoutesQuery = query(
+          collection(db, "routes"),
           where("status", "==", "assigned")
         );
         
@@ -2385,25 +2460,25 @@
           where("status", "==", "available")
         );
         
-        // Offene Aufträge (available)
-        const availableOrdersQuery = query(
-          collection(db, "orders"),
+        // Offene Routen (available)
+        const availableRoutesQuery = query(
+          collection(db, "routes"),
           where("status", "==", "available")
         );
         
-        // Abgeschlossene Aufträge
-        const completedOrdersQuery = query(
-          collection(db, "orders"),
+        // Abgeschlossene Routen
+        const completedRoutesQuery = query(
+          collection(db, "routes"),
           where("status", "==", "completed")
         );
         
-        // Echtzeit-Listener für aktive Aufträge
-        onSnapshot(activeOrdersQuery, (snapshot) => {
+        // Echtzeit-Listener für aktive Routen
+        onSnapshot(activeRoutesQuery, (snapshot) => {
           const count = snapshot.size;
           activeOrdersValue.textContent = count;
           activeOrdersChange.textContent = count === 1 ? "Aktiver Auftrag" : "Aktive Aufträge";
         }, (error) => {
-          console.error("Fehler beim Laden der aktiven Aufträge:", error);
+          console.error("Fehler beim Laden der aktiven Routen:", error);
           activeOrdersValue.textContent = "-";
           activeOrdersChange.textContent = "Fehler beim Laden";
         });
@@ -2419,19 +2494,19 @@
           availableDriversChange.textContent = "Fehler beim Laden";
         });
         
-        // Echtzeit-Listener für offene Aufträge
-        onSnapshot(availableOrdersQuery, (snapshot) => {
+        // Echtzeit-Listener für offene Routen
+        onSnapshot(availableRoutesQuery, (snapshot) => {
           const count = snapshot.size;
           availableOrdersValue.textContent = count;
           availableOrdersChange.textContent = count === 1 ? "Offener Auftrag" : "Offene Aufträge";
         }, (error) => {
-          console.error("Fehler beim Laden der offenen Aufträge:", error);
+          console.error("Fehler beim Laden der offenen Routen:", error);
           availableOrdersValue.textContent = "-";
           availableOrdersChange.textContent = "Fehler beim Laden";
         });
         
-        // Echtzeit-Listener für abgeschlossene Aufträge
-        onSnapshot(completedOrdersQuery, (snapshot) => {
+        // Echtzeit-Listener für abgeschlossene Routen
+        onSnapshot(completedRoutesQuery, (snapshot) => {
           const count = snapshot.size;
           completedOrdersValue.textContent = count;
           
@@ -2439,7 +2514,7 @@
           const oneMonthAgo = new Date();
           oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
           
-          // Zählen, wie viele Aufträge im letzten Monat abgeschlossen wurden
+          // Zählen, wie viele Routen im letzten Monat abgeschlossen wurden
           let lastMonthCount = 0;
           snapshot.forEach(doc => {
             const completedAt = doc.data().completedAt?.toDate();
@@ -2450,7 +2525,7 @@
           
           completedOrdersChange.textContent = `+${lastMonthCount} im letzten Monat`;
         }, (error) => {
-          console.error("Fehler beim Laden der abgeschlossenen Aufträge:", error);
+          console.error("Fehler beim Laden der abgeschlossenen Routen:", error);
           completedOrdersValue.textContent = "-";
           completedOrdersChange.textContent = "Fehler beim Laden";
         });
@@ -2507,6 +2582,11 @@
             loadOmniView();
           }
           
+          // Payroll-Sektion laden, wenn sie aktiviert wird
+          if (sectionId === 'payroll-section') {
+            initializePayrollSection();
+          }
+          
                 
         });
       });
@@ -2553,9 +2633,9 @@
           const clientsSnapshot = await getDocs(clientsQuery);
           document.getElementById('totalClientsValue').textContent = clientsSnapshot.size;
           
-          // Aufträge zählen
-          const ordersSnapshot = await getDocs(collection(db, "orders"));
-          document.getElementById('totalOrdersValue').textContent = ordersSnapshot.size;
+          // Routen zählen
+          const routesSnapshot = await getDocs(collection(db, "routes"));
+          document.getElementById('totalOrdersValue').textContent = routesSnapshot.size;
           
           // Dokumente zählen
           const documentsSnapshot = await getDocs(collection(db, "driver_documents"));
@@ -2602,26 +2682,26 @@
         }
       }
 
-      // Alle Aufträge laden
+      // Alle Routen laden
       async function loadAllOrders() {
         try {
-          const ordersSnapshot = await getDocs(collection(db, "orders"));
+          const routesSnapshot = await getDocs(collection(db, "routes"));
           const ordersTableBody = document.getElementById('ordersTableBodyOmni');
           ordersTableBody.innerHTML = '';
           
-          ordersSnapshot.forEach(doc => {
-            const orderData = doc.data();
+          routesSnapshot.forEach(doc => {
+            const routeData = doc.data();
             const tr = document.createElement('tr');
             
-            const createdAt = orderData.createdAt ? new Date(orderData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt';
-            const price = orderData.price ? `${orderData.price.toFixed(2)} €` : 'N/A';
+            const createdAt = routeData.createdAt ? new Date(routeData.createdAt.seconds * 1000).toLocaleDateString('de-DE') : 'Unbekannt';
+            const price = routeData.price ? `${routeData.price.toFixed(2)} €` : 'N/A';
             
             tr.innerHTML = `
               <td>${doc.id.substring(0, 8)}...</td>
-              <td>${orderData.title || 'Unbekannt'}</td>
-              <td>${orderData.customerEmail || 'Unbekannt'}</td>
-              <td>${orderData.driverEmail || 'Nicht zugewiesen'}</td>
-              <td><span class="status-badge ${orderData.status}">${translateOrderStatus(orderData.status)}</span></td>
+              <td>${routeData.title || 'Unbekannt'}</td>
+              <td>${routeData.customerEmail || 'Unbekannt'}</td>
+              <td>${routeData.driverEmail || 'Nicht zugewiesen'}</td>
+              <td><span class="status-badge ${routeData.status}">${translateOrderStatus(routeData.status)}</span></td>
               <td>${price}</td>
               <td>${createdAt}</td>
               <td>
@@ -2634,7 +2714,7 @@
             ordersTableBody.appendChild(tr);
           });
         } catch (error) {
-          console.error("Fehler beim Laden der Aufträge:", error);
+          console.error("Fehler beim Laden der Routen:", error);
         }
       }
 
@@ -3542,7 +3622,8 @@
           };
           
           try {
-            await updateDoc(doc(db, "orders", orderId), updatedData);
+            await updateDoc(doc(db, "routes", orderId), updatedData);
+            
             alert('Auftrag erfolgreich aktualisiert');
             closeModal();
             loadAllOrders(); // Tabelle aktualisieren
@@ -3613,6 +3694,250 @@
         
         console.log("Modal erfolgreich geschlossen");
       };
+
+      // Gehaltsabrechnungen-Funktionalität
+      
+      // Fahrer für Payroll-Dropdown laden
+      async function loadPayrollDrivers() {
+        try {
+          console.log("Lade Fahrer für Payroll-Dropdown...");
+          
+          // Alle Benutzer laden und dann nach Rolle filtern (für Debugging)
+          const allUsersSnapshot = await getDocs(collection(db, "users"));
+          console.log("Alle Benutzer:", allUsersSnapshot.size);
+          
+          const drivers = [];
+          allUsersSnapshot.forEach(doc => {
+            const userData = doc.data();
+            console.log("Benutzer:", userData.email, "Rolle:", userData.role);
+            if (userData.role === "driver" || userData.role === "Driver" || userData.role === "fahrer") {
+              drivers.push({id: doc.id, data: userData});
+            }
+          });
+          
+          console.log("Gefundene Fahrer:", drivers.length);
+          
+          const payrollDriverSelect = document.getElementById('payrollDriver');
+          if (!payrollDriverSelect) {
+            console.error("Payroll-Driver-Select-Element nicht gefunden");
+            return;
+          }
+          
+          payrollDriverSelect.innerHTML = '<option value="">Bitte wählen...</option>';
+          
+          if (drivers.length === 0) {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "Keine Fahrer gefunden";
+            option.disabled = true;
+            payrollDriverSelect.appendChild(option);
+            console.warn("Keine Fahrer gefunden! Überprüfen Sie die Rollen in der Datenbank.");
+          } else {
+            drivers.forEach(driver => {
+              const driverData = driver.data;
+              console.log("Fahrer gefunden:", driverData.email, driverData);
+              
+              // Bessere Namensdarstellung
+              const fullName = `${driverData.firstName || ''} ${driverData.lastName || ''}`.trim();
+              const displayName = fullName || driverData.displayName || driverData.name || 'Unbekannt';
+              
+              const option = document.createElement('option');
+              option.value = driver.id;
+              option.textContent = `${displayName} (${driverData.email})`;
+              payrollDriverSelect.appendChild(option);
+            });
+          }
+          
+          console.log(`${drivers.length} Fahrer für Payroll-Dropdown geladen`);
+        } catch (error) {
+          console.error("Fehler beim Laden der Fahrer für Payroll:", error);
+        }
+      }
+      
+      // Gehaltsabrechnungen laden
+      async function loadPayrollRecords() {
+        try {
+          const payrollQuery = query(collection(db, "payroll"), orderBy("uploadedAt", "desc"));
+          const payrollSnapshot = await getDocs(payrollQuery);
+          
+          const payrollTableBody = document.getElementById('payrollTableBody');
+          payrollTableBody.innerHTML = '';
+          
+          if (payrollSnapshot.empty) {
+            payrollTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Keine Abrechnungen gefunden</td></tr>';
+            return;
+          }
+          
+          for (const doc of payrollSnapshot.docs) {
+            const payrollData = doc.data();
+            
+            // Fahrer-Daten laden
+            let driverName = 'Unbekannt';
+            try {
+              const driverDoc = await getDoc(doc(db, "users", payrollData.driverId));
+              if (driverDoc.exists()) {
+                const driverData = driverDoc.data();
+                driverName = driverData.displayName || driverData.name || 'Unbekannt';
+              }
+            } catch (error) {
+              console.warn("Fehler beim Laden der Fahrer-Daten:", error);
+            }
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${driverName}</td>
+              <td>${payrollData.month}</td>
+              <td>${payrollData.amount.toFixed(2)} €</td>
+              <td>${payrollData.uploadedAt?.toDate().toLocaleDateString('de-DE') || 'Unbekannt'}</td>
+              <td>${payrollData.notes || '-'}</td>
+              <td>
+                <button class="action-btn-small view" onclick="downloadPayrollFile('${doc.id}')">📄 Herunterladen</button>
+                <button class="action-btn-small delete" onclick="deletePayrollRecord('${doc.id}')">🗑️ Löschen</button>
+              </td>
+            `;
+            payrollTableBody.appendChild(row);
+          }
+          
+          console.log(`${payrollSnapshot.size} Gehaltsabrechnungen geladen`);
+        } catch (error) {
+          console.error("Fehler beim Laden der Gehaltsabrechnungen:", error);
+        }
+      }
+      
+      // Gehaltsabrechnung hochladen
+      async function uploadPayrollRecord(formData) {
+        try {
+          const file = formData.get('file');
+          const driverId = formData.get('driverId');
+          const month = formData.get('month');
+          const amount = parseFloat(formData.get('amount'));
+          const notes = formData.get('notes') || '';
+          
+          // Datei zu Firebase Storage hochladen
+          const fileName = `payroll_${driverId}_${month}_${Date.now()}.pdf`;
+          const storageRef = ref(storage, `payroll/${fileName}`);
+          
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          
+          // Metadaten in Firestore speichern
+          await addDoc(collection(db, "payroll"), {
+            driverId: driverId,
+            month: month,
+            amount: amount,
+            notes: notes,
+            fileName: fileName,
+            downloadURL: downloadURL,
+            uploadedAt: serverTimestamp(),
+            uploadedBy: auth.currentUser.uid
+          });
+          
+          console.log("Gehaltsabrechnung erfolgreich hochgeladen");
+          return true;
+        } catch (error) {
+          console.error("Fehler beim Hochladen der Gehaltsabrechnung:", error);
+          throw error;
+        }
+      }
+      
+      // Gehaltsabrechnung herunterladen
+      async function downloadPayrollFile(payrollId) {
+        try {
+          const payrollDoc = await getDoc(doc(db, "payroll", payrollId));
+          if (payrollDoc.exists()) {
+            const payrollData = payrollDoc.data();
+            window.open(payrollData.downloadURL, '_blank');
+          }
+        } catch (error) {
+          console.error("Fehler beim Herunterladen der Datei:", error);
+          alert("Fehler beim Herunterladen der Datei");
+        }
+      }
+      
+      // Gehaltsabrechnung löschen
+      async function deletePayrollRecord(payrollId) {
+        if (!confirm("Sind Sie sicher, dass Sie diese Gehaltsabrechnung löschen möchten?")) return;
+        
+        try {
+          const payrollDoc = await getDoc(doc(db, "payroll", payrollId));
+          if (payrollDoc.exists()) {
+            const payrollData = payrollDoc.data();
+            
+            // Datei aus Storage löschen
+            const storageRef = ref(storage, `payroll/${payrollData.fileName}`);
+            await deleteObject(storageRef);
+            
+            // Dokument aus Firestore löschen
+            await deleteDoc(doc(db, "payroll", payrollId));
+            
+            alert("Gehaltsabrechnung erfolgreich gelöscht");
+            loadPayrollRecords();
+          }
+        } catch (error) {
+          console.error("Fehler beim Löschen der Gehaltsabrechnung:", error);
+          alert("Fehler beim Löschen der Gehaltsabrechnung");
+        }
+      }
+      
+      // Event-Listener für Payroll-Formular
+      document.getElementById('payrollUploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('driverId', document.getElementById('payrollDriver').value);
+        formData.append('month', document.getElementById('payrollMonth').value);
+        formData.append('amount', document.getElementById('payrollAmount').value);
+        formData.append('notes', document.getElementById('payrollNotes').value);
+        formData.append('file', document.getElementById('payrollFile').files[0]);
+        
+        try {
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          submitButton.disabled = true;
+          submitButton.textContent = 'Wird hochgeladen...';
+          
+          await uploadPayrollRecord(formData);
+          
+          alert("Gehaltsabrechnung erfolgreich hochgeladen!");
+          e.target.reset();
+          loadPayrollRecords();
+        } catch (error) {
+          alert("Fehler beim Hochladen: " + error.message);
+        } finally {
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          submitButton.disabled = false;
+          submitButton.textContent = 'Abrechnung hochladen';
+        }
+      });
+      
+      // Event-Listener für Payroll-Refresh
+      document.getElementById('refreshPayrollBtn').addEventListener('click', () => {
+        loadPayrollRecords();
+      });
+      
+      // Payroll-Suchfunktion
+      document.getElementById('payrollSearchInput').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('#payrollTableBody tr');
+        
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+      });
+      
+      // Payroll-Sektion initialisieren
+      function initializePayrollSection() {
+        console.log("Initialisiere Payroll-Sektion...");
+        loadPayrollDrivers();
+        loadPayrollRecords();
+      }
+      
+
+      
+      // Globale Funktionen für onclick-Handler
+      window.downloadPayrollFile = downloadPayrollFile;
+      window.deletePayrollRecord = deletePayrollRecord;
+      
     </script>
   </div>
 </body>

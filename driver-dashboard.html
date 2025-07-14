@@ -636,6 +636,83 @@
     .btn-delete:hover {
       background-color: #c82333;
     }
+
+    /* Payroll/Abrechnungen Styles */
+    .payroll-overview {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .payroll-info {
+      padding: 1.5rem;
+      background-color: var(--bg-light);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .payroll-info p {
+      margin: 0;
+      color: var(--text-color-secondary);
+    }
+
+    .payroll-table-container {
+      overflow-x: auto;
+    }
+
+    .payroll-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .payroll-table th,
+    .payroll-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .payroll-table th {
+      background-color: var(--bg-light);
+      font-weight: 600;
+      color: var(--text-color-primary);
+    }
+
+    .payroll-table tbody tr:hover {
+      background-color: var(--bg-light);
+    }
+
+    .payroll-amount {
+      font-weight: 600;
+      color: var(--primary-navy);
+    }
+
+    .payroll-download-btn {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .payroll-download-btn:hover {
+      background-color: var(--primary-navy);
+    }
+
+    .no-payroll-message {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-color-secondary);
+    }
+
+    .no-payroll-message h3 {
+      margin-bottom: 1rem;
+      color: var(--text-color-primary);
+    }
   </style>
 </head>
 <body>
@@ -660,7 +737,7 @@
           <li><a href="#" class="active" data-section="dashboard">Dashboard</a></li>
           <li><a href="#" data-section="my-trips">Meine Fahrten</a></li>
           <li><a href="#" data-section="available-orders">Verfügbare Aufträge</a></li>
-          <li><a href="#">Abrechnungen</a></li>
+          <li><a href="#" data-section="payroll">Abrechnungen</a></li>
           <li><a href="#" data-section="documents">Dokumente</a></li>
           <li><a href="#">Profil</a></li>
           <li><a href="#">Einstellungen</a></li>
@@ -772,6 +849,37 @@
             <h3>Hochgeladene Dokumente</h3>
             <div id="documents-list">
               <p class="loading-text">Lade Dokumente...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abrechnungen Bereich -->
+        <div class="content-section" id="payroll-section" style="display: none;">
+          <h2>Meine Gehaltsabrechnungen</h2>
+          <div class="payroll-overview">
+            <div class="payroll-info">
+              <p>Hier finden Sie alle Ihre Gehaltsabrechnungen. Sie können diese einsehen und als PDF herunterladen.</p>
+            </div>
+            
+            <div class="payroll-table-container">
+              <table class="payroll-table">
+                <thead>
+                  <tr>
+                    <th>Monat</th>
+                    <th>Bruttobetrag</th>
+                    <th>Hochgeladen am</th>
+                    <th>Notizen</th>
+                    <th>Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody id="payroll-table-body">
+                  <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem;">
+                      <div class="loading-text">Lade Abrechnungen...</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -912,6 +1020,8 @@
             loadMyTrips();
           } else if (sectionId === 'documents') {
             loadDocuments();
+          } else if (sectionId === 'payroll') {
+            loadPayrollRecords();
           }
         }
       });
@@ -931,15 +1041,15 @@
       
       availableOrdersContainer.innerHTML = '<p class="loading-text">Lade verfügbare Aufträge...</p>';
       
-      // Nur verfügbare Aufträge laden, ohne Sortierung nach createdAt
-      const ordersQuery = query(
-        collection(db, "orders"),
+      // Nur verfügbare Routen laden, ohne Sortierung nach createdAt
+      const routesQuery = query(
+        collection(db, "routes"),
         where("status", "==", "available")
         // Sortierung entfernt, um keinen zusammengesetzten Index zu benötigen
       );
       
-      // Echtzeit-Listener für Aufträge
-      const unsubscribe = onSnapshot(ordersQuery, (querySnapshot) => {
+      // Echtzeit-Listener für Routen
+      const unsubscribe = onSnapshot(routesQuery, (querySnapshot) => {
         if (querySnapshot.empty) {
           availableOrdersContainer.innerHTML = `
             <div class="no-orders">
@@ -1250,7 +1360,7 @@
       
       // Fahrten des angemeldeten Fahrers abfragen, ohne Sortierung nach pickupDate
       const tripsQuery = query(
-        collection(db, "orders"),
+        collection(db, "routes"),
         where("driverId", "==", currentUser.uid),
         where("status", "==", "assigned")
       );
@@ -1402,8 +1512,8 @@
         
         const driverData = driverDoc.data();
         
-        // Auftrag aktualisieren
-        await updateDoc(doc(db, "orders", orderId), {
+        // Route aktualisieren
+        await updateDoc(doc(db, "routes", orderId), {
           status: "assigned",
           driverId: currentUser.uid,
           driverName: driverData.displayName || driverData.name || "Unbekannter Fahrer",
@@ -1431,7 +1541,7 @@
     // Fahrt als abgeschlossen markieren
     async function completeTrip(tripId) {
       try {
-        await updateDoc(doc(db, "orders", tripId), {
+        await updateDoc(doc(db, "routes", tripId), {
           status: "completed",
           completedAt: Timestamp.now()
         });
@@ -1502,21 +1612,21 @@
     function loadDashboardStats(driverId) {
       // Abgeschlossene Fahrten zählen
       const completedTripsQuery = query(
-        collection(db, "orders"),
+        collection(db, "routes"),
         where("driverId", "==", driverId),
         where("status", "==", "completed")
       );
       
       // Zugewiesene Fahrten zählen
       const assignedTripsQuery = query(
-        collection(db, "orders"),
+        collection(db, "routes"),
         where("driverId", "==", driverId),
         where("status", "==", "assigned")
       );
       
       // Stornierte Aufträge zählen
       const cancelledOrdersQuery = query(
-        collection(db, "orders"),
+        collection(db, "routes"),
         where("driverId", "==", driverId),
         where("status", "==", "cancelled")
       );
@@ -1934,6 +2044,149 @@
         alert("Fehler beim Löschen des Dokuments. Bitte versuchen Sie es erneut.");
       }
     };
+
+    // Payroll/Abrechnungen-Funktionen
+    
+    // Abrechnungen für den aktuellen Fahrer laden
+    async function loadPayrollRecords() {
+      if (!currentUser) {
+        console.error("Kein Benutzer angemeldet");
+        return;
+      }
+      
+      try {
+        console.log("Lade Abrechnungen für Fahrer:", currentUser.uid);
+        
+        const payrollTableBody = document.getElementById('payroll-table-body');
+        payrollTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="loading-text">Lade Abrechnungen...</div></td></tr>';
+        
+        // Erst versuchen mit orderBy, falls das fehlschlägt ohne orderBy
+        let payrollSnapshot;
+        try {
+          console.log("Versuche Abfrage mit orderBy...");
+          const payrollQuery = query(
+            collection(db, "payroll"),
+            where("driverId", "==", currentUser.uid),
+            orderBy("uploadedAt", "desc")
+          );
+          payrollSnapshot = await getDocs(payrollQuery);
+        } catch (orderError) {
+          console.warn("orderBy fehlgeschlagen, versuche ohne orderBy:", orderError);
+          // Fallback: Ohne orderBy
+          const payrollQuery = query(
+            collection(db, "payroll"),
+            where("driverId", "==", currentUser.uid)
+          );
+          payrollSnapshot = await getDocs(payrollQuery);
+        }
+        
+        console.log("Abfrage erfolgreich, Anzahl Dokumente:", payrollSnapshot.size);
+        
+        if (payrollSnapshot.empty) {
+          payrollTableBody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem;">
+                <div class="no-payroll-message">
+                  <h3>Keine Abrechnungen gefunden</h3>
+                  <p>Sie haben derzeit keine Gehaltsabrechnungen. Wenden Sie sich an Ihren Manager, falls Sie Fragen haben.</p>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        // Tabelle mit Abrechnungen füllen
+        payrollTableBody.innerHTML = '';
+        
+        // Dokumente in Array sammeln für manuelle Sortierung
+        const payrollRecords = [];
+        payrollSnapshot.forEach((doc) => {
+          payrollRecords.push({
+            id: doc.id,
+            data: doc.data()
+          });
+        });
+        
+        // Manuell nach uploadedAt sortieren (falls orderBy nicht funktioniert hat)
+        payrollRecords.sort((a, b) => {
+          const dateA = a.data.uploadedAt?.toDate() || new Date(0);
+          const dateB = b.data.uploadedAt?.toDate() || new Date(0);
+          return dateB - dateA; // Absteigende Sortierung (neueste zuerst)
+        });
+        
+        payrollRecords.forEach((record) => {
+          const payrollData = record.data;
+          
+          console.log("Verarbeite Abrechnung:", record.id, payrollData);
+          
+          // Datum formatieren
+          const uploadedAt = payrollData.uploadedAt?.toDate 
+            ? payrollData.uploadedAt.toDate().toLocaleDateString('de-DE')
+            : 'Unbekannt';
+          
+          // Monat formatieren (YYYY-MM zu MM/YYYY)
+          const formattedMonth = payrollData.month 
+            ? payrollData.month.split('-').reverse().join('/')
+            : 'Unbekannt';
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${formattedMonth}</td>
+            <td><span class="payroll-amount">${payrollData.amount?.toFixed(2) || '0.00'} €</span></td>
+            <td>${uploadedAt}</td>
+            <td>${payrollData.notes || '-'}</td>
+            <td>
+              <button class="payroll-download-btn" onclick="downloadPayrollRecord('${record.id}', '${payrollData.downloadURL}', '${payrollData.fileName}')">
+                📄 Herunterladen
+              </button>
+            </td>
+          `;
+          
+          payrollTableBody.appendChild(row);
+        });
+        
+        console.log(`${payrollRecords.length} Abrechnungen erfolgreich geladen`);
+        
+      } catch (error) {
+        console.error("Fehler beim Laden der Abrechnungen:", error);
+        console.error("Fehler-Details:", error.message);
+        console.error("Fehler-Stack:", error.stack);
+        
+        const payrollTableBody = document.getElementById('payroll-table-body');
+        payrollTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 2rem;">
+              <div class="no-payroll-message">
+                <h3>Fehler beim Laden</h3>
+                <p>Die Abrechnungen konnten nicht geladen werden.</p>
+                <p><strong>Fehler:</strong> ${error.message}</p>
+                <p>Bitte versuchen Sie es später erneut oder wenden Sie sich an den Support.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+    
+    // Abrechnung herunterladen
+    window.downloadPayrollRecord = function(payrollId, downloadURL, fileName) {
+      try {
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = fileName || `Abrechnung_${payrollId}.pdf`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log("Abrechnung heruntergeladen:", fileName);
+      } catch (error) {
+        console.error("Fehler beim Herunterladen der Abrechnung:", error);
+        alert("Fehler beim Herunterladen der Abrechnung. Bitte versuchen Sie es erneut.");
+      }
+    };
+    
   </script>
 </body>
 </html> 

@@ -783,6 +783,7 @@
       getFirestore, 
       doc, 
       getDoc, 
+      getDocs,
       collection, 
       addDoc, 
       query, 
@@ -1254,10 +1255,10 @@
           createdAt: Timestamp.now()
         };
         
-        // In Firestore speichern
-        const orderRef = await addDoc(collection(db, "orders"), orderData);
+        // In Firestore speichern (nur routes Collection)
+        const routeRef = await addDoc(collection(db, "routes"), orderData);
         
-        console.log("Auftrag erstellt mit ID:", orderRef.id);
+        console.log("Route erstellt mit ID:", routeRef.id);
         showNotification('success', 'Auftrag erstellt', 'Ihr Transportauftrag wurde erfolgreich erstellt!');
         
         // Modal schließen und Formular zurücksetzen
@@ -1284,14 +1285,14 @@
       clientOrdersCount.textContent = '(0)'; // Initiale Anzeige
       
       // Nur nach clientId filtern, ohne Sortierung nach createdAt
-      const ordersQuery = query(
-        collection(db, "orders"),
+      const routesQuery = query(
+        collection(db, "routes"),
         where("clientId", "==", currentUser.uid)
         // Sortierung nach createdAt entfernt, um keinen zusammengesetzten Index zu benötigen
       );
       
       // Echtzeit-Listener für Aufträge, um sofortige Updates zu erhalten
-      const unsubscribe = onSnapshot(ordersQuery, (querySnapshot) => {
+      const unsubscribe = onSnapshot(routesQuery, (querySnapshot) => {
         const count = querySnapshot.size;
         clientOrdersCount.textContent = `(${count})`;
         
@@ -1376,32 +1377,32 @@
     // Auftragsdetails anzeigen
     async function showOrderDetails(orderId) {
       try {
-        const orderDoc = await getDoc(doc(db, "orders", orderId));
+        const routeDoc = await getDoc(doc(db, "routes", orderId));
         
-        if (!orderDoc.exists()) {
-          showNotification('error', 'Auftrag nicht gefunden', 'Der angeforderte Auftrag konnte nicht gefunden werden.');
+        if (!routeDoc.exists()) {
+          showNotification('error', 'Route nicht gefunden', 'Die angeforderte Route konnte nicht gefunden werden.');
           return;
         }
         
-        const orderData = orderDoc.data();
-        const pickupDate = orderData.pickupDate.toDate();
+        const routeData = routeDoc.data();
+        const pickupDate = routeData.pickupDate.toDate();
         const formattedDate = pickupDate.toLocaleDateString('de-DE') + ' ' + 
                             pickupDate.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
         
         let driverInfo = '';
-        if (orderData.driverId && orderData.status !== 'available') {
+        if (routeData.driverId && routeData.status !== 'available') {
           driverInfo = `
             <div class="detail-section">
               <h3>Fahrer-Information</h3>
-              <p><strong>Name:</strong> ${orderData.driverName || 'Nicht verfügbar'}</p>
-              <p><strong>E-Mail:</strong> ${orderData.driverEmail || 'Nicht verfügbar'}</p>
+              <p><strong>Name:</strong> ${routeData.driverName || 'Nicht verfügbar'}</p>
+              <p><strong>E-Mail:</strong> ${routeData.driverEmail || 'Nicht verfügbar'}</p>
             </div>
           `;
         }
         
         let completionInfo = '';
-        if (orderData.status === 'completed' && orderData.completedAt) {
-          const completedDate = orderData.completedAt.toDate();
+        if (routeData.status === 'completed' && routeData.completedAt) {
+          const completedDate = routeData.completedAt.toDate();
           const formattedCompletionDate = completedDate.toLocaleDateString('de-DE') + ' ' + 
                                         completedDate.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
           
@@ -1416,23 +1417,23 @@
         orderDetailsContent.innerHTML = `
           <div class="detail-section">
             <h3>Allgemeine Informationen</h3>
-            <p><strong>Titel:</strong> ${orderData.title || 'Transportauftrag'}</p>
-            <p><strong>Status:</strong> <span class="status-badge ${orderData.status}">${getStatusText(orderData.status)}</span></p>
-            <p><strong>Erstellt am:</strong> ${orderData.createdAt.toDate().toLocaleString('de-DE')}</p>
+            <p><strong>Titel:</strong> ${routeData.title || 'Transportauftrag'}</p>
+            <p><strong>Status:</strong> <span class="status-badge ${routeData.status}">${getStatusText(routeData.status)}</span></p>
+            <p><strong>Erstellt am:</strong> ${routeData.createdAt.toDate().toLocaleString('de-DE')}</p>
           </div>
           
           <div class="detail-section">
             <h3>Transport-Details</h3>
-            <p><strong>Abholung von:</strong> ${orderData.pickupLocation}</p>
-            <p><strong>Lieferung nach:</strong> ${orderData.deliveryLocation}</p>
+            <p><strong>Abholung von:</strong> ${routeData.pickupLocation}</p>
+            <p><strong>Lieferung nach:</strong> ${routeData.deliveryLocation}</p>
             <p><strong>Abholdatum:</strong> ${formattedDate}</p>
-            <p><strong>Fracht:</strong> ${orderData.cargoDescription || 'Keine Angabe'}</p>
-            <p><strong>Preis:</strong> ${orderData.price ? orderData.price + ' €' : 'Auf Anfrage'}</p>
+            <p><strong>Fracht:</strong> ${routeData.cargoDescription || 'Keine Angabe'}</p>
+            <p><strong>Preis:</strong> ${routeData.price ? routeData.price + ' €' : 'Auf Anfrage'}</p>
           </div>
           
           <div class="detail-section">
             <h3>Beschreibung</h3>
-            <p>${orderData.description || 'Keine Beschreibung vorhanden.'}</p>
+            <p>${routeData.description || 'Keine Beschreibung vorhanden.'}</p>
           </div>
           
           ${driverInfo}
@@ -1465,7 +1466,7 @@
       
       if (confirmed) {
         try {
-          await updateDoc(doc(db, "orders", orderId), {
+          await updateDoc(doc(db, "routes", orderId), {
             status: 'cancelled',
             cancelledAt: Timestamp.now()
           });
@@ -1541,40 +1542,40 @@
     
     // Dashboard-Statistiken laden
     function loadDashboardStats(clientId) {
-      // Aktive Aufträge (assigned)
-      const activeOrdersQuery = query(
-        collection(db, "orders"),
+      // Aktive Routen (assigned)
+      const activeRoutesQuery = query(
+        collection(db, "routes"),
         where("clientId", "==", clientId),
         where("status", "==", "assigned")
       );
       
-      // Abgeschlossene Aufträge
-      const completedOrdersQuery = query(
-        collection(db, "orders"),
+      // Abgeschlossene Routen
+      const completedRoutesQuery = query(
+        collection(db, "routes"),
         where("clientId", "==", clientId),
         where("status", "==", "completed")
       );
       
-      // Stornierte Aufträge
-      const cancelledOrdersQuery = query(
-        collection(db, "orders"),
+      // Stornierte Routen
+      const cancelledRoutesQuery = query(
+        collection(db, "routes"),
         where("clientId", "==", clientId),
         where("status", "==", "cancelled")
       );
       
-      // Echtzeit-Listener für aktive Aufträge
-      onSnapshot(activeOrdersQuery, (snapshot) => {
+      // Echtzeit-Listener für aktive Routen
+      onSnapshot(activeRoutesQuery, (snapshot) => {
         const count = snapshot.size;
         activeOrdersValue.textContent = count;
         activeOrdersChange.textContent = count === 1 ? "Aktiver Auftrag" : "Aktive Aufträge";
       }, (error) => {
-        console.error("Fehler beim Laden der aktiven Aufträge:", error);
+        console.error("Fehler beim Laden der aktiven Routen:", error);
         activeOrdersValue.textContent = "-";
         activeOrdersChange.textContent = "Fehler beim Laden";
       });
       
-      // Echtzeit-Listener für abgeschlossene Aufträge
-      onSnapshot(completedOrdersQuery, (snapshot) => {
+      // Echtzeit-Listener für abgeschlossene Routen
+      onSnapshot(completedRoutesQuery, (snapshot) => {
         const count = snapshot.size;
         completedOrdersValue.textContent = count;
         
@@ -1582,7 +1583,7 @@
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
         
-        // Zählen, wie viele Aufträge im letzten Monat abgeschlossen wurden
+        // Zählen, wie viele Routen im letzten Monat abgeschlossen wurden
         let lastMonthCount = 0;
         snapshot.forEach(doc => {
           const completedAt = doc.data().completedAt?.toDate();
@@ -1593,13 +1594,13 @@
         
         completedOrdersChange.textContent = `+${lastMonthCount} im letzten Monat`;
       }, (error) => {
-        console.error("Fehler beim Laden der abgeschlossenen Aufträge:", error);
+        console.error("Fehler beim Laden der abgeschlossenen Routen:", error);
         completedOrdersValue.textContent = "-";
         completedOrdersChange.textContent = "Fehler beim Laden";
       });
       
-      // Echtzeit-Listener für stornierte Aufträge
-      onSnapshot(cancelledOrdersQuery, (snapshot) => {
+      // Echtzeit-Listener für stornierte Routen
+      onSnapshot(cancelledRoutesQuery, (snapshot) => {
         const count = snapshot.size;
         cancelledOrdersValue.textContent = count;
         
@@ -1607,7 +1608,7 @@
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
         
-        // Zählen, wie viele Aufträge im letzten Monat storniert wurden
+        // Zählen, wie viele Routen im letzten Monat storniert wurden
         let lastMonthCount = 0;
         snapshot.forEach(doc => {
           const cancelledAt = doc.data().cancelledAt?.toDate();
@@ -1632,13 +1633,13 @@
           cancelledOrdersValue.style.color = '';
         }
       }, (error) => {
-        console.error("Fehler beim Laden der stornierten Aufträge:", error);
+        console.error("Fehler beim Laden der stornierten Routen:", error);
         cancelledOrdersValue.textContent = "-";
         cancelledOrdersChange.textContent = "Fehler beim Laden";
       });
       
       // Echtzeit-Listener für Gesamtkilometer
-      onSnapshot(completedOrdersQuery, (snapshot) => {
+      onSnapshot(completedRoutesQuery, (snapshot) => {
         let totalKilometers = 0;
         let lastMonthKilometers = 0;
         const oneMonthAgo = new Date();
@@ -1725,12 +1726,12 @@
                   
                   // Speichere die berechnete Entfernung im Auftrag für zukünftige Berechnungen
                   try {
-                    await updateDoc(doc(db, "orders", order.id), {
+                    await updateDoc(doc(db, "routes", order.id), {
                       distance: kilometers,
                       pickupLocationGeo: pickupGeo,
                       deliveryLocationGeo: deliveryGeo
                     });
-                    console.log(`Entfernung für Auftrag ${order.id} in der Datenbank aktualisiert`);
+                    console.log(`Entfernung für Route ${order.id} in der Datenbank aktualisiert`);
                   } catch (error) {
                     console.error(`Fehler beim Speichern der Entfernung für Auftrag ${order.id}:`, error);
                   }
