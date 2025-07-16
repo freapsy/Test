@@ -2889,7 +2889,6 @@
         console.error("Fehler beim Laden der Abrechnungen:", error);
         console.error("Fehler-Details:", error.message);
         console.error("Fehler-Stack:", error.stack);
-        
         const payrollTableBody = document.getElementById('payroll-table-body');
         payrollTableBody.innerHTML = `
           <tr>
@@ -2922,8 +2921,7 @@
         console.error("Fehler beim Herunterladen der Abrechnung:", error);
         alert("Fehler beim Herunterladen der Abrechnung. Bitte versuchen Sie es erneut.");
       }
-    };
-  }    
+    };   
   </script>
   
   <footer class="section footer">
