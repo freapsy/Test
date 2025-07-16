@@ -18,7 +18,7 @@
             <li><a href="team.html">Team</a></li>
             <li><a href="ueber_uns.html" class="active">Über Uns</a></li>
             <li><a href="login.html" id="loginLink">Login</a></li>
-            <li><a href="impressum.html">Impressum</a></li>
+
           </ul>
         </nav>
       </div>
@@ -496,8 +496,71 @@
         font-size: 1.5rem;
       }
     }
+    
+    .footer {
+      background-color: var(--bg-light);
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+      margin-top: 3rem;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .footer-links a {
+      color: var(--text-color-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent-blue);
+    }
+    
+    .separator {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .footer-copyright {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .footer-links {
+        order: 1;
+      }
+      
+      .footer-copyright {
+        order: 2;
+      }
+    }
   </style>
 
+  <!-- Cookie Consent Script -->
+  <script src="cookie-consent.js"></script>
+  
   <script type="module">
     // Firebase SDK v9+ modular imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -589,5 +652,18 @@
       }
     });
   </script>
+  
+  <footer class="section footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="impressum.html">Impressum</a>
+        <span class="separator">|</span>
+        <a href="datenschutz.html">Datenschutz</a>
+      </div>
+      <div class="footer-copyright">
+        © 2024 NorthDrive. Alle Rechte vorbehalten.
+      </div>
+    </div>
+  </footer>
 </body>
 </html> 

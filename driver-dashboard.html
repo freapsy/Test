@@ -57,14 +57,26 @@
     .dashboard-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: stretch;
       margin-bottom: 2rem;
       padding-bottom: 1rem;
       border-bottom: 1px solid var(--border-color);
+      gap: 2rem;
+      min-height: 120px;
+    }
+    
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 250px;
+      height: 100%;
+      justify-content: space-between;
     }
     
     .user-welcome {
       font-size: 1.2rem;
+      margin-top: 0;
     }
     
     .user-welcome strong {
@@ -262,6 +274,59 @@
       color: var(--text-color-secondary);
       background-color: var(--bg-light);
       border-radius: 4px;
+    }
+
+    /* Synchronisationshinweise */
+    .sync-info {
+      font-size: 0.9rem;
+      color: var(--accent-blue);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .no-orders {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-color-secondary);
+      background-color: var(--bg-light);
+      border-radius: 4px;
+    }
+
+    .no-orders .sync-info {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background-color: rgba(0, 123, 255, 0.1);
+      border-radius: 4px;
+      border-left: 3px solid var(--accent-blue);
+    }
+
+    /* Synchronisationsindikator */
+    .sync-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--accent-blue);
+      min-width: 180px;
+      flex-shrink: 0;
+    }
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-blue);
+      border-radius: 50%;
+      animation: sync-pulse 2s infinite;
+    }
+
+    @keyframes sync-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .sync-text {
+      font-weight: 500;
     }
 
     /* Neue Stile für Standortabfrage-Dialog */
@@ -466,6 +531,240 @@
     .earnings-display strong {
       color: var(--accent-blue);
       font-weight: 600;
+    }
+    
+    .earnings-display {
+      /* Entferne min-width, da es jetzt in header-left ist */
+      margin-bottom: 0;
+    }
+    
+    .total-earnings {
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+      color: var(--text-color-secondary);
+    }
+    
+    .total-earnings strong {
+      color: #28a745;
+    }
+    
+    /* Belohnungssystem Styles */
+    /* .earnings-rewards-container wurde entfernt, da das Layout geändert wurde */
+    
+    .rewards-section {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 193, 7, 0.1));
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-top: 0;
+      min-width: 300px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .level-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      gap: 1rem;
+      margin-top: 0;
+    }
+    
+    .level-badge {
+      background: linear-gradient(135deg, #ffd700, #ffb300);
+      color: #333;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+    }
+    
+    .bonus-total {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+    }
+    
+    .bonus-total strong {
+      color: #28a745;
+      font-weight: 600;
+    }
+    
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 200px;
+      margin-bottom: 0;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffd700, #ffb300);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+      position: relative;
+    }
+    
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .progress-text {
+      font-size: 0.8rem;
+      color: var(--text-color-secondary);
+      text-align: center;
+    }
+    
+    /* Level-Up Animation */
+    .level-up-animation {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #ffd700, #ffb300);
+      color: #333;
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
+      z-index: 2000;
+      animation: levelUpPulse 0.5s ease-out;
+    }
+    
+    @keyframes levelUpPulse {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    
+    .level-up-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .level-up-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .level-up-message {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .level-up-bonus {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #28a745;
+    }
+    
+    /* Belohnungsstatistiken */
+    .rewards-info {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 193, 7, 0.05));
+      border: 1px solid rgba(255, 193, 7, 0.2);
+      border-radius: 8px;
+    }
+    
+    .rewards-info h3 {
+      color: var(--primary-navy);
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    
+    .rewards-info p {
+      color: var(--text-color-secondary);
+      margin-bottom: 1rem;
+    }
+    
+    .rewards-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .reward-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-color-secondary);
+    }
+    
+    .stat-value {
+      font-weight: 600;
+      color: var(--accent-blue);
+    }
+    
+    /* Responsive Anpassungen für Belohnungssystem */
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        min-height: auto;
+      }
+      
+      .header-left {
+        min-width: auto;
+        text-align: center;
+        height: auto;
+        justify-content: flex-start;
+      }
+      
+      .rewards-section {
+        min-width: auto;
+        margin-top: 1rem;
+        align-self: stretch;
+        height: auto;
+      }
+      
+      .progress-container {
+        min-width: auto;
+      }
+      
+      .user-welcome {
+        text-align: center;
+      }
+      
+      .sync-indicator {
+        min-width: auto;
+        justify-content: center;
+      }
     }
     
     .highlight-value {
@@ -713,6 +1012,66 @@
       margin-bottom: 1rem;
       color: var(--text-color-primary);
     }
+    
+    .footer {
+      background-color: var(--bg-light);
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+      margin-top: 3rem;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .footer-links a {
+      color: var(--text-color-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent-blue);
+    }
+    
+    .separator {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .footer-copyright {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .footer-links {
+        order: 1;
+      }
+      
+      .footer-copyright {
+        order: 2;
+      }
+    }
   </style>
 </head>
 <body>
@@ -725,7 +1084,7 @@
           <ul>
             <li><a href="index.html">Startseite</a></li>
             <li><a href="driver-dashboard.html" class="active">Dashboard</a></li>
-            <li><a href="impressum.html">Impressum</a></li>
+
           </ul>
         </nav>
       </div>
@@ -744,9 +1103,32 @@
       
       <div class="content-area">
         <div class="dashboard-header">
-          <div class="user-welcome">
-            Willkommen zurück, <strong id="userName" class="loading-name">Wird geladen...</strong>!
-            <span class="earnings-display">Verdienst: <strong id="headerEarningsValue" class="highlight-value">-</strong> (<span id="headerEarningsChange" class="positive-change">+0 €</span> im letzten Monat)</span>
+          <div class="header-left">
+            <div class="user-welcome">
+              Willkommen zurück, <strong id="userName" class="loading-name">Wird geladen...</strong>!
+            </div>
+            <div class="earnings-display">
+              Verdienst: <strong id="headerEarningsValue" class="highlight-value">-</strong> (<span id="headerEarningsChange" class="positive-change">+0 €</span> im letzten Monat)
+              <div class="total-earnings">
+                Gesamt (inkl. Bonus): <strong id="totalEarningsValue" class="highlight-value">-</strong>
+              </div>
+            </div>
+          </div>
+          <div class="rewards-section">
+            <div class="level-info">
+              <span class="level-badge">Level <span id="driverLevel">1</span></span>
+              <span class="bonus-total">Bonus: <strong id="totalBonus">0 €</strong></span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+              </div>
+              <span class="progress-text"><span id="currentProgress">0</span>€ / <span id="targetProgress">2500</span>€</span>
+            </div>
+          </div>
+          <div class="sync-indicator" id="syncIndicator" style="display: none;">
+            <span class="sync-dot"></span>
+            <span class="sync-text">Mit App synchronisiert</span>
           </div>
           <button id="logoutBtn" class="logout-btn">Abmelden</button>
         </div>
@@ -778,6 +1160,25 @@
             <p>Hier siehst du eine Übersicht deiner Fahreraktivitäten.</p>
             <p>Um deine aktuellen Fahrten zu sehen, wechsle bitte zu <a href="#" onclick="switchToSection('my-trips'); return false;">Meine Fahrten</a>.</p>
             <p>Um neue Aufträge anzunehmen, besuche die <a href="#" onclick="switchToSection('available-orders'); return false;">Verfügbare Aufträge</a> Sektion.</p>
+            
+            <div class="rewards-info">
+              <h3>🏆 Belohnungssystem</h3>
+              <p>Erreichen Sie 2500€ Verdienst und erhalten Sie automatisch 50€ Bonus! Steigen Sie Level auf und sammeln Sie weitere Boni.</p>
+              <div class="rewards-stats">
+                <div class="reward-stat">
+                  <span class="stat-label">Aktuelles Level:</span>
+                  <span class="stat-value" id="dashboardLevel">1</span>
+                </div>
+                <div class="reward-stat">
+                  <span class="stat-label">Gesamtbonus:</span>
+                  <span class="stat-value" id="dashboardTotalBonus">0 €</span>
+                </div>
+                <div class="reward-stat">
+                  <span class="stat-label">Nächster Bonus bei:</span>
+                  <span class="stat-value" id="dashboardNextBonus">2500 €</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -910,6 +1311,17 @@
     </div>
   </div>
 
+  <!-- Level-Up Modal -->
+  <div id="levelUpModal" class="level-up-animation" style="display: none;">
+    <div class="level-up-icon">🎉</div>
+    <div class="level-up-title">Level Up!</div>
+    <div class="level-up-message">Herzlichen Glückwunsch! Sie haben ein neues Level erreicht!</div>
+    <div class="level-up-bonus">+50€ Bonus erhalten!</div>
+  </div>
+
+  <!-- Cookie Consent Script -->
+  <script src="cookie-consent.js"></script>
+  
   <script type="module">
     // Firebase SDK v9+ modular imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -1033,56 +1445,71 @@
       }
     }
     
-    // Verfügbare Aufträge laden
+    // Verfügbare Aufträge laden - Synchronisiert mit App
     function loadAvailableOrders() {
       if (!currentUser) return;
       
       availableOrdersContainer.innerHTML = '<p class="loading-text">Lade verfügbare Aufträge...</p>';
       
-      // Nur verfügbare Routen laden, ohne Sortierung nach createdAt
+      // Abfrage für verfügbare Routen - identisch mit App
       const routesQuery = query(
         collection(db, "routes"),
         where("status", "==", "available")
-        // Sortierung entfernt, um keinen zusammengesetzten Index zu benötigen
       );
       
-      // Echtzeit-Listener für Routen
+      // Echtzeit-Listener für Routen - Synchronisiert mit App
       const unsubscribe = onSnapshot(routesQuery, (querySnapshot) => {
+        console.log(`[Website] ${querySnapshot.size} verfügbare Aufträge von Firebase geladen`);
+        
         if (querySnapshot.empty) {
           availableOrdersContainer.innerHTML = `
             <div class="no-orders">
               <p>Keine verfügbaren Aufträge gefunden.</p>
+              <p class="sync-info">💡 Tipp: Die Daten sind mit der App synchronisiert</p>
             </div>
           `;
           return;
         }
         
-        // Alle Aufträge zwischenspeichern
+        // Alle Aufträge zwischenspeichern - gleiche Struktur wie App
         cachedOrders = [];
         querySnapshot.forEach(doc => {
           const data = doc.data();
-          console.log("Auftrag geladen:", doc.id, data.title);
-          cachedOrders.push({id: doc.id, ...data});
+          const orderData = {
+            id: doc.id,
+            ...data,
+            // Zusätzliche Felder für bessere Synchronisation
+            lastUpdated: data.updatedAt || data.createdAt,
+            source: 'website'
+          };
+          console.log("Auftrag geladen:", doc.id, data.title, "Status:", data.status);
+          cachedOrders.push(orderData);
         });
         
-        // Manuelles Sortieren nach createdAt (absteigend)
+        // Manuelles Sortieren nach createdAt (absteigend) - wie in App
         cachedOrders.sort((a, b) => {
-          // Prüfen, ob createdAt existiert und ein gültiger Timestamp ist
           const timeA = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
           const timeB = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
           return timeB - timeA; // Absteigend sortieren (neueste zuerst)
         });
         
-        console.log(`${cachedOrders.length} verfügbare Aufträge geladen`);
+        console.log(`[Website] ${cachedOrders.length} verfügbare Aufträge verarbeitet und sortiert`);
+        
+        // Synchronisationsstatus anzeigen
+        if (cachedOrders.length > 0) {
+          showSyncStatus();
+          toggleSyncIndicator(true);
+        }
         
         // Aufträge nach Entfernung filtern und anzeigen
         filterAndDisplayOrders();
       }, (error) => {
-        console.error("Fehler beim Laden der verfügbaren Aufträge:", error);
+        console.error("[Website] Fehler beim Laden der verfügbaren Aufträge:", error);
         availableOrdersContainer.innerHTML = `
           <div class="error-message">
             <p>Fehler beim Laden der Aufträge.</p>
             <p>Details: ${error.message}</p>
+            <p class="sync-info">💡 Die Daten werden mit der App synchronisiert</p>
           </div>
         `;
       });
@@ -1350,6 +1777,52 @@
     // Änderungen am Entfernungsfilter überwachen
     maxDistance.addEventListener('change', filterAndDisplayOrders);
     
+    // Synchronisationsstatus anzeigen
+    function showSyncStatus() {
+      const syncStatus = document.createElement('div');
+      syncStatus.className = 'sync-status';
+      syncStatus.innerHTML = `
+        <div style="position: fixed; top: 20px; right: 20px; background: rgba(0, 123, 255, 0.9); color: white; padding: 10px 15px; border-radius: 5px; font-size: 0.9rem; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+          🔄 Synchronisiert mit App
+        </div>
+      `;
+      document.body.appendChild(syncStatus);
+      
+      // Nach 3 Sekunden ausblenden
+      setTimeout(() => {
+        if (syncStatus.parentNode) {
+          syncStatus.parentNode.removeChild(syncStatus);
+        }
+      }, 3000);
+    }
+    
+    // Synchronisationsstatus bei erfolgreichen Aktionen anzeigen
+    function showSyncNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'sync-notification';
+      notification.innerHTML = `
+        <div style="position: fixed; top: 20px; right: 20px; background: rgba(40, 167, 69, 0.9); color: white; padding: 10px 15px; border-radius: 5px; font-size: 0.9rem; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+          ✅ ${message}
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      // Nach 3 Sekunden ausblenden
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 3000);
+    }
+    
+    // Synchronisationsindikator anzeigen/verstecken
+    function toggleSyncIndicator(show = true) {
+      const syncIndicator = document.getElementById('syncIndicator');
+      if (syncIndicator) {
+        syncIndicator.style.display = show ? 'flex' : 'none';
+      }
+    }
+    
     // Meine Fahrten laden
     function loadMyTrips() {
       if (!currentUser) return;
@@ -1498,34 +1971,61 @@
       };
     }
     
-    // Verarbeitung der Auftragsannahme nach Bestätigung
+    // Verarbeitung der Auftragsannahme nach Bestätigung - Synchronisiert mit App
     async function processOrderAcceptance(orderId) {
       try {
+        console.log(`[Website] Versuche Auftrag ${orderId} anzunehmen...`);
+        
         // Benutzerdaten des Fahrers abrufen
         const driverDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (!driverDoc.exists()) {
-          console.error("Fahrer-Profil nicht gefunden");
+          console.error("[Website] Fahrer-Profil nicht gefunden");
+          alert("Fahrer-Profil nicht gefunden. Bitte melden Sie sich erneut an.");
           return;
         }
         
         const driverData = driverDoc.data();
         
-        // Route aktualisieren
-        await updateDoc(doc(db, "routes", orderId), {
+        // Prüfen, ob der Auftrag noch verfügbar ist (Race Condition vermeiden)
+        const routeDoc = await getDoc(doc(db, "routes", orderId));
+        if (!routeDoc.exists()) {
+          console.error("[Website] Auftrag nicht mehr verfügbar");
+          alert("Dieser Auftrag ist nicht mehr verfügbar.");
+          return;
+        }
+        
+        const routeData = routeDoc.data();
+        if (routeData.status !== "available") {
+          console.error("[Website] Auftrag bereits vergeben");
+          alert("Dieser Auftrag wurde bereits an einen anderen Fahrer vergeben.");
+          return;
+        }
+        
+        // Route aktualisieren - Synchronisiert mit App
+        const updateData = {
           status: "assigned",
           driverId: currentUser.uid,
           driverName: driverData.displayName || driverData.name || "Unbekannter Fahrer",
           driverEmail: driverData.email || "Keine E-Mail",
-          assignedAt: Timestamp.now()
-        });
+          assignedAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+          // Zusätzliche Felder für bessere Synchronisation
+          assignedFrom: 'website',
+          lastModifiedBy: currentUser.uid
+        };
         
-        alert("Auftrag erfolgreich angenommen!");
+        await updateDoc(doc(db, "routes", orderId), updateData);
+        
+        console.log(`[Website] Auftrag ${orderId} erfolgreich angenommen`);
+        
+        // Erfolgsmeldung mit Synchronisationshinweis
+        showSyncNotification("Auftrag angenommen - mit App synchronisiert");
         
         // Zur "Meine Fahrten" Ansicht wechseln und Fahrten neu laden
         switchToSection('my-trips');
         
       } catch (error) {
-        console.error("Fehler beim Annehmen des Auftrags:", error);
+        console.error("[Website] Fehler beim Annehmen des Auftrags:", error);
         alert("Fehler beim Annehmen des Auftrags: " + error.message);
       }
     }
@@ -1536,18 +2036,51 @@
       console.log("Auftrag abgelehnt:", orderId);
     }
     
-    // Fahrt als abgeschlossen markieren
+    // Fahrt als abgeschlossen markieren - Synchronisiert mit App
     async function completeTrip(tripId) {
       try {
-        await updateDoc(doc(db, "routes", tripId), {
-          status: "completed",
-          completedAt: Timestamp.now()
-        });
+        console.log(`[Website] Versuche Fahrt ${tripId} als abgeschlossen zu markieren...`);
         
-        alert("Fahrt erfolgreich als abgeschlossen markiert!");
+        // Prüfen, ob die Fahrt dem aktuellen Fahrer zugewiesen ist
+        const routeDoc = await getDoc(doc(db, "routes", tripId));
+        if (!routeDoc.exists()) {
+          console.error("[Website] Fahrt nicht gefunden");
+          alert("Diese Fahrt wurde nicht gefunden.");
+          return;
+        }
+        
+        const routeData = routeDoc.data();
+        if (routeData.driverId !== currentUser.uid) {
+          console.error("[Website] Fahrt nicht dem aktuellen Fahrer zugewiesen");
+          alert("Diese Fahrt ist Ihnen nicht zugewiesen.");
+          return;
+        }
+        
+        if (routeData.status !== "assigned") {
+          console.error("[Website] Fahrt nicht im richtigen Status");
+          alert("Diese Fahrt kann nicht als abgeschlossen markiert werden.");
+          return;
+        }
+        
+        // Fahrt als abgeschlossen markieren - Synchronisiert mit App
+        const updateData = {
+          status: "completed",
+          completedAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+          // Zusätzliche Felder für bessere Synchronisation
+          completedFrom: 'website',
+          lastModifiedBy: currentUser.uid
+        };
+        
+        await updateDoc(doc(db, "routes", tripId), updateData);
+        
+        console.log(`[Website] Fahrt ${tripId} erfolgreich als abgeschlossen markiert`);
+        
+        // Erfolgsmeldung mit Synchronisationshinweis
+        showSyncNotification("Fahrt abgeschlossen - mit App synchronisiert");
         
       } catch (error) {
-        console.error("Fehler beim Abschließen der Fahrt:", error);
+        console.error("[Website] Fehler beim Abschließen der Fahrt:", error);
         alert("Fehler beim Abschließen der Fahrt: " + error.message);
       }
     }
@@ -1596,6 +2129,15 @@
             
             // Dashboard-Statistiken laden
             loadDashboardStats(user.uid);
+            
+            // Daten-Synchronisation starten
+            monitorDataSync();
+            
+            // Datenqualität prüfen
+            checkDataQuality();
+            
+            // Belohnungssystem initialisieren
+            initializeRewardsSystem(user.uid);
           }
         } catch (error) {
           console.error("Fehler beim Abrufen der Benutzerdaten:", error);
@@ -1605,6 +2147,62 @@
         window.location.href = "login.html";
       }
     });
+    
+    // Datenstruktur für App-Website-Synchronisation überwachen
+    function monitorDataSync() {
+      // Überwache Änderungen in der routes Collection
+      const routesQuery = query(collection(db, "routes"));
+      
+      onSnapshot(routesQuery, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "modified") {
+            const data = change.doc.data();
+            console.log(`[Website] Datenänderung erkannt: ${change.doc.id} - Status: ${data.status}`);
+            
+            // Zeige Synchronisationsbenachrichtigung bei wichtigen Änderungen
+            if (data.status === "assigned" || data.status === "completed") {
+              showSyncNotification("Daten mit App synchronisiert");
+            }
+          }
+        });
+      });
+      
+      // Datenqualität überwachen
+      console.log(`[Website] Daten-Synchronisation aktiviert - ${snapshot.size} Routen überwacht`);
+    }
+    
+    // Datenqualität und Synchronisation prüfen
+    function checkDataQuality() {
+      const routesQuery = query(collection(db, "routes"));
+      
+      getDocs(routesQuery).then((snapshot) => {
+        let availableCount = 0;
+        let assignedCount = 0;
+        let completedCount = 0;
+        let withGeocoding = 0;
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          switch(data.status) {
+            case 'available': availableCount++; break;
+            case 'assigned': assignedCount++; break;
+            case 'completed': completedCount++; break;
+          }
+          if (data.pickupLocationGeo) withGeocoding++;
+        });
+        
+        console.log(`[Website] Datenqualität: ${snapshot.size} Routen total`);
+        console.log(`[Website] - Verfügbar: ${availableCount}, Zugewiesen: ${assignedCount}, Abgeschlossen: ${completedCount}`);
+        console.log(`[Website] - Mit Geocoding: ${withGeocoding}/${snapshot.size}`);
+        
+        // Synchronisationsindikator basierend auf Datenqualität
+        if (snapshot.size > 0) {
+          toggleSyncIndicator(true);
+        }
+      }).catch(error => {
+        console.error("[Website] Fehler bei der Datenqualitätsprüfung:", error);
+      });
+    }
     
     // Dashboard-Statistiken laden
     function loadDashboardStats(driverId) {
@@ -1704,39 +2302,195 @@
         cancelledOrdersChange.textContent = "Fehler beim Laden";
       });
       
-      // Echtzeit-Listener für Gesamtverdienst
-      onSnapshot(completedTripsQuery, (snapshot) => {
-        let totalEarnings = 0;
-        let lastMonthEarnings = 0;
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+          // Belohnungssystem Variablen
+    let driverRewards = {
+      level: 1,
+      totalBonus: 0,
+      currentProgress: 0,
+      targetProgress: 2500
+    };
+    
+    // Belohnungssystem initialisieren
+    async function initializeRewardsSystem(driverId) {
+      try {
+        // Fahrer-Belohnungsdaten aus Firestore laden oder erstellen
+        const rewardsDoc = await getDoc(doc(db, "driver_rewards", driverId));
         
-        snapshot.forEach(doc => {
-          const orderData = doc.data();
-          const price = orderData.price || 0;
+        if (rewardsDoc.exists()) {
+          const rewardsData = rewardsDoc.data();
+          driverRewards = {
+            level: rewardsData.level || 1,
+            totalBonus: rewardsData.totalBonus || 0,
+            currentProgress: rewardsData.currentProgress || 0,
+            targetProgress: 2500
+          };
+        } else {
+          // Neue Belohnungsdaten erstellen
+          await setDoc(doc(db, "driver_rewards", driverId), {
+            level: 1,
+            totalBonus: 0,
+            currentProgress: 0,
+            targetProgress: 2500,
+            createdAt: Timestamp.now()
+          });
+        }
+        
+        updateRewardsDisplay();
+        console.log("[Website] Belohnungssystem initialisiert:", driverRewards);
+        
+      } catch (error) {
+        console.error("[Website] Fehler beim Initialisieren des Belohnungssystems:", error);
+      }
+    }
+    
+    // Belohnungsanzeige aktualisieren
+    function updateRewardsDisplay() {
+      const driverLevelElement = document.getElementById('driverLevel');
+      const totalBonusElement = document.getElementById('totalBonus');
+      const currentProgressElement = document.getElementById('currentProgress');
+      const targetProgressElement = document.getElementById('targetProgress');
+      const progressFillElement = document.getElementById('progressFill');
+      const totalEarningsElement = document.getElementById('totalEarningsValue');
+      
+      // Dashboard-Statistiken
+      const dashboardLevelElement = document.getElementById('dashboardLevel');
+      const dashboardTotalBonusElement = document.getElementById('dashboardTotalBonus');
+      const dashboardNextBonusElement = document.getElementById('dashboardNextBonus');
+      
+      if (driverLevelElement) driverLevelElement.textContent = driverRewards.level;
+      if (totalBonusElement) totalBonusElement.textContent = `${driverRewards.totalBonus.toFixed(2)} €`;
+      if (currentProgressElement) currentProgressElement.textContent = driverRewards.currentProgress.toFixed(0);
+      if (targetProgressElement) targetProgressElement.textContent = driverRewards.targetProgress.toFixed(0);
+      
+      // Dashboard-Statistiken aktualisieren
+      if (dashboardLevelElement) dashboardLevelElement.textContent = driverRewards.level;
+      if (dashboardTotalBonusElement) dashboardTotalBonusElement.textContent = `${driverRewards.totalBonus.toFixed(2)} €`;
+      if (dashboardNextBonusElement) {
+        const nextBonusAt = driverRewards.targetProgress - driverRewards.currentProgress;
+        dashboardNextBonusElement.textContent = `${nextBonusAt.toFixed(0)} €`;
+      }
+      
+      // Fortschrittsbalken aktualisieren
+      if (progressFillElement) {
+        const progressPercentage = Math.min((driverRewards.currentProgress / driverRewards.targetProgress) * 100, 100);
+        progressFillElement.style.width = `${progressPercentage}%`;
+      }
+      
+      // Gesamtverdienst aktualisieren (wird später im Echtzeit-Listener berechnet)
+      if (totalEarningsElement && window.currentTotalEarnings !== undefined) {
+        const totalWithBonus = window.currentTotalEarnings + driverRewards.totalBonus;
+        totalEarningsElement.textContent = `${totalWithBonus.toFixed(2)} €`;
+      }
+    }
+    
+    // Level-Up prüfen und verarbeiten
+    async function checkAndProcessLevelUp(driverId, newEarnings) {
+      const oldProgress = driverRewards.currentProgress;
+      driverRewards.currentProgress = newEarnings;
+      
+      // Prüfen, ob Level-Up erreicht wurde
+      while (driverRewards.currentProgress >= driverRewards.targetProgress) {
+        // Level-Up verarbeiten
+        driverRewards.level++;
+        driverRewards.totalBonus += 50;
+        driverRewards.currentProgress -= driverRewards.targetProgress;
+        
+        // Level-Up Animation anzeigen
+        showLevelUpAnimation(driverRewards.level, 50);
+        
+        // Belohnungsdaten in Firestore aktualisieren
+        try {
+          await updateDoc(doc(db, "driver_rewards", driverId), {
+            level: driverRewards.level,
+            totalBonus: driverRewards.totalBonus,
+            currentProgress: driverRewards.currentProgress,
+            lastLevelUp: Timestamp.now()
+          });
           
-          // Gesamtverdienst berechnen
-          totalEarnings += price;
+          console.log(`[Website] Level-Up! Neues Level: ${driverRewards.level}, Gesamtbonus: ${driverRewards.totalBonus}€`);
           
-          // Verdienst im letzten Monat berechnen
-          const completedAt = orderData.completedAt?.toDate();
-          if (completedAt && completedAt > oneMonthAgo) {
-            lastMonthEarnings += price;
-          }
-        });
+        } catch (error) {
+          console.error("[Website] Fehler beim Speichern des Level-Ups:", error);
+        }
+      }
+      
+      // Belohnungsanzeige aktualisieren
+      updateRewardsDisplay();
+      
+      // Fortschritt in Firestore speichern (nur wenn sich geändert hat)
+      if (oldProgress !== driverRewards.currentProgress) {
+        try {
+          await updateDoc(doc(db, "driver_rewards", driverId), {
+            currentProgress: driverRewards.currentProgress,
+            lastUpdated: Timestamp.now()
+          });
+        } catch (error) {
+          console.error("[Website] Fehler beim Speichern des Fortschritts:", error);
+        }
+      }
+    }
+    
+    // Level-Up Animation anzeigen
+    function showLevelUpAnimation(newLevel, bonusAmount) {
+      const levelUpModal = document.getElementById('levelUpModal');
+      const levelUpTitle = levelUpModal.querySelector('.level-up-title');
+      const levelUpMessage = levelUpModal.querySelector('.level-up-message');
+      const levelUpBonus = levelUpModal.querySelector('.level-up-bonus');
+      
+      levelUpTitle.textContent = `Level ${newLevel} erreicht!`;
+      levelUpMessage.textContent = `Herzlichen Glückwunsch! Sie haben Level ${newLevel} erreicht!`;
+      levelUpBonus.textContent = `+${bonusAmount}€ Bonus erhalten!`;
+      
+      levelUpModal.style.display = 'block';
+      
+      // Nach 3 Sekunden ausblenden
+      setTimeout(() => {
+        levelUpModal.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Echtzeit-Listener für Gesamtverdienst mit Belohnungssystem
+    onSnapshot(completedTripsQuery, (snapshot) => {
+      let totalEarnings = 0;
+      let lastMonthEarnings = 0;
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      
+      snapshot.forEach(doc => {
+        const orderData = doc.data();
+        const price = orderData.price || 0;
         
-        // Formatierung mit Euro-Zeichen
-        const formattedTotal = `${totalEarnings.toFixed(2)} €`;
-        const formattedLastMonth = `+${lastMonthEarnings.toFixed(2)} €`;
+        // Gesamtverdienst berechnen
+        totalEarnings += price;
         
-        // Aktualisiere den Header
-        headerEarningsValue.textContent = formattedTotal;
-        headerEarningsChange.textContent = formattedLastMonth;
-      }, (error) => {
-        console.error("Fehler beim Laden des Gesamtverdienstes:", error);
-        headerEarningsValue.textContent = "-";
-        headerEarningsChange.textContent = "+0 €";
+        // Verdienst im letzten Monat berechnen
+        const completedAt = orderData.completedAt?.toDate();
+        if (completedAt && completedAt > oneMonthAgo) {
+          lastMonthEarnings += price;
+        }
       });
+      
+      // Formatierung mit Euro-Zeichen
+      const formattedTotal = `${totalEarnings.toFixed(2)} €`;
+      const formattedLastMonth = `+${lastMonthEarnings.toFixed(2)} €`;
+      
+      // Aktualisiere den Header
+      headerEarningsValue.textContent = formattedTotal;
+      headerEarningsChange.textContent = formattedLastMonth;
+      
+      // Gesamtverdienst für Belohnungssystem speichern
+      window.currentTotalEarnings = totalEarnings;
+      
+      // Belohnungssystem verarbeiten
+      if (currentUser) {
+        checkAndProcessLevelUp(currentUser.uid, totalEarnings);
+        updateRewardsDisplay(); // Aktualisiere auch den Gesamtverdienst
+      }
+    }, (error) => {
+      console.error("Fehler beim Laden des Gesamtverdienstes:", error);
+      headerEarningsValue.textContent = "-";
+      headerEarningsChange.textContent = "+0 €";
+    });
     }
 
     // Dokumente laden
@@ -2186,5 +2940,18 @@
     };
     
   </script>
+  
+  <footer class="section footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="impressum.html">Impressum</a>
+        <span class="separator">|</span>
+        <a href="datenschutz.html">Datenschutz</a>
+      </div>
+      <div class="footer-copyright">
+        © 2024 NorthDrive. Alle Rechte vorbehalten.
+      </div>
+    </div>
+  </footer>
 </body>
 </html> 

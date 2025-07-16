@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datenschutzerklärung - NorthDrive</title>
+  <link rel="stylesheet" href="transport-style.css">
+  <style>
+    .privacy-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    
+    .privacy-content h1 {
+      color: var(--primary-navy);
+      margin-bottom: 1.5rem;
+    }
+    
+    .privacy-content h2 {
+      color: var(--primary-navy);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+    
+    .privacy-content h3 {
+      color: var(--text-color-primary);
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .privacy-content p {
+      margin-bottom: 1rem;
+    }
+    
+    .privacy-content ul {
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+    }
+    
+    .privacy-content li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .cookie-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    
+    .cookie-table th,
+    .cookie-table td {
+      border: 1px solid var(--border-color);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    
+    .cookie-table th {
+      background-color: var(--bg-light);
+      font-weight: 600;
+    }
+    
+    .cookie-table tr:nth-child(even) {
+      background-color: var(--bg-light);
+    }
+    
+    .contact-info {
+      background-color: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+    }
+    
+    .contact-info h3 {
+      margin-top: 0;
+      color: var(--primary-navy);
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-top: 2rem;
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    
+    .footer {
+      background-color: var(--bg-light);
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+      margin-top: 3rem;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .footer-links a {
+      color: var(--text-color-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent-blue);
+    }
+    
+    .separator {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .footer-copyright {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .footer-links {
+        order: 1;
+      }
+      
+      .footer-copyright {
+        order: 2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+
+    <header class="section hero-small">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="impressum.html">Impressum</a></li>
+            <li><a href="datenschutz.html" class="active">Datenschutz</a></li>
+            <li><a href="login.html" id="loginLink">Login</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="section">
+      <div class="privacy-content">
+        <h1>Datenschutzerklärung</h1>
+        
+        <p><strong>Stand: Dezember 2024</strong></p>
+        
+        <h2>1. Einleitung</h2>
+        <p>Der Schutz Ihrer persönlichen Daten ist uns ein wichtiges Anliegen. Diese Datenschutzerklärung informiert Sie über die Art, den Umfang und Zweck der Verarbeitung personenbezogener Daten auf unserer Website.</p>
+        
+        <h2>2. Verantwortlicher</h2>
+        <div class="contact-info">
+          <h3>NorthDrive</h3>
+          <p><strong>E-Mail:</strong> contact@northdrive.team</p>
+          <p><strong>Website:</strong> www.northdrive.team</p>
+        </div>
+        
+        <h2>3. Erhebung und Verarbeitung personenbezogener Daten</h2>
+        
+        <h3>3.1 Automatisch erfasste Daten</h3>
+        <p>Bei Ihrem Besuch auf unserer Website werden automatisch folgende Informationen erfasst:</p>
+        <ul>
+          <li>IP-Adresse</li>
+          <li>Datum und Uhrzeit des Zugriffs</li>
+          <li>Übertragene Datenmenge</li>
+          <li>Website, von der aus Sie zu uns gelangt sind</li>
+          <li>Verwendeter Browser und Betriebssystem</li>
+        </ul>
+        
+        <h3>3.2 Daten, die Sie uns mitteilen</h3>
+        <p>Bei der Nutzung unserer Dienste können folgende Daten anfallen:</p>
+        <ul>
+          <li>Name und Kontaktdaten (bei Registrierung)</li>
+          <li>Fahrzeugdaten (bei Transportaufträgen)</li>
+          <li>Standortdaten (bei der Nutzung der App)</li>
+          <li>Kommunikationsdaten (E-Mails, Nachrichten)</li>
+        </ul>
+        
+        <h2>4. Cookies und Tracking</h2>
+        
+        <h3>4.1 Was sind Cookies?</h3>
+        <p>Cookies sind kleine Textdateien, die auf Ihrem Gerät gespeichert werden, wenn Sie eine Website besuchen. Sie helfen dabei, Ihre Präferenzen zu speichern und die Website zu optimieren.</p>
+        
+        <h3>4.2 Welche Cookies verwenden wir?</h3>
+        <table class="cookie-table">
+          <thead>
+            <tr>
+              <th>Cookie-Typ</th>
+              <th>Zweck</th>
+              <th>Speicherdauer</th>
+              <th>Notwendig</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Notwendige Cookies</strong></td>
+              <td>Grundfunktionen der Website, Sicherheit, Session-Management</td>
+              <td>Sitzung / 1 Jahr</td>
+              <td>Ja</td>
+            </tr>
+            <tr>
+              <td><strong>Analyse-Cookies</strong></td>
+              <td>Website-Nutzung verstehen, Performance optimieren</td>
+              <td>2 Jahre</td>
+              <td>Nein</td>
+            </tr>
+            <tr>
+              <td><strong>Marketing-Cookies</strong></td>
+              <td>Personalisierte Werbung, Conversion-Tracking</td>
+              <td>1 Jahr</td>
+              <td>Nein</td>
+            </tr>
+            <tr>
+              <td><strong>Präferenz-Cookies</strong></td>
+              <td>Benutzereinstellungen speichern, Sprache/Region</td>
+              <td>1 Jahr</td>
+              <td>Nein</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <h3>4.3 Cookie-Verwaltung</h3>
+        <p>Sie können Ihre Cookie-Einstellungen jederzeit über unser Cookie-Banner oder die Einstellungen Ihres Browsers anpassen. Bitte beachten Sie, dass das Deaktivieren bestimmter Cookies die Funktionalität der Website beeinträchtigen kann.</p>
+        
+        <h2>5. Firebase Services</h2>
+        <p>Wir nutzen Firebase von Google für folgende Zwecke:</p>
+        <ul>
+          <li><strong>Firebase Authentication:</strong> Sichere Benutzeranmeldung und -verwaltung</li>
+          <li><strong>Firestore Database:</strong> Speicherung von Benutzerdaten und Aufträgen</li>
+          <li><strong>Firebase Storage:</strong> Sichere Dateispeicherung (Dokumente, Bilder)</li>
+          <li><strong>Firebase Analytics:</strong> Website-Nutzung analysieren (nur mit Ihrer Einwilligung)</li>
+        </ul>
+        
+        <h3>5.1 Google Analytics</h3>
+        <p>Wir verwenden Google Analytics, um die Nutzung unserer Website zu analysieren. Die Daten werden anonymisiert verarbeitet. Sie können die Erfassung durch Google Analytics verhindern, indem Sie das entsprechende Cookie in unseren Einstellungen deaktivieren.</p>
+        
+        <h2>6. Zweck der Datenverarbeitung</h2>
+        <p>Wir verarbeiten Ihre Daten für folgende Zwecke:</p>
+        <ul>
+          <li>Bereitstellung unserer Transportdienstleistungen</li>
+          <li>Kommunikation mit Kunden und Fahrern</li>
+          <li>Verbesserung unserer Website und Services</li>
+          <li>Erfüllung gesetzlicher Verpflichtungen</li>
+          <li>Gewährleistung der Sicherheit unserer Systeme</li>
+        </ul>
+        
+        <h2>7. Rechtsgrundlagen</h2>
+        <p>Die Verarbeitung Ihrer Daten erfolgt auf folgenden Rechtsgrundlagen:</p>
+        <ul>
+          <li><strong>Einwilligung (Art. 6 Abs. 1 lit. a DSGVO):</strong> Für Marketing- und Analyse-Cookies</li>
+          <li><strong>Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO):</strong> Für die Erbringung unserer Dienstleistungen</li>
+          <li><strong>Berechtigte Interessen (Art. 6 Abs. 1 lit. f DSGVO):</strong> Für Website-Optimierung und Sicherheit</li>
+          <li><strong>Gesetzliche Verpflichtung (Art. 6 Abs. 1 lit. c DSGVO):</strong> Für Aufbewahrungspflichten</li>
+        </ul>
+        
+        <h2>8. Datenweitergabe</h2>
+        <p>Wir geben Ihre Daten nur in folgenden Fällen weiter:</p>
+        <ul>
+          <li>An Auftraggeber/Fahrer für die Durchführung von Transporten</li>
+          <li>An IT-Dienstleister für die technische Bereitstellung unserer Services</li>
+          <li>An Behörden bei gesetzlicher Verpflichtung</li>
+          <li>An Google für Firebase-Services (nur anonymisierte Daten für Analytics)</li>
+        </ul>
+        
+        <h2>9. Datensicherheit</h2>
+        <p>Wir setzen technische und organisatorische Maßnahmen ein, um Ihre Daten vor unbefugtem Zugriff, Verlust oder Manipulation zu schützen:</p>
+        <ul>
+          <li>Verschlüsselte Datenübertragung (HTTPS)</li>
+          <li>Sichere Firebase-Infrastruktur</li>
+          <li>Regelmäßige Sicherheitsupdates</li>
+          <li>Zugriffskontrollen und Authentifizierung</li>
+        </ul>
+        
+        <h2>10. Ihre Rechte</h2>
+        <p>Sie haben folgende Rechte bezüglich Ihrer personenbezogenen Daten:</p>
+        <ul>
+          <li><strong>Auskunftsrecht:</strong> Sie können Auskunft über die verarbeiteten Daten verlangen</li>
+          <li><strong>Berichtigungsrecht:</strong> Sie können falsche Daten berichtigen lassen</li>
+          <li><strong>Löschungsrecht:</strong> Sie können die Löschung Ihrer Daten verlangen</li>
+          <li><strong>Einschränkungsrecht:</strong> Sie können die Verarbeitung einschränken lassen</li>
+          <li><strong>Datenübertragbarkeit:</strong> Sie können Ihre Daten in einem strukturierten Format erhalten</li>
+          <li><strong>Widerspruchsrecht:</strong> Sie können der Verarbeitung widersprechen</li>
+        </ul>
+        
+        <h2>11. Aufbewahrung</h2>
+        <p>Wir speichern Ihre Daten nur so lange, wie es für die genannten Zwecke erforderlich ist:</p>
+        <ul>
+          <li>Account-Daten: Bis zur Löschung des Accounts</li>
+          <li>Auftragsdaten: 10 Jahre (gesetzliche Aufbewahrungspflicht)</li>
+          <li>Log-Daten: 90 Tage</li>
+          <li>Cookie-Daten: Je nach Cookie-Typ (siehe Tabelle oben)</li>
+        </ul>
+        
+        <h2>12. Kontakt</h2>
+        <p>Bei Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte erreichen Sie uns unter:</p>
+        <div class="contact-info">
+          <p><strong>E-Mail:</strong> contact@northdrive.team</p>
+          <p><strong>Betreff:</strong> Datenschutz</p>
+        </div>
+        
+        <h2>13. Änderungen der Datenschutzerklärung</h2>
+        <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf zu aktualisieren. Änderungen werden auf dieser Seite veröffentlicht. Wir empfehlen, diese Seite regelmäßig zu besuchen.</p>
+        
+        <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Cookie Consent Script -->
+  <script src="cookie-consent.js"></script>
+  
+  <script type="module">
+    // Firebase SDK v9+ modular imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_KAYTuhfjpASvzvI1zgdNam7BzliB3mM",
+      authDomain: "appnorthdrive.firebaseapp.com",
+      projectId: "appnorthdrive",
+      storageBucket: "appnorthdrive.firebasestorage.app",
+      messagingSenderId: "559746363897",
+      appId: "1:559746363897:web:959bffc6e2f374e5448d28",
+      measurementId: "G-ZSJL11E70J"
+    };
+
+    // Deklariere Variablen außerhalb des try-catch-Blocks
+    let app, auth, db;
+
+    // Initialize Firebase
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      console.log("Firebase erfolgreich initialisiert");
+    } catch (error) {
+      console.error("Fehler bei der Firebase-Initialisierung:", error);
+    }
+
+    // DOM Elements
+    const loginLink = document.getElementById('loginLink');
+
+    // Überprüfe Authentifizierungsstatus
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Benutzer ist eingeloggt
+        console.log("Benutzer ist eingeloggt:", user.uid);
+        
+        try {
+          // Benutzerdaten aus Firestore abrufen
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // Login-Link ändern
+            loginLink.textContent = "Dashboard";
+            
+            // Link zum entsprechenden Dashboard setzen
+            switch(userData.role) {
+              case 'driver':
+                loginLink.href = "driver-dashboard.html";
+                break;
+              case 'client':
+                loginLink.href = "client-dashboard.html";
+                break;
+              case 'manager':
+                loginLink.href = "manager-dashboard.html";
+                break;
+              default:
+                loginLink.href = "login.html";
+            }
+          } else {
+            console.log("Keine Benutzerdaten gefunden");
+            loginLink.textContent = "Login";
+            loginLink.href = "login.html";
+          }
+        } catch (error) {
+          console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+        }
+      } else {
+        // Benutzer ist nicht eingeloggt
+        console.log("Kein Benutzer eingeloggt");
+        loginLink.textContent = "Login";
+        loginLink.href = "login.html";
+      }
+    });
+  </script>
+  
+  <footer class="section footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="impressum.html">Impressum</a>
+        <span class="separator">|</span>
+        <a href="datenschutz.html">Datenschutz</a>
+      </div>
+      <div class="footer-copyright">
+        © 2024 NorthDrive. Alle Rechte vorbehalten.
+      </div>
+    </div>
+  </footer>
+</body>
+</html> 
