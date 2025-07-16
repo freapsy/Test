@@ -2903,9 +2903,9 @@
           </tr>
         `;
       }
-    }
-    
-    // Abrechnung herunterladen
+    } // <-- loadPayrollRecords korrekt abgeschlossen
+
+    // Abrechnung herunterladen (außerhalb von loadPayrollRecords!)
     window.downloadPayrollRecord = function(payrollId, downloadURL, fileName) {
       try {
         const link = document.createElement('a');
@@ -2915,13 +2915,12 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
         console.log("Abrechnung heruntergeladen:", fileName);
       } catch (error) {
         console.error("Fehler beim Herunterladen der Abrechnung:", error);
         alert("Fehler beim Herunterladen der Abrechnung. Bitte versuchen Sie es erneut.");
       }
-    };   
+    };
   </script>
   
   <footer class="section footer">
