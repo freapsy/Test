@@ -2165,10 +2165,10 @@
             }
           }
         });
+        // Hier ist snapshot definiert, daher kann man z.B. loggen:
+        console.log(`[Website] Daten-Synchronisation aktiviert - ${snapshot.size} Routen überwacht`);
       });
-      
-      // Datenqualität überwachen
-      console.log(`[Website] Daten-Synchronisation aktiviert - ${snapshot.size} Routen überwacht`);
+      // Außerhalb KEIN Zugriff mehr auf snapshot!
       console.log(`[Website] Daten-Synchronisation aktiviert`);
     }
    
