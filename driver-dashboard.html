@@ -2227,7 +2227,7 @@
         where("status", "==", "cancelled")
       );
       
-      // Echtzeit-Listener für abgeschlossene Fahrten
+      // Echtzeit-Listener für abgeschlossene Fahrten mit Belohnungssystem
       onSnapshot(completedTripsQuery, (snapshot) => {
         const count = snapshot.size;
         completedTripsValue.textContent = count;
@@ -2238,18 +2238,44 @@
         
         // Zählen, wie viele Aufträge im letzten Monat abgeschlossen wurden
         let lastMonthCount = 0;
+        let totalEarnings = 0;
+        let lastMonthEarnings = 0;
+        
         snapshot.forEach(doc => {
-          const completedAt = doc.data().completedAt?.toDate();
+          const orderData = doc.data();
+          const price = orderData.price || 0;
+          totalEarnings += price;
+          
+          const completedAt = orderData.completedAt?.toDate();
           if (completedAt && completedAt > oneMonthAgo) {
             lastMonthCount++;
+            lastMonthEarnings += price;
           }
         });
         
         completedTripsChange.textContent = `+${lastMonthCount} im letzten Monat`;
+        
+        // Gesamtverdienst für Header aktualisieren
+        const formattedTotal = `${totalEarnings.toFixed(2)} €`;
+        const formattedLastMonth = `+${lastMonthEarnings.toFixed(2)} €`;
+        
+        headerEarningsValue.textContent = formattedTotal;
+        headerEarningsChange.textContent = formattedLastMonth;
+        
+        // Gesamtverdienst für Belohnungssystem speichern
+        window.currentTotalEarnings = totalEarnings;
+        
+        // Belohnungssystem verarbeiten
+        if (currentUser) {
+          checkAndProcessLevelUp(currentUser.uid, totalEarnings);
+          updateRewardsDisplay();
+        }
       }, (error) => {
         console.error("Fehler beim Laden der abgeschlossenen Fahrten:", error);
         completedTripsValue.textContent = "-";
         completedTripsChange.textContent = "Fehler beim Laden";
+        headerEarningsValue.textContent = "-";
+        headerEarningsChange.textContent = "+0 €";
       });
       
       // Echtzeit-Listener für zugewiesene Fahrten
@@ -2449,49 +2475,7 @@
       }, 3000);
     }
     
-    // Echtzeit-Listener für Gesamtverdienst mit Belohnungssystem
-    onSnapshot(completedTripsQuery, (snapshot) => {
-      let totalEarnings = 0;
-      let lastMonthEarnings = 0;
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      
-      snapshot.forEach(doc => {
-        const orderData = doc.data();
-        const price = orderData.price || 0;
-        
-        // Gesamtverdienst berechnen
-        totalEarnings += price;
-        
-        // Verdienst im letzten Monat berechnen
-        const completedAt = orderData.completedAt?.toDate();
-        if (completedAt && completedAt > oneMonthAgo) {
-          lastMonthEarnings += price;
-        }
-      });
-      
-      // Formatierung mit Euro-Zeichen
-      const formattedTotal = `${totalEarnings.toFixed(2)} €`;
-      const formattedLastMonth = `+${lastMonthEarnings.toFixed(2)} €`;
-      
-      // Aktualisiere den Header
-      headerEarningsValue.textContent = formattedTotal;
-      headerEarningsChange.textContent = formattedLastMonth;
-      
-      // Gesamtverdienst für Belohnungssystem speichern
-      window.currentTotalEarnings = totalEarnings;
-      
-      // Belohnungssystem verarbeiten
-      if (currentUser) {
-        checkAndProcessLevelUp(currentUser.uid, totalEarnings);
-        updateRewardsDisplay(); // Aktualisiere auch den Gesamtverdienst
-      }
-    }, (error) => {
-      console.error("Fehler beim Laden des Gesamtverdienstes:", error);
-      headerEarningsValue.textContent = "-";
-      headerEarningsChange.textContent = "+0 €";
-    });
-    }
+
 
     // Dokumente laden
     async function loadDocuments() {
