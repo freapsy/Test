@@ -416,6 +416,7 @@
         defaultDate: null,
         allowInput: false, 
         disableMobile: true, // Verhindert die native mobile Datumsauswahl
+        minDate: new Date().fp_incr(2), // Nur Termine ab übermorgen (2 Tage Vorlaufzeit)
         onChange: function(selectedDates, dateStr, instance) {
             console.log("[FP onChange] Funktion betreten. Mode: single.");
             console.log("[FP onChange] dateStr:", dateStr, "selectedDates:", selectedDates);
@@ -504,8 +505,12 @@
           timeSlotsContainer.innerHTML = '<p style="text-align:center; color: red;">Fehler beim Laden der Verfügbarkeiten aus der Datenbank.</p>';
       }
 
-      // Verfügbare Zeiten definieren (9:00 - 17:00, alle 2 Stunden)
-      const hours = ['09:00', '11:00', '13:00', '15:00', '17:00'];
+      // Verfügbare Zeiten definieren (9:00 - 19:00, alle 30 Minuten)
+      const hours = [
+        '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30',
+        '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
+        '17:00', '17:30', '18:00', '18:30', '19:00'
+      ];
       const previouslySelectedTime = (selectedDateTimeSlots[dateStr] && selectedDateTimeSlots[dateStr][0]) || null;
 
       if (hours.length === 0) {
@@ -532,10 +537,25 @@
           label.htmlFor = radioButton.id;
           label.textContent = hour;
 
-          if (bookedFirebaseTimes.has(hour)) {
+          // Prüfe, ob der Termin bereits gebucht ist oder der vorherige Termin gebucht wurde
+          const isBooked = bookedFirebaseTimes.has(hour);
+          
+          // Finde den Index des aktuellen Zeit-Slots
+          const currentIndex = hours.indexOf(hour);
+          const previousSlot = currentIndex > 0 ? hours[currentIndex - 1] : null;
+          const isPreviousBooked = previousSlot ? bookedFirebaseTimes.has(previousSlot) : false;
+          
+          // Termin ist gesperrt, wenn er selbst oder der vorherige Termin gebucht ist
+          const isBlocked = isBooked || isPreviousBooked;
+          
+          if (isBlocked) {
               radioButton.disabled = true;
               slotWrapper.classList.add('slot-unavailable'); 
-              label.title = "Dieser Termin ist bereits vergeben.";
+              if (isBooked) {
+                  label.title = "Dieser Termin ist bereits vergeben.";
+              } else {
+                  label.title = "Dieser Termin ist gesperrt, da der vorherige Termin bereits gebucht wurde.";
+              }
           } else {
               if (previouslySelectedTime === hour) {
                   radioButton.checked = true;
