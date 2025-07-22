@@ -885,6 +885,9 @@ h3 {
   .contact-section {
     text-align: center;
   }
+  .hero-subtitle, .tagline, h2, h3, .team-vision {
+    color: var(--text-dark) !important;
+  }
 }
 
 @media (max-width: 480px) {

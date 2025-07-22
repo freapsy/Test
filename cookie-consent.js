@@ -93,55 +93,62 @@ class CookieConsent {
     styles.textContent = `
       #cookie-banner {
         position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.95);
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        background: rgba(30, 30, 30, 0.92);
         color: white;
         z-index: 10000;
-        padding: 20px;
+        padding: 10px 18px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      }
-      
-      .cookie-banner-content {
-        max-width: 1200px;
+        border-radius: 10px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        max-width: 350px;
         margin: 0 auto;
       }
       
+      .cookie-banner-content {
+        max-width: 100%;
+        margin: 0;
+      }
+      
       .cookie-banner-header h3 {
-        margin: 0 0 10px 0;
-        font-size: 1.2rem;
+        margin: 0 0 6px 0;
+        font-size: 1rem;
         color: #fff;
+        font-weight: 500;
       }
       
       .cookie-banner-header p {
-        margin: 0 0 20px 0;
+        margin: 0 0 10px 0;
         color: #ccc;
-        line-height: 1.5;
+        line-height: 1.4;
+        font-size: 0.92rem;
       }
       
       .cookie-settings {
-        margin: 20px 0;
+        margin: 10px 0 0 0;
+        display: none;
       }
       
       .cookie-option {
-        margin-bottom: 15px;
-        padding: 15px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
+        margin-bottom: 8px;
+        padding: 7px 8px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 6px;
       }
       
       .cookie-option-header {
         display: flex;
         align-items: flex-start;
-        gap: 15px;
+        gap: 10px;
       }
       
       .cookie-toggle {
         position: relative;
         display: inline-block;
-        width: 50px;
-        height: 24px;
+        width: 36px;
+        height: 18px;
         flex-shrink: 0;
         margin-top: 2px;
       }
@@ -159,20 +166,20 @@ class CookieConsent {
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: #ccc;
-        transition: .4s;
-        border-radius: 24px;
+        background-color: #bbb;
+        transition: .3s;
+        border-radius: 18px;
       }
       
       .toggle-slider:before {
         position: absolute;
         content: "";
-        height: 18px;
-        width: 18px;
+        height: 12px;
+        width: 12px;
         left: 3px;
         bottom: 3px;
         background-color: white;
-        transition: .4s;
+        transition: .3s;
         border-radius: 50%;
       }
       
@@ -186,66 +193,61 @@ class CookieConsent {
       }
       
       input:checked + .toggle-slider:before {
-        transform: translateX(26px);
+        transform: translateX(18px);
       }
       
       .cookie-option-info h4 {
-        margin: 0 0 5px 0;
-        font-size: 1rem;
-        color: #fff;
+        font-size: 0.98rem;
+        margin: 0 0 2px 0;
       }
       
       .cookie-option-info p {
+        font-size: 0.85rem;
         margin: 0;
-        font-size: 0.9rem;
-        color: #ccc;
-        line-height: 1.4;
+        color: #bbb;
       }
       
       .cookie-banner-actions {
         display: flex;
-        gap: 10px;
+        gap: 8px;
+        margin-top: 8px;
         flex-wrap: wrap;
-        align-items: center;
+        justify-content: flex-end;
       }
       
       .cookie-btn {
-        padding: 10px 20px;
+        font-size: 0.92rem;
+        padding: 5px 12px;
+        border-radius: 5px;
         border: none;
-        border-radius: 6px;
         cursor: pointer;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
+        transition: background 0.2s, color 0.2s;
       }
-      
       .cookie-btn.primary {
-        background-color: #2196F3;
-        color: white;
-      }
-      
-      .cookie-btn.primary:hover {
-        background-color: #1976D2;
-      }
-      
-      .cookie-btn.secondary {
-        background-color: transparent;
+        background: #2196F3;
         color: #fff;
-        border: 1px solid #ccc;
       }
-      
+      .cookie-btn.primary:hover {
+        background: #1769aa;
+      }
+      .cookie-btn.secondary {
+        background: #eee;
+        color: #222;
+      }
       .cookie-btn.secondary:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background: #ddd;
       }
-      
       .cookie-link {
-        color: #2196F3;
-        text-decoration: none;
         font-size: 0.9rem;
-      }
-      
-      .cookie-link:hover {
+        color: #2196F3;
         text-decoration: underline;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+      .cookie-link:hover {
+        color: #1769aa;
       }
       
       @media (max-width: 768px) {
