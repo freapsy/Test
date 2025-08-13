@@ -830,6 +830,7 @@ h3 {
 
   .hero > h1 {
     font-size: 2rem;
+    color: var(--text-dark) !important;
   }
 
   .section:not(.hero):not(.hero-small) > h1 {
@@ -921,6 +922,7 @@ h3 {
 
   .hero > h1 {
     font-size: 1.8rem;
+    color: var(--text-dark) !important;
   }
 
   .section:not(.hero):not(.hero-small) > h1 {
