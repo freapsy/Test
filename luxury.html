@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luxusüberführungen - NorthDrive</title>
+  <link rel="stylesheet" href="transport-style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --luxury-gold: #D4AF37;
+      --luxury-navy: #0c2340;
+      --luxury-cream: #F5F5F0;
+    }
+
+    .luxury-hero {
+      min-height: 90vh;
+      background: linear-gradient(135deg, var(--luxury-navy) 0%, #1a3a64 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .luxury-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .luxury-hero-content {
+      max-width: 1000px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .luxury-hero h1 {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 300;
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+
+    .luxury-hero h1 em {
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .luxury-hero h1 .gold-text {
+      color: var(--luxury-gold);
+    }
+
+    .luxury-hero-subtitle {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      font-weight: 300;
+      margin-bottom: 3rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .luxury-cta-group {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+
+    .luxury-btn-primary {
+      background-color: var(--luxury-gold);
+      color: var(--luxury-navy);
+      padding: 1.2rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .luxury-btn-primary:hover {
+      background-color: #E5C158;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+
+    .luxury-btn-secondary {
+      background-color: transparent;
+      color: white;
+      padding: 1.2rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      border: 2px solid white;
+      transition: all 0.3s ease;
+    }
+
+    .luxury-btn-secondary:hover {
+      background-color: white;
+      color: var(--luxury-navy);
+    }
+
+    .luxury-trust-badges {
+      text-align: center;
+    }
+
+    .luxury-trust-badges p {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .luxury-trust-locations {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      font-weight: 600;
+      color: var(--luxury-gold);
+    }
+
+    .luxury-services {
+      padding: 6rem 2rem;
+      background-color: var(--luxury-cream);
+    }
+
+    .luxury-services-header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 4rem;
+    }
+
+    .luxury-services-header h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      color: var(--luxury-navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .luxury-services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .luxury-service-card {
+      background: white;
+      padding: 2.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .luxury-service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .luxury-service-icon {
+      width: 60px;
+      height: 60px;
+      background-color: rgba(212, 175, 55, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .luxury-service-icon i {
+      font-size: 2rem;
+      color: var(--luxury-gold);
+    }
+
+    .luxury-service-card h3 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--luxury-navy);
+      margin-bottom: 1rem;
+    }
+
+    .luxury-service-card p {
+      color: var(--text-color-secondary);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .luxury-service-features {
+      list-style: none;
+      padding: 0;
+    }
+
+    .luxury-service-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .luxury-service-features li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background-color: var(--luxury-gold);
+      border-radius: 50%;
+    }
+
+    .luxury-contact {
+      padding: 6rem 2rem;
+      background: white;
+    }
+
+    .luxury-contact-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .luxury-contact h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      color: var(--luxury-navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .luxury-contact-info {
+      margin: 3rem 0;
+      padding: 2.5rem;
+      background-color: var(--luxury-cream);
+    }
+
+    .luxury-contact-item {
+      margin-bottom: 1.5rem;
+    }
+
+    .luxury-contact-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .luxury-contact-item i {
+      color: var(--luxury-gold);
+      margin-right: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .luxury-contact-item a {
+      color: var(--luxury-navy);
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .luxury-contact-item a:hover {
+      color: var(--luxury-gold);
+    }
+
+    @media (max-width: 768px) {
+      .luxury-cta-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .luxury-btn-primary,
+      .luxury-btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .luxury-services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+
+    <header class="section hero-small">
+      <div class="hero-nav-container">
+        <a href="index.html"><img src="logo.png" alt="NorthDrive Logo" class="logo"></a>
+        <nav class="hero-nav">
+          <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="team.html">Team</a></li>
+            <li><a href="ueber_uns.html">Über Uns</a></li>
+            <li><a href="luxury.html" class="active">Luxusüberführungen</a></li>
+            <li><a href="login.html" id="loginLink">Login</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="luxury-hero">
+      <div class="luxury-hero-content">
+        <h1>
+          Wir <em>bewegen</em> das,<br />
+          <span class="gold-text">was <em>unbezahlbar</em> ist.</span>
+        </h1>
+        
+        <p class="luxury-hero-subtitle">
+          Exklusiver Transport für Luxusfahrzeuge, Sportwagen und Sammlerobjekte.<br />
+          Weltweit sicher, diskret und mit höchsten Sicherheitsstandards.
+        </p>
+        
+        <div class="luxury-cta-group">
+          <a href="https://wa.me/4915259441243?text=Hallo%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Ihren%20Luxus-Transport-Service." target="_blank" class="luxury-btn-primary">
+            <i class="fab fa-whatsapp"></i>
+            Sofort-Beratung
+          </a>
+          <a href="#services" class="luxury-btn-secondary">
+            Services entdecken
+          </a>
+        </div>
+        
+        <div class="luxury-trust-badges">
+          <p>Vertraut von Premium-Kunden weltweit</p>
+          <div class="luxury-trust-locations">
+            <span>Monaco</span>
+            <span>Dubai</span>
+            <span>Schweiz</span>
+            <span>Deutschland</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="luxury-services">
+      <div class="luxury-services-header">
+        <h2>Premium Transport Services</h2>
+        <p class="tagline">Maßgeschneiderte Lösungen für anspruchsvollste Kunden</p>
+      </div>
+
+      <div class="luxury-services-grid">
+        <div class="luxury-service-card">
+          <div class="luxury-service-icon">
+            <i class="fas fa-truck"></i>
+          </div>
+          <h3>Geschlossener Transport</h3>
+          <p>Vollständig geschlossene Transporter mit Klimakontrolle und Federung für maximalen Schutz Ihres Fahrzeugs.</p>
+          <ul class="luxury-service-features">
+            <li>Klimatisiert</li>
+            <li>Stoßdämpfung</li>
+            <li>Vollversicherung</li>
+          </ul>
+        </div>
+
+        <div class="luxury-service-card">
+          <div class="luxury-service-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3>Sicherheitszertifikate</h3>
+          <p>TÜV-zertifizierte Sicherheitsstandards und umfassende Versicherung bis 5 Millionen Euro.</p>
+          <ul class="luxury-service-features">
+            <li>TÜV-zertifiziert</li>
+            <li>5M€ Versicherung</li>
+            <li>24/7 Überwachung</li>
+          </ul>
+        </div>
+
+        <div class="luxury-service-card">
+          <div class="luxury-service-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <h3>GPS Live-Tracking</h3>
+          <p>Verfolgen Sie Ihren Transport in Echtzeit mit unserem professionellen Tracking-System.</p>
+          <ul class="luxury-service-features">
+            <li>Live-Position</li>
+            <li>Status-Updates</li>
+            <li>Ankunftszeit</li>
+          </ul>
+        </div>
+
+        <div class="luxury-service-card">
+          <div class="luxury-service-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <h3>Weltweite Überführungen</h3>
+          <p>Von Monaco nach München, von Dubai nach Deutschland - wir transportieren weltweit.</p>
+          <ul class="luxury-service-features">
+            <li>Europa</li>
+            <li>Naher Osten</li>
+            <li>Nordamerika</li>
+          </ul>
+        </div>
+
+        <div class="luxury-service-card">
+          <div class="luxury-service-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h3>Private Transporte</h3>
+          <p>Diskrete Abholung und Lieferung außerhalb Europas für höchste Ansprüche.</p>
+          <ul class="luxury-service-features">
+            <li>Diskret</li>
+            <li>Termingenau</li>
+            <li>Concierge-Service</li>
+          </ul>
+        </div>
+
+        <div class="luxury-service-card">
+          <div class="luxury-service-icon">
+            <i class="fas fa-concierge-bell"></i>
+          </div>
+          <h3>Concierge-Service</h3>
+          <p>Persönliche Betreuung von A bis Z. Preis auf Anfrage für exklusive Anforderungen.</p>
+          <ul class="luxury-service-features">
+            <li>Persönlich</li>
+            <li>Maßgeschneidert</li>
+            <li>Auf Anfrage</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="luxury-contact">
+      <div class="luxury-contact-content">
+        <h2>Bereit für den Transport?</h2>
+        <p class="tagline">Kontaktieren Sie uns für eine unverbindliche Beratung.</p>
+        
+        <div class="luxury-contact-info">
+          <div class="luxury-contact-item">
+            <i class="fab fa-whatsapp"></i>
+            <a href="https://wa.me/4915259441243?text=Hallo%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Ihren%20Luxus-Transport-Service." target="_blank">
+              WhatsApp Concierge
+            </a>
+            <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem;">
+              Verfügbar 24/7 für Premium-Kunden
+            </p>
+          </div>
+          
+          <div class="luxury-contact-item">
+            <i class="fas fa-envelope"></i>
+            <a href="mailto:luxury@northdrive.team">
+              luxury@northdrive.team
+            </a>
+          </div>
+          
+          <div class="luxury-contact-item">
+            <i class="fas fa-phone"></i>
+            <a href="tel:+4915259441243">
+              +49 (0) 152 / 5944 1243
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  
+  <!-- Cookie Consent Script -->
+  <script src="cookie-consent.js"></script>
+  
+  <script type="module">
+    // Firebase SDK v9+ modular imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_KAYTuhfjpASvzvI1zgdNam7BzliB3mM",
+      authDomain: "appnorthdrive.firebaseapp.com",
+      projectId: "appnorthdrive",
+      storageBucket: "appnorthdrive.firebasestorage.app",
+      messagingSenderId: "559746363897",
+      appId: "1:559746363897:web:959bffc6e2f374e5448d28",
+      measurementId: "G-ZSJL11E70J"
+    };
+
+    // Deklariere Variablen außerhalb des try-catch-Blocks
+    let app, auth, db;
+
+    // Initialize Firebase
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      console.log("Firebase erfolgreich initialisiert");
+    } catch (error) {
+      console.error("Fehler bei der Firebase-Initialisierung:", error);
+    }
+
+    // DOM Elements
+    const loginLink = document.getElementById('loginLink');
+
+    // Überprüfe Authentifizierungsstatus
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Benutzer ist eingeloggt
+        console.log("Benutzer ist eingeloggt:", user.uid);
+        
+        try {
+          // Benutzerdaten aus Firestore abrufen
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // Login-Link ändern
+            loginLink.textContent = "Dashboard";
+            
+            // Link zum entsprechenden Dashboard setzen
+            switch(userData.role) {
+              case 'driver':
+                loginLink.href = "driver-dashboard.html";
+                break;
+              case 'client':
+                loginLink.href = "client-dashboard.html";
+                break;
+              case 'manager':
+                loginLink.href = "manager-dashboard.html";
+                break;
+              default:
+                loginLink.href = "login.html";
+            }
+          } else {
+            console.log("Keine Benutzerdaten gefunden");
+            loginLink.textContent = "Login";
+            loginLink.href = "login.html";
+          }
+        } catch (error) {
+          console.error("Fehler beim Abrufen der Benutzerdaten:", error);
+        }
+      } else {
+        // Benutzer ist nicht eingeloggt
+        console.log("Kein Benutzer eingeloggt");
+        loginLink.textContent = "Login";
+        loginLink.href = "login.html";
+      }
+    });
+  </script>
+  
+  <footer class="section footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="impressum.html">Impressum</a>
+        <span class="separator">|</span>
+        <a href="datenschutz.html">Datenschutz</a>
+      </div>
+      <div class="footer-copyright">
+          © 2025 NorthDrive UG. Alle Rechte vorbehalten.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+
